@@ -50,13 +50,13 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = context.colorScheme;
-    final textTheme = context.textTheme;
+    final ColorScheme colorScheme = context.colorScheme;
+    final TextTheme textTheme = context.textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (labelText != null) ...[
+      children: <Widget>[
+        if (labelText != null) ...<Widget>[
           Text(
             labelText!,
             style: textTheme.titleMedium?.copyWith(

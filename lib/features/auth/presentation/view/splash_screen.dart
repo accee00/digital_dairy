@@ -78,13 +78,6 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (BuildContext context) => const SignUpPage()),
     );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Would navigate to home screen'),
-        backgroundColor: context.colorScheme.primary,
-      ),
-    );
   }
 
   @override

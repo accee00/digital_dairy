@@ -99,10 +99,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get authOr => 'या';
 
   @override
-  String get authWithGoogle => 'Google से जारी रखें';
+  String get authWithGoogle => 'Google';
 
   @override
-  String get authWithApple => 'Apple से जारी रखें';
+  String get authWithApple => 'Apple';
 
   @override
   String get formSubmit => 'जमा करें';

@@ -281,13 +281,13 @@ abstract class AppLocalizations {
   /// No description provided for @authWithGoogle.
   ///
   /// In en, this message translates to:
-  /// **'Continue with Google'**
+  /// **'Google'**
   String get authWithGoogle;
 
   /// No description provided for @authWithApple.
   ///
   /// In en, this message translates to:
-  /// **'Continue with Apple'**
+  /// **'Apple'**
   String get authWithApple;
 
   /// No description provided for @formSubmit.

@@ -51,7 +51,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authContinue => 'Continue';
 
   @override
-  String get authEmail => 'Email';
+  String get authEmail => 'Email Address';
 
   @override
   String get authEnterEmail => 'Enter your email';
@@ -81,7 +81,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authEnterName => 'Enter your full name';
 
   @override
-  String get authPhone => 'Phone';
+  String get authPhone => 'Phone Number';
 
   @override
   String get authEnterPhone => 'Enter your phone number';
@@ -99,10 +99,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authOr => 'or';
 
   @override
-  String get authWithGoogle => 'Continue with Google';
+  String get authWithGoogle => 'Google';
 
   @override
-  String get authWithApple => 'Continue with Apple';
+  String get authWithApple => 'Apple';
 
   @override
   String get formSubmit => 'Submit';
