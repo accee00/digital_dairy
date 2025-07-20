@@ -4,14 +4,22 @@ import 'package:equatable/equatable.dart';
 
 class UserModel extends Equatable {
   const UserModel({
-    required this.id,
     required this.name,
     required this.email,
     required this.phoneNumber,
+    this.id,
     this.createdAt,
     this.updatedAt,
   });
-  final String id;
+  factory UserModel.fromMap(Map<String, dynamic> map) => UserModel(
+    id: map['id']?.toString() ?? '',
+    name: map['name'].toString(),
+    email: map['email'].toString(),
+    phoneNumber: map['phone_number'].toString(),
+    createdAt: DateTime.parse(map['created_at'] as String),
+    updatedAt: DateTime.parse(map['updated_at'] as String),
+  );
+  final String? id;
   final String name;
   final String email;
   final String phoneNumber;
@@ -41,16 +49,7 @@ class UserModel extends Equatable {
     'phone_number': phoneNumber,
     'created_at': createdAt?.toIso8601String(),
     'updated_at': updatedAt?.toIso8601String(),
-  };
-
-  factory UserModel.fromMap(Map<String, dynamic> map) => UserModel(
-    id: map['id'] as String,
-    name: map['name'] as String,
-    email: map['email'] as String,
-    phoneNumber: map['phone_number'] as String,
-    createdAt: DateTime.parse(map['created_at'] as String),
-    updatedAt: DateTime.parse(map['updated_at'] as String),
-  );
+  }..removeWhere((String key, dynamic value) => value == null);
 
   @override
   String toString() =>

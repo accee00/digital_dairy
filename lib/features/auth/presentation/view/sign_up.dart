@@ -117,7 +117,10 @@ class _SignUpPageState extends State<SignUpPage> {
     final TextTheme textTheme = context.textTheme;
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (BuildContext context, AuthState state) {
-        if (state is AuthSuccessState) {}
+        if (state is AuthSuccessState) {
+          showAppSnackbar(context, message: 'Welcome to Digital Dairy');
+          context.go(AppRoutes.home);
+        }
         if (state is AuthFailureState) {
           showAppSnackbar(
             context,
