@@ -1,13 +1,15 @@
+import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
+import 'package:digital_dairy/core/widget/custom_circular_indicator.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
-import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
-import 'package:digital_dairy/features/auth/presentation/widget/custom_text_feild.dart';
-import 'package:digital_dairy/features/auth/presentation/widget/elevated_button.dart';
+import 'package:digital_dairy/core/widget/custom_text_feild.dart';
+import 'package:digital_dairy/core/widget/elevated_button.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 ///
 class SignUpPage extends StatefulWidget {
@@ -113,8 +115,9 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = context.colorScheme;
     final TextTheme textTheme = context.textTheme;
-    return BlocListener<AuthCubit, AuthState>(
+    return BlocConsumer<AuthCubit, AuthState>(
       listener: (BuildContext context, AuthState state) {
+        if (state is AuthSuccessState) {}
         if (state is AuthFailureState) {
           showAppSnackbar(
             context,
@@ -122,296 +125,293 @@ class _SignUpPageState extends State<SignUpPage> {
             type: SnackbarType.error,
           );
         }
-        if (state is AuthSuccessState) {
-          showAppSnackbar(
-            context,
-            message: 'Account created successfully.',
-            type: SnackbarType.success,
-          );
-        }
       },
-      child: Scaffold(
-        body: Container(
-          height: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: <Color>[
-                colorScheme.primary.withAlpha(100),
-                colorScheme.surface,
-                colorScheme.secondary.withAlpha(90),
-              ],
-            ),
-          ),
-          child: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(left: 25, right: 25),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(height: 10),
-                  Text(
-                    context.strings.authCreateAccount,
-                    style: textTheme.displaySmall?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    context.strings.welcome,
-                    style: textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurface.withAlpha(180),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        // Full Name Field
-                        CustomTextField(
-                          controller: _nameController,
-                          labelText: 'Full Name',
-                          hintText: 'Enter your full name',
-                          prefixIcon: Icons.person_outline_rounded,
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Full name is required';
-                            }
-                            if (value.length < 2) {
-                              return 'Name must be at least 2 characters';
-                            }
-                            return null;
-                          },
+      builder: (BuildContext context, AuthState state) => Scaffold(
+        body: Stack(
+          children: <Widget>[
+            Container(
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[
+                    colorScheme.primary.withAlpha(100),
+                    colorScheme.surface,
+                    colorScheme.secondary.withAlpha(90),
+                  ],
+                ),
+              ),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(left: 25, right: 25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const SizedBox(height: 10),
+                      Text(
+                        context.strings.authCreateAccount,
+                        style: textTheme.displaySmall?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w800,
                         ),
-                        const SizedBox(height: 20),
-                        // Email Field
-                        CustomTextField(
-                          controller: _emailController,
-                          labelText: context.strings.authEmail,
-                          hintText: context.strings.authEnterEmail,
-                          prefixIcon: Icons.email_outlined,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: _validateEmail,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        context.strings.welcome,
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurface.withAlpha(180),
                         ),
-                        const SizedBox(height: 20),
-                        // Phone Feild
-                        CustomTextField(
-                          controller: _phoneController,
-                          labelText: context.strings.authPhone,
-                          hintText: 'Enter your phone number',
-                          prefixIcon: Icons.phone_outlined,
-                          keyboardType: TextInputType.phone,
-                          validator: _validatePhone,
-
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9+\-\s]'),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        // Password Field
-                        CustomTextField(
-                          controller: _passwordController,
-                          labelText: 'Password',
-                          hintText: 'Enter your password',
-                          prefixIcon: Icons.lock_outline_rounded,
-                          obscureText: !_isPasswordVisible,
-                          validator: _validatePassword,
-
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
-                            icon: Icon(
-                              _isPasswordVisible
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              color: colorScheme.onSurface.withAlpha(120),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Confirm Password Field
-                        CustomTextField(
-                          controller: _confirmPasswordController,
-                          labelText: 'Confirm Password',
-                          hintText: 'Confirm your password',
-                          prefixIcon: Icons.lock_outline_rounded,
-                          obscureText: !_isConfirmPasswordVisible,
-                          validator: _validateConfirmPassword,
-                          textInputAction: TextInputAction.done,
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _isConfirmPasswordVisible =
-                                    !_isConfirmPasswordVisible;
-                              });
-                            },
-                            icon: Icon(
-                              _isConfirmPasswordVisible
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              color: colorScheme.onSurface.withAlpha(120),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 25),
-                        // Terms & Conditions Checkbox
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                      const SizedBox(height: 15),
+                      Form(
+                        key: _formKey,
+                        child: Column(
                           children: <Widget>[
-                            Checkbox(
-                              value: _acceptTerms,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _acceptTerms = value ?? false;
-                                });
+                            // Full Name Field
+                            CustomTextField(
+                              controller: _nameController,
+                              labelText: context.strings.authName,
+                              hintText: context.strings.authEnterName,
+                              prefixIcon: Icons.person_outline_rounded,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Full name is required';
+                                }
+                                if (value.length < 2) {
+                                  return 'Name must be at least 2 characters';
+                                }
+                                return null;
                               },
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                            ),
+                            const SizedBox(height: 20),
+                            // Email Field
+                            CustomTextField(
+                              controller: _emailController,
+                              labelText: context.strings.authEmail,
+                              hintText: context.strings.authEnterEmail,
+                              prefixIcon: Icons.email_outlined,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: _validateEmail,
+                            ),
+                            const SizedBox(height: 20),
+                            // Phone Feild
+                            CustomTextField(
+                              controller: _phoneController,
+                              labelText: context.strings.authPhone,
+                              hintText: context.strings.authEnterPhone,
+                              prefixIcon: Icons.phone_outlined,
+                              keyboardType: TextInputType.phone,
+                              validator: _validatePhone,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9+\-\s]'),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            // Password Field
+                            CustomTextField(
+                              controller: _passwordController,
+                              labelText: 'Password',
+                              hintText: 'Enter your password',
+                              prefixIcon: Icons.lock_outline_rounded,
+                              obscureText: !_isPasswordVisible,
+                              validator: _validatePassword,
+
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: colorScheme.onSurface.withAlpha(120),
+                                ),
                               ),
                             ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: textTheme.bodyMedium?.copyWith(
-                                      color: colorScheme.onSurface.withAlpha(
-                                        180,
-                                      ),
-                                    ),
-                                    children: <InlineSpan>[
-                                      const TextSpan(text: 'I agree to the '),
-                                      TextSpan(
-                                        text: 'Terms & Conditions',
-                                        style: TextStyle(
-                                          color: colorScheme.primary,
-                                          fontWeight: FontWeight.w600,
-                                          decoration: TextDecoration.underline,
-                                        ),
-                                      ),
-                                      const TextSpan(text: ' and '),
-                                      TextSpan(
-                                        text: 'Privacy Policy',
-                                        style: TextStyle(
-                                          color: colorScheme.primary,
-                                          fontWeight: FontWeight.w600,
-                                          decoration: TextDecoration.underline,
-                                        ),
-                                      ),
-                                    ],
+                            const SizedBox(height: 20),
+                            // Confirm Password Field
+                            CustomTextField(
+                              controller: _confirmPasswordController,
+                              labelText: 'Confirm Password',
+                              hintText: 'Confirm your password',
+                              prefixIcon: Icons.lock_outline_rounded,
+                              obscureText: !_isConfirmPasswordVisible,
+                              validator: _validateConfirmPassword,
+                              textInputAction: TextInputAction.done,
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isConfirmPasswordVisible =
+                                        !_isConfirmPasswordVisible;
+                                  });
+                                },
+                                icon: Icon(
+                                  _isConfirmPasswordVisible
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: colorScheme.onSurface.withAlpha(120),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 25),
+                            // Terms & Conditions Checkbox
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Checkbox(
+                                  value: _acceptTerms,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      _acceptTerms = value ?? false;
+                                    });
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                        // Sign Up Button
-                        CustomElevatedButton(
-                          onPressed: _handleSignUp,
-                          text: 'Create Account',
-                          icon: Icons.person_add_rounded,
-                        ),
-                        const SizedBox(height: 20),
-                        // Divider
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Divider(
-                                color: colorScheme.onSurface.withOpacity(0.2),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                'or',
-                                style: textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurface.withOpacity(0.6),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                color: colorScheme.onSurface.withOpacity(0.2),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        // Social Sign Up Buttons
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomElevatedButton(
-                                onPressed: () {},
-                                text: context.strings.authWithGoogle,
-                                icon: Icons.g_mobiledata_rounded,
-                                isOutlined: true,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: CustomElevatedButton(
-                                onPressed: () {},
-                                text: context.strings.authWithApple,
-                                icon: Icons.apple_rounded,
-                                isOutlined: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Center(
-                          child: RichText(
-                            text: TextSpan(
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurface.withAlpha(150),
-                              ),
-                              children: [
-                                const TextSpan(
-                                  text: 'Already have an account? ',
-                                ),
-                                WidgetSpan(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => SignInPage(),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.onSurface
+                                              .withAlpha(180),
                                         ),
-                                      );
-                                    },
-                                    child: Text(
-                                      context.strings.authSignIn,
-                                      style: textTheme.bodyMedium?.copyWith(
-                                        color: colorScheme.primary,
-                                        fontWeight: FontWeight.w600,
-                                        decoration: TextDecoration.underline,
+                                        children: <InlineSpan>[
+                                          const TextSpan(
+                                            text: 'I agree to the ',
+                                          ),
+                                          TextSpan(
+                                            text: 'Terms & Conditions',
+                                            style: TextStyle(
+                                              color: colorScheme.primary,
+                                              fontWeight: FontWeight.w600,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                          const TextSpan(text: ' and '),
+                                          TextSpan(
+                                            text: 'Privacy Policy',
+                                            style: TextStyle(
+                                              color: colorScheme.primary,
+                                              fontWeight: FontWeight.w600,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
+                            const SizedBox(height: 30),
+                            // Sign Up Button
+                            CustomElevatedButton(
+                              onPressed: _handleSignUp,
+                              text: 'Create Account',
+                              icon: Icons.person_add_rounded,
+                            ),
+                            const SizedBox(height: 20),
+                            // Divider
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Divider(
+                                    color: colorScheme.onSurface.withAlpha(40),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Text(
+                                    'or',
+                                    style: textTheme.bodyMedium?.copyWith(
+                                      color: colorScheme.onSurface.withAlpha(
+                                        180,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: colorScheme.onSurface.withAlpha(40),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            // Social Sign Up Buttons
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: CustomElevatedButton(
+                                    onPressed: () {},
+                                    text: context.strings.authWithGoogle,
+                                    icon: Icons.g_mobiledata_rounded,
+                                    isOutlined: true,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: CustomElevatedButton(
+                                    onPressed: () {},
+                                    text: context.strings.authWithApple,
+                                    icon: Icons.apple_rounded,
+                                    isOutlined: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: RichText(
+                                text: TextSpan(
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface.withAlpha(150),
+                                  ),
+                                  children: <InlineSpan>[
+                                    const TextSpan(
+                                      text: 'Already have an account? ',
+                                    ),
+                                    WidgetSpan(
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            context.push(AppRoutes.signIn),
+                                        child: Text(
+                                          context.strings.authSignIn,
+                                          style: textTheme.bodyMedium?.copyWith(
+                                            color: colorScheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+            if (state is AuthLoading) const CustomLoadingIndicator.overlay(),
+          ],
         ),
       ),
     );

@@ -29,7 +29,7 @@
     "authInvalidPassword": "Password must be at least 6 characters",
     "authConfirmPassword": "Confirm Password",
     "authPasswordsDoNotMatch": "Passwords do not match",
-    "authName": "Name",
+    "authName": "Full Name",
     "authEnterName": "Enter your full name",
     "authPhone": "Phone Number",
     "authEnterPhone": "Enter your phone number",

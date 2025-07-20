@@ -1,10 +1,11 @@
+import 'package:digital_dairy/core/routes/go_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:nested/nested.dart';
 
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
-import 'package:digital_dairy/features/auth/presentation/view/splash_screen.dart';
 import 'package:digital_dairy/l10n/localization/app_localizations.dart';
 
 Future<void> main() async {
@@ -21,13 +22,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
-    providers: [BlocProvider<AuthCubit>(create: (_) => serviceLocator())],
-    child: const MaterialApp(
+    providers: <SingleChildWidget>[
+      BlocProvider<AuthCubit>(create: (_) => serviceLocator()),
+    ],
+    child: MaterialApp.router(
+      routerConfig: AppRouteConfig.router,
       title: 'Digital Dairy',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale('en'),
-      home: SplashScreen(),
+      locale: const Locale('en'),
     ),
   );
 }

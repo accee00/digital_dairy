@@ -75,7 +75,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPasswordsDoNotMatch => 'Passwords do not match';
 
   @override
-  String get authName => 'Name';
+  String get authName => 'Full Name';
 
   @override
   String get authEnterName => 'Enter your full name';

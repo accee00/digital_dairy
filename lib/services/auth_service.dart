@@ -2,12 +2,19 @@ import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+///
 class AuthService {
+  ///
   AuthService(this.client);
 
+  ///
   final SupabaseClient client;
 
+  ///
   Session? get currentUserSession => client.auth.currentSession;
+  Future<Session?> getInitialSession() async {
+    return currentUserSession;
+  }
 
   Future<Either<Failure, void>> signUpUser({
     required String name,

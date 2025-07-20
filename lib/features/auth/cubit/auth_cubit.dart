@@ -3,7 +3,8 @@ import 'package:digital_dairy/features/auth/model/user.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'auth_state.dart';
 
@@ -45,9 +46,26 @@ class AuthCubit extends Cubit<AuthState> {
       email: email,
       password: password,
     );
+
     response.fold(
       (Failure failure) => emit(AuthFailureState(failure.message)),
       (void success) => emit(AuthSuccessState()),
     );
+  }
+
+  ///
+  Future<void> checkPersistedSession() async {
+    emit(AuthLoading());
+    try {
+      final Session? session = await authService.getInitialSession();
+      if (session != null) {
+        print('[Session from Auth Cubit]=> $session');
+        emit(AuthSuccessState());
+      } else {
+        emit(SessionNotFoundState());
+      }
+    } catch (e) {
+      emit(AuthFailureState('Session check failed'));
+    }
   }
 }

@@ -10,6 +10,7 @@
 analyzer:
   errors:
     directives_ordering: ignore
+    depend_on_referenced_packages: ignore
 include: package:hyper_lint/analysis_options.yaml
 
 linter:

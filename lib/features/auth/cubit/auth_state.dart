@@ -32,3 +32,7 @@ class GetUserDetailsFailure extends AuthState {
   @override
   List<Object?> get props => <Object?>[msg];
 }
+
+class AuthInitialState extends AuthState {}
+
+class SessionNotFoundState extends AuthState {}

@@ -22,7 +22,7 @@ class AppTheme {
   static const Color textHint = Color(0xFF9CA3AF);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
-  // Gradient Colors
+  /// Gradient Colors
   static const List<Color> primaryGradient = [
     Color(0xFF1e3c72),
     Color(0xFF2a5298),
@@ -37,7 +37,7 @@ class AppTheme {
     Color(0xFFc4d8ff),
   ];
 
-  // Light Theme
+  /// Light Theme
   static ThemeData get lightTheme => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
