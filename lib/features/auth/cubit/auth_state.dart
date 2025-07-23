@@ -36,3 +36,12 @@ class GetUserDetailsFailure extends AuthState {
 class AuthInitialState extends AuthState {}
 
 class SessionNotFoundState extends AuthState {}
+
+class AuthForgotPassSuccess extends AuthState {}
+
+class AuthForgotPassFailure extends AuthState {
+  final String msg;
+  AuthForgotPassFailure(this.msg);
+  @override
+  List<Object?> get props => <Object?>[msg];
+}

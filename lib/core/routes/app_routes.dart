@@ -10,5 +10,8 @@ class AppRoutes {
   static const String signIn = '/sign-in';
 
   ///
+  static const String forgotPassword = '/forgot-password';
+
+  ///
   static const String home = '/home';
 }

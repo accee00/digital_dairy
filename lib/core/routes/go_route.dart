@@ -1,4 +1,5 @@
 import 'package:digital_dairy/core/routes/app_routes.dart';
+import 'package:digital_dairy/features/auth/presentation/view/forgot_password.dart';
 import 'package:digital_dairy/features/auth/presentation/view/home.dart';
 import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,11 @@ class AppRouteConfig {
         path: AppRoutes.signIn,
         builder: (BuildContext context, GoRouterState state) =>
             const SignInPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (BuildContext context, GoRouterState state) =>
+            const ForgotPasswordPage(),
       ),
       GoRoute(
         path: AppRoutes.home,

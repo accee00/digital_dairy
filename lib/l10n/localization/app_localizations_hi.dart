@@ -51,10 +51,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get authContinue => 'जारी रखें';
 
   @override
-  String get authEmail => 'ईमेल';
+  String get authEmail => 'मेल पता';
 
   @override
   String get authEnterEmail => 'अपना ईमेल दर्ज करें';
+
+  @override
+  String get authEmailRequired => 'ईमेल की जरूरत है';
 
   @override
   String get authInvalidEmail => 'कृपया एक मान्य ईमेल पता दर्ज करें';
@@ -75,13 +78,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get authPasswordsDoNotMatch => 'पासवर्ड मेल नहीं खाते';
 
   @override
+  String get authPasswordRequired => 'पासवर्ड आवश्यक है';
+
+  @override
+  String get authConfirmPasswordRequired => 'पुष्टि पासवर्ड आवश्यक है';
+
+  @override
   String get authName => 'नाम';
 
   @override
   String get authEnterName => 'अपना पूरा नाम दर्ज करें';
 
   @override
-  String get authPhone => 'फोन';
+  String get authNameRequires => 'पूरा नाम आवश्यक है';
+
+  @override
+  String get authPhone => 'फ़ोन नंबर';
 
   @override
   String get authEnterPhone => 'अपना फ़ोन नंबर दर्ज करें';
@@ -129,6 +141,47 @@ class AppLocalizationsHi extends AppLocalizations {
   String get success => 'सफलता!';
 
   @override
-  String get welcome =>
-      'डिजिटल डेयरी में आपका स्वागत है! चलिए आपकी खेती को स्मार्ट और अधिक कुशल बनाते हैं।';
+  String get welcome => 'डिजिटल डेयरी में आपका स्वागत है! चलिए आपकी खेती को स्मार्ट और अधिक कुशल बनाते हैं।';
+
+  @override
+  String get authAgreeTerms => 'मैं सहमत हूँ ';
+
+  @override
+  String get authTermsConditions => 'नियम और शर्तें';
+
+  @override
+  String get authPrivacyPolicy => 'गोपनीयता नीति';
+
+  @override
+  String get authCreateAccountAction => 'खाता बनाएं';
+
+  @override
+  String get authAlreadyHaveAccount => 'पहले से ही खाता है? ';
+
+  @override
+  String get authWelcome => 'डिजिटल डेयरी में आपका स्वागत है';
+
+  @override
+  String get authSignInToAccount => 'कृपया अपने खाते में साइन इन करें';
+
+  @override
+  String get authDontHaveAccount => 'क्या आपके पास खाता नहीं है?';
+
+  @override
+  String get authForgotPasswordDescription => 'चिंता न करें! अपना ईमेल पता दर्ज करें और हम आपको पासवर्ड रीसेट करने के लिए एक लिंक भेजेंगे।';
+
+  @override
+  String get authSendResetLink => 'रीसेट लिंक भेजें';
+
+  @override
+  String get authRememberPassword => 'Remember your password?';
+
+  @override
+  String get authBackToSignIn => 'साइन इन पर वापस जाएं';
+
+  @override
+  String get authResetLinkSent => 'आपके ईमेल पर रीसेट लिंक सफलतापूर्वक भेजा गया!';
+
+  @override
+  String get authResetPasswordHelp => 'यदि आपको कुछ मिनटों के भीतर ईमेल नहीं मिलता है, तो कृपया अपना स्पैम फ़ोल्डर जांचें या सहायता से संपर्क करें।';
 }

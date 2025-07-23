@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+/// A StatefulWidget for handling the sign-in process.
 class SignInPage extends StatefulWidget {
+  /// Initializes [key] for [SignInPage] widget.
   const SignInPage({super.key});
 
   @override
@@ -41,21 +43,19 @@ class _SignInPageState extends State<SignInPage> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return context.strings.authInvalidEmail;
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return context.strings.authInvalidEmail;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your password';
+      return context.strings.authEnterPassword;
     }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters long';
-    }
+
     return null;
   }
 
@@ -74,7 +74,7 @@ class _SignInPageState extends State<SignInPage> {
           );
         }
         if (state is AuthSuccessState) {
-          showAppSnackbar(context, message: 'Sign In Successfull!');
+          showAppSnackbar(context, message: context.strings.authWelcomeBack);
           context.go(AppRoutes.home);
         }
       },
@@ -101,7 +101,6 @@ class _SignInPageState extends State<SignInPage> {
                   child: Form(
                     key: _formKey,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         const SizedBox(height: 10),
@@ -134,7 +133,7 @@ class _SignInPageState extends State<SignInPage> {
 
                         // Subtitle
                         Text(
-                          'Please sign in to your account',
+                          context.strings.authSignInToAccount,
                           style: textTheme.bodyLarge?.copyWith(
                             color: colorScheme.onSurface.withAlpha(140),
                           ),
@@ -180,7 +179,7 @@ class _SignInPageState extends State<SignInPage> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () => context.push(AppRoutes.forgotPassword),
                             child: Text(
                               context.strings.authForgotPassword,
                               style: TextStyle(
@@ -208,7 +207,7 @@ class _SignInPageState extends State<SignInPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                "Don't have an account?",
+                                context.strings.authDontHaveAccount,
                                 style: textTheme.bodyMedium?.copyWith(
                                   color: colorScheme.onSurface.withAlpha(150),
                                 ),
