@@ -54,6 +54,17 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   ///
+  Future<void> forgotPassword({required String email}) async {
+    final Either<Failure, bool> response = await authService.forgotPassword(
+      email: email,
+    );
+    response.fold(
+      (Failure failure) => emit(AuthForgotPassFailure(failure.message)),
+      (bool success) => emit(AuthForgotPassSuccess()),
+    );
+  }
+
+  ///
   Future<void> checkPersistedSession() async {
     emit(AuthLoading());
     try {

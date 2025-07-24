@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "4434856120",
+    "project_id": "digitaldairy-6cf9a",
+    "storage_bucket": "digitaldairy-6cf9a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4434856120:android:77eda7b010cc1e5e13cc4d",
+        "android_client_info": {
+          "package_name": "com.example.digital_dairy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDa3ci8t1ky0t4ZnG9YIKBOP2W8Vj0O-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

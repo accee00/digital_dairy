@@ -11,6 +11,7 @@ analyzer:
   errors:
     directives_ordering: ignore
     depend_on_referenced_packages: ignore
+    avoid_catches_without_on_clauses: ignore
 include: package:hyper_lint/analysis_options.yaml
 
 linter:

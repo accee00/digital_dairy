@@ -11,9 +11,7 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-///
 class SignUpPage extends StatefulWidget {
-  ///
   const SignUpPage({super.key});
 
   @override
@@ -48,7 +46,10 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
     if (!_acceptTerms) {
-      _showErrorSnackBar('Please accept Terms & Conditions');
+      _showErrorSnackBar(
+        context.strings.authAgreeTerms.trim() +
+            context.strings.authTermsConditions,
+      );
       return;
     }
     await context.read<AuthCubit>().signUpUser(
@@ -70,43 +71,40 @@ class _SignUpPageState extends State<SignUpPage> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return context.strings.authEmailRequired;
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Enter a valid email address';
+      return context.strings.authInvalidEmail;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return context.strings.authPasswordRequired;
     }
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+      return context.strings.authInvalidPassword;
     }
-    // if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
-    //   return 'Password must contain uppercase, lowercase and number';
-    // }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Confirm password is required';
+      return context.strings.authConfirmPasswordRequired;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return context.strings.authPasswordsDoNotMatch;
     }
     return null;
   }
 
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Phone number is required';
+      return context.strings.authInvalidPhone;
     }
     if (!RegExp(r'^\+?[1-9]\d{9,14}$').hasMatch(value.replaceAll(' ', ''))) {
-      return 'Enter a valid phone number';
+      return context.strings.authInvalidPhone;
     }
     return null;
   }
@@ -117,7 +115,10 @@ class _SignUpPageState extends State<SignUpPage> {
     final TextTheme textTheme = context.textTheme;
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (BuildContext context, AuthState state) {
-        if (state is AuthSuccessState) {}
+        if (state is AuthSuccessState) {
+          showAppSnackbar(context, message: context.strings.authWelcome);
+          context.go(AppRoutes.home);
+        }
         if (state is AuthFailureState) {
           showAppSnackbar(
             context,
@@ -168,7 +169,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         key: _formKey,
                         child: Column(
                           children: <Widget>[
-                            // Full Name Field
                             CustomTextField(
                               controller: _nameController,
                               labelText: context.strings.authName,
@@ -176,16 +176,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               prefixIcon: Icons.person_outline_rounded,
                               validator: (String? value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Full name is required';
-                                }
-                                if (value.length < 2) {
-                                  return 'Name must be at least 2 characters';
+                                  return context.strings.authNameRequires;
                                 }
                                 return null;
                               },
                             ),
                             const SizedBox(height: 20),
-                            // Email Field
                             CustomTextField(
                               controller: _emailController,
                               labelText: context.strings.authEmail,
@@ -195,7 +191,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               validator: _validateEmail,
                             ),
                             const SizedBox(height: 20),
-                            // Phone Feild
                             CustomTextField(
                               controller: _phoneController,
                               labelText: context.strings.authPhone,
@@ -210,15 +205,13 @@ class _SignUpPageState extends State<SignUpPage> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            // Password Field
                             CustomTextField(
                               controller: _passwordController,
-                              labelText: 'Password',
-                              hintText: 'Enter your password',
+                              labelText: context.strings.authPassword,
+                              hintText: context.strings.authEnterPassword,
                               prefixIcon: Icons.lock_outline_rounded,
                               obscureText: !_isPasswordVisible,
                               validator: _validatePassword,
-
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -234,11 +227,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            // Confirm Password Field
                             CustomTextField(
                               controller: _confirmPasswordController,
-                              labelText: 'Confirm Password',
-                              hintText: 'Confirm your password',
+                              labelText: context.strings.authConfirmPassword,
+                              hintText: context.strings.authConfirmPassword,
                               prefixIcon: Icons.lock_outline_rounded,
                               obscureText: !_isConfirmPasswordVisible,
                               validator: _validateConfirmPassword,
@@ -259,7 +251,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ),
                             const SizedBox(height: 25),
-                            // Terms & Conditions Checkbox
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -284,11 +275,14 @@ class _SignUpPageState extends State<SignUpPage> {
                                               .withAlpha(180),
                                         ),
                                         children: <InlineSpan>[
-                                          const TextSpan(
-                                            text: 'I agree to the ',
+                                          TextSpan(
+                                            text:
+                                                context.strings.authAgreeTerms,
                                           ),
                                           TextSpan(
-                                            text: 'Terms & Conditions',
+                                            text: context
+                                                .strings
+                                                .authTermsConditions,
                                             style: TextStyle(
                                               color: colorScheme.primary,
                                               fontWeight: FontWeight.w600,
@@ -298,7 +292,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                           ),
                                           const TextSpan(text: ' and '),
                                           TextSpan(
-                                            text: 'Privacy Policy',
+                                            text: context
+                                                .strings
+                                                .authPrivacyPolicy,
                                             style: TextStyle(
                                               color: colorScheme.primary,
                                               fontWeight: FontWeight.w600,
@@ -314,14 +310,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               ],
                             ),
                             const SizedBox(height: 30),
-                            // Sign Up Button
                             CustomElevatedButton(
                               onPressed: _handleSignUp,
-                              text: 'Create Account',
+                              text: context.strings.authCreateAccountAction,
                               icon: Icons.person_add_rounded,
                             ),
                             const SizedBox(height: 20),
-                            // Divider
                             Row(
                               children: <Widget>[
                                 Expanded(
@@ -334,7 +328,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     horizontal: 16,
                                   ),
                                   child: Text(
-                                    'or',
+                                    context.strings.authOr,
                                     style: textTheme.bodyMedium?.copyWith(
                                       color: colorScheme.onSurface.withAlpha(
                                         180,
@@ -350,7 +344,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            // Social Sign Up Buttons
                             Row(
                               children: <Widget>[
                                 Expanded(
@@ -380,8 +373,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                     color: colorScheme.onSurface.withAlpha(150),
                                   ),
                                   children: <InlineSpan>[
-                                    const TextSpan(
-                                      text: 'Already have an account? ',
+                                    TextSpan(
+                                      text: context
+                                          .strings
+                                          .authAlreadyHaveAccount,
                                     ),
                                     WidgetSpan(
                                       child: GestureDetector(

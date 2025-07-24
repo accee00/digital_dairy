@@ -12,10 +12,11 @@ class AuthService {
 
   ///
   Session? get currentUserSession => client.auth.currentSession;
-  Future<Session?> getInitialSession() async {
-    return currentUserSession;
-  }
 
+  ///
+  Future<Session?> getInitialSession() async => currentUserSession;
+
+  ///
   Future<Either<Failure, void>> signUpUser({
     required String name,
     required String email,
@@ -26,7 +27,7 @@ class AuthService {
       final AuthResponse response = await client.auth.signUp(
         password: password,
         email: email,
-        data: {'name': name, 'phone_number': phoneNumber},
+        data: <String, dynamic>{'name': name, 'phone_number': phoneNumber},
       );
       if (response.user != null) {
         return right(null);
@@ -39,6 +40,7 @@ class AuthService {
     }
   }
 
+  ///
   Future<Either<Failure, void>> signInUser({
     required String email,
     required String password,
@@ -56,6 +58,26 @@ class AuthService {
       return left(_mapAuthExceptionToFailure(e));
     } catch (_) {
       return left(Failure('Something went wrong. Please try again.'));
+    }
+  }
+
+  ///
+  Future<Either<Failure, bool>> forgotPassword({required String email}) async {
+    try {
+      await client.auth.resetPasswordForEmail(email);
+      return right(true);
+    } on AuthException catch (e) {
+      return left(_mapAuthExceptionToFailure(e));
+    }
+  }
+
+  ///
+  Future<Either<Failure, bool>> logOutUser() async {
+    try {
+      await client.auth.signOut();
+      return right(true);
+    } on AuthException catch (e) {
+      return left(_mapAuthExceptionToFailure(e));
     }
   }
 

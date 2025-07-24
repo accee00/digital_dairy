@@ -180,14 +180,16 @@ class CustomElevatedButton extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ).copyWith(
-              overlayColor: MaterialStateProperty.resolveWith((states) {
-                if (states.contains(MaterialState.pressed)) {
+              overlayColor: WidgetStateColor.resolveWith((
+                Set<WidgetState> states,
+              ) {
+                if (states.contains(WidgetState.pressed)) {
                   return Colors.white.withOpacity(0.1);
                 }
-                if (states.contains(MaterialState.hovered)) {
+                if (states.contains(WidgetState.hovered)) {
                   return Colors.white.withOpacity(0.05);
                 }
-                return null;
+                return Colors.red;
               }),
             ),
         child: buildButtonContent(),
