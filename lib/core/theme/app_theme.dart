@@ -147,10 +147,10 @@ class AppTheme {
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: error, width: 1),
+        borderSide: const BorderSide(color: error),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      hintStyle: TextStyle(
+      hintStyle: const TextStyle(
         color: textHint,
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -367,7 +367,7 @@ class AppTheme {
     brightness: Brightness.dark,
 
     colorScheme: const ColorScheme.dark(
-      primary: secondary, // Lighter blue for dark mode
+      primary: secondary,
       primaryContainer: Color(0xFF1A237E),
       secondary: primaryVariant,
       secondaryContainer: Color(0xFF4527A0),
@@ -411,7 +411,7 @@ class AppTheme {
   }) => BoxDecoration(
     color: Colors.white.withOpacity(opacity),
     borderRadius: borderRadius ?? BorderRadius.circular(16),
-    border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+    border: Border.all(color: Colors.white.withAlpha(30), width: 1),
     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.1),

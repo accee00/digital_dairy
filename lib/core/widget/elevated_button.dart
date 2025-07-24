@@ -39,16 +39,16 @@ class CustomElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = context.colorScheme;
-    final textTheme = context.textTheme;
+    final ColorScheme colorScheme = context.colorScheme;
+    final TextTheme textTheme = context.textTheme;
 
-    final effectiveBackgroundColor =
+    final Color effectiveBackgroundColor =
         backgroundColor ??
         (isOutlined ? Colors.transparent : colorScheme.primary);
-    final effectiveForegroundColor =
+    final Color effectiveForegroundColor =
         foregroundColor ??
         (isOutlined ? colorScheme.primary : colorScheme.onPrimary);
-    final effectiveBorderColor =
+    final Color effectiveBorderColor =
         borderColor ?? (isOutlined ? colorScheme.primary : Colors.transparent);
 
     Widget buildButtonContent() {
@@ -67,7 +67,7 @@ class CustomElevatedButton extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Icon(icon, size: 20, color: effectiveForegroundColor),
             const SizedBox(width: 8),
             Text(
@@ -101,7 +101,7 @@ class CustomElevatedButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: onPressed != null && !isLoading
-              ? [
+              ? <BoxShadow>[
                   BoxShadow(
                     color: effectiveBorderColor.withOpacity(0.2),
                     blurRadius: 8,
@@ -126,11 +126,13 @@ class CustomElevatedButton extends StatelessWidget {
                 elevation: 0,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ).copyWith(
-                overlayColor: MaterialStateProperty.resolveWith((states) {
-                  if (states.contains(MaterialState.pressed)) {
+                overlayColor: WidgetStateProperty.resolveWith((
+                  Set<WidgetState> states,
+                ) {
+                  if (states.contains(WidgetState.pressed)) {
                     return effectiveBorderColor.withOpacity(0.1);
                   }
-                  if (states.contains(MaterialState.hovered)) {
+                  if (states.contains(WidgetState.hovered)) {
                     return effectiveBorderColor.withOpacity(0.05);
                   }
                   return null;
@@ -172,7 +174,7 @@ class CustomElevatedButton extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
                 side: effectiveBorderColor != Colors.transparent
-                    ? BorderSide(color: effectiveBorderColor, width: 1)
+                    ? BorderSide(color: effectiveBorderColor)
                     : BorderSide.none,
               ),
               padding:
@@ -200,6 +202,7 @@ class CustomElevatedButton extends StatelessWidget {
 
 // Extension for quick button variants
 extension CustomElevatedButtonVariants on CustomElevatedButton {
+  ///
   static CustomElevatedButton primary({
     required VoidCallback? onPressed,
     required String text,
@@ -207,17 +210,16 @@ extension CustomElevatedButtonVariants on CustomElevatedButton {
     bool isLoading = false,
     double? width,
     double height = 56,
-  }) {
-    return CustomElevatedButton(
-      onPressed: onPressed,
-      text: text,
-      icon: icon,
-      isLoading: isLoading,
-      width: width,
-      height: height,
-    );
-  }
+  }) => CustomElevatedButton(
+    onPressed: onPressed,
+    text: text,
+    icon: icon,
+    isLoading: isLoading,
+    width: width,
+    height: height,
+  );
 
+  ///
   static CustomElevatedButton secondary({
     required VoidCallback? onPressed,
     required String text,
@@ -225,55 +227,51 @@ extension CustomElevatedButtonVariants on CustomElevatedButton {
     bool isLoading = false,
     double? width,
     double height = 56,
-  }) {
-    return CustomElevatedButton(
-      onPressed: onPressed,
-      text: text,
-      icon: icon,
-      isLoading: isLoading,
-      isOutlined: true,
-      width: width,
-      height: height,
-    );
-  }
+  }) => CustomElevatedButton(
+    onPressed: onPressed,
+    text: text,
+    icon: icon,
+    isLoading: isLoading,
+    isOutlined: true,
+    width: width,
+    height: height,
+  );
 
+  ///
   static CustomElevatedButton small({
     required VoidCallback? onPressed,
     required String text,
     IconData? icon,
     bool isLoading = false,
     double? width,
-  }) {
-    return CustomElevatedButton(
-      onPressed: onPressed,
-      text: text,
-      icon: icon,
-      isLoading: isLoading,
-      width: width,
-      height: 40,
-      fontSize: 14,
-      borderRadius: 8,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    );
-  }
+  }) => CustomElevatedButton(
+    onPressed: onPressed,
+    text: text,
+    icon: icon,
+    isLoading: isLoading,
+    width: width,
+    height: 40,
+    fontSize: 14,
+    borderRadius: 8,
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  );
 
+  ///
   static CustomElevatedButton large({
     required VoidCallback? onPressed,
     required String text,
     IconData? icon,
     bool isLoading = false,
     double? width,
-  }) {
-    return CustomElevatedButton(
-      onPressed: onPressed,
-      text: text,
-      icon: icon,
-      isLoading: isLoading,
-      width: width,
-      height: 64,
-      fontSize: 18,
-      borderRadius: 16,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-    );
-  }
+  }) => CustomElevatedButton(
+    onPressed: onPressed,
+    text: text,
+    icon: icon,
+    isLoading: isLoading,
+    width: width,
+    height: 64,
+    fontSize: 18,
+    borderRadius: 16,
+    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+  );
 }

@@ -1,3 +1,4 @@
+import 'package:digital_dairy/core/bloc/locale_bloc.dart';
 import 'package:digital_dairy/core/routes/go_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,14 +24,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
     providers: <SingleChildWidget>[
+      BlocProvider<LocaleBloc>(create: (_) => serviceLocator()),
       BlocProvider<AuthCubit>(create: (_) => serviceLocator()),
     ],
-    child: MaterialApp.router(
-      routerConfig: AppRouteConfig.router,
-      title: 'Digital Dairy',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('en'),
+    child: BlocBuilder<LocaleBloc, LocaleState>(
+      builder: (BuildContext context, LocaleState state) => MaterialApp.router(
+        routerConfig: AppRouteConfig.router,
+        title: 'Digital Dairy',
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: state.locale,
+      ),
     ),
   );
 }

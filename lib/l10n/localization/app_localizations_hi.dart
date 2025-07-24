@@ -184,4 +184,16 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get authResetPasswordHelp => 'यदि आपको कुछ मिनटों के भीतर ईमेल नहीं मिलता है, तो कृपया अपना स्पैम फ़ोल्डर जांचें या सहायता से संपर्क करें।';
+
+  @override
+  String get navbarHome => 'होम';
+
+  @override
+  String get navbarMilKLog => 'दूध लॉग';
+
+  @override
+  String get navbarCattle => 'पशु';
+
+  @override
+  String get navbarReports => 'रिपोर्ट';
 }

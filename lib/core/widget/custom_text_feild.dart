@@ -1,11 +1,24 @@
+import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:digital_dairy/core/extension/build_extenstion.dart';
 
+/// A custom text field widget that provides a flexible and styled input field.
+///
+/// This widget allows for various configurations such as label text, hint text,
+/// prefix and suffix icons, and input validation. It also supports different
+/// keyboard types and actions, as well as customization for appearance and behavior.
+///
+/// The [CustomTextField] is a stateless widget that requires a [controller]
+/// to manage the text input. Other parameters are optional and can be used
+/// to customize the text field's appearance and functionality.
+///
 class CustomTextField extends StatelessWidget {
+  /// Creates a [CustomTextField].
+  ///
+  /// The [controller] parameter is required and must not be null.
   const CustomTextField({
-    Key? key,
     required this.controller,
+    super.key,
     this.labelText,
     this.hintText,
     this.prefixIcon,
@@ -25,27 +38,66 @@ class CustomTextField extends StatelessWidget {
     this.autofocus = false,
     this.readOnly = false,
     this.onTap,
-  }) : super(key: key);
+  });
 
+  /// The controller for managing the text input.
   final TextEditingController controller;
+
+  /// The text to display as the label for the text field.
   final String? labelText;
+
+  /// The text to display as a hint in the text field.
   final String? hintText;
+
+  /// An optional icon to display before the text input.
   final IconData? prefixIcon;
+
+  /// An optional widget to display after the text input.
   final Widget? suffixIcon;
+
+  /// Whether the text input should be obscured (e.g., for passwords).
   final bool obscureText;
+
+  /// The type of keyboard to use for the text input.
   final TextInputType keyboardType;
+
+  /// The action button to display on the keyboard.
   final TextInputAction textInputAction;
+
+  /// A function to validate the input text.
   final String? Function(String?)? validator;
+
+  /// A callback function that is called when the text changes.
   final void Function(String)? onChanged;
+
+  /// A callback function that is called when the text is submitted.
   final void Function(String)? onSubmitted;
+
+  /// Whether the text field is enabled or disabled.
   final bool enabled;
+
+  /// The maximum number of lines the text field can display.
   final int maxLines;
+
+  /// The minimum number of lines the text field can display.
   final int? minLines;
+
+  /// The maximum number of characters allowed in the text field.
   final int? maxLength;
+
+  /// A list of input formatters to control the input format.
   final List<TextInputFormatter>? inputFormatters;
+
+  /// A node to manage the focus of the text field.
   final FocusNode? focusNode;
+
+  /// Whether the text field should be focused automatically.
   final bool autofocus;
+
+  /// Whether the text field is read-only.
   final bool readOnly;
+
+  /// A callback function that is called when the text field is tapped.
   final VoidCallback? onTap;
 
   @override
@@ -69,9 +121,9 @@ class CustomTextField extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
+            boxShadow: <BoxShadow>[
               BoxShadow(
-                color: colorScheme.primary.withOpacity(0.05),
+                color: colorScheme.primary.withAlpha(50),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),

@@ -1,9 +1,11 @@
+import 'package:digital_dairy/core/bloc/locale_bloc.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_circular_indicator.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/elevated_button.dart';
+import 'package:digital_dairy/features/auth/presentation/widget/language_selection_dialog_box.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +13,9 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class SignUpPage extends StatefulWidget {
+  ///
   const SignUpPage({super.key});
 
   @override
@@ -41,6 +45,21 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final LocaleState localeState = context.read<LocaleBloc>().state;
+
+      if (!localeState.hasShownLanguageDialog) {
+        showLanguageSelectionDialog(context: context);
+        context.read<LocaleBloc>().add(
+          LocaleChangeEvent(localeState.locale, hasShownLanguageDialog: true),
+        );
+      }
+    });
+  }
+
   Future<void> _handleSignUp() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -61,12 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: context.colorScheme.error,
-      ),
-    );
+    showAppSnackbar(context, message: message);
   }
 
   String? _validateEmail(String? value) {

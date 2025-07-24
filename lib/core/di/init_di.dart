@@ -1,7 +1,11 @@
+import 'package:digital_dairy/core/bloc/locale_bloc.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/services/auth_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 ///
@@ -13,8 +17,17 @@ Future<void> initDi() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
-  serviceLocator.registerLazySingleton(() => supabase.client);
 
+  final HydratedStorage storage = await HydratedStorage.build(
+    storageDirectory: kIsWeb
+        ? HydratedStorageDirectory.web
+        : HydratedStorageDirectory(
+            (await getApplicationSupportDirectory()).path,
+          ),
+  );
+  HydratedBloc.storage = storage;
+
+  serviceLocator.registerLazySingleton(() => supabase.client);
   initService();
   initCubits();
 }
@@ -26,7 +39,9 @@ void initService() {
 
 ///
 void initCubits() {
-  serviceLocator.registerFactory<AuthCubit>(
-    () => AuthCubit(serviceLocator<AuthService>()),
-  );
+  serviceLocator
+    ..registerLazySingleton<LocaleBloc>(LocaleBloc.new)
+    ..registerFactory<AuthCubit>(
+      () => AuthCubit(serviceLocator<AuthService>()),
+    );
 }

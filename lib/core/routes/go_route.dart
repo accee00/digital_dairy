@@ -1,6 +1,6 @@
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/features/auth/presentation/view/forgot_password.dart';
-import 'package:digital_dairy/features/auth/presentation/view/home.dart';
+import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
 import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -46,7 +46,7 @@ class AppRouteConfig {
       GoRoute(
         path: AppRoutes.home,
         builder: (BuildContext context, GoRouterState state) =>
-            const HomePage(),
+            const MainScreen(),
       ),
     ],
   );

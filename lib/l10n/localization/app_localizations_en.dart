@@ -141,7 +141,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get success => 'Success!';
 
   @override
-  String get welcome => 'Welcome to Digital Dairy! Let\'s make your farming smarter and more efficient.';
+  String get welcome =>
+      'Welcome to Digital Dairy! Let\'s make your farming smarter and more efficient.';
 
   @override
   String get authAgreeTerms => 'I agree to the ';
@@ -168,7 +169,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authDontHaveAccount => 'Don’t have an account?';
 
   @override
-  String get authForgotPasswordDescription => 'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.';
+  String get authForgotPasswordDescription =>
+      'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.';
 
   @override
   String get authSendResetLink => 'Send Reset Link';
@@ -183,5 +185,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authResetLinkSent => 'Reset link sent to your email successfully!';
 
   @override
-  String get authResetPasswordHelp => 'If you don\'t receive the email within a few minutes, please check your spam folder or contact support.';
+  String get authResetPasswordHelp =>
+      'If you don\'t receive the email within a few minutes, please check your spam folder or contact support.';
+
+  @override
+  String get navbarHome => 'Home';
+
+  @override
+  String get navbarMilKLog => 'Milk Log';
+
+  @override
+  String get navbarCattle => 'Cattle';
+
+  @override
+  String get navbarReports => 'Reports';
 }
