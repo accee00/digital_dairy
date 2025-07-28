@@ -5,6 +5,9 @@ class MilkLogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return SafeArea(
+      minimum: const EdgeInsets.all(20),
+      child: Container(child: Text('data')),
+    );
   }
 }

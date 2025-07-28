@@ -27,7 +27,7 @@ class AuthService {
       final AuthResponse response = await client.auth.signUp(
         password: password,
         email: email,
-        data: <String, dynamic>{'name': name, 'phone_number': phoneNumber},
+        data: <String, dynamic>{'full_name': name, 'phone_number': phoneNumber},
       );
       if (response.user != null) {
         return right(null);

@@ -48,6 +48,8 @@ dependencies:
   go_router: ^16.0.0
   google_nav_bar: ^5.0.7
   firebase_core: ^3.15.2
+  cached_network_image: ^3.4.1
+  image_picker:
 
 dev_dependencies:
   flutter_test:

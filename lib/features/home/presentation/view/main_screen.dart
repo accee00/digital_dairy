@@ -1,4 +1,6 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_screen.dart';
+import 'package:digital_dairy/features/cattle/presentation/view/cattle_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/home_scree.dart';
 import 'package:digital_dairy/features/home/presentation/widget/bottom_nav_bar.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/milk_log_screen.dart';
@@ -26,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = <Widget>[
     const HomeScreen(),
     const MilkLogScreen(),
-    const Center(child: Text('data')),
+    const CattleScreen(),
     const Center(child: Text('data')),
   ];
 
@@ -42,6 +44,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
       ),
+
       extendBody: true,
       body: Container(
         height: double.infinity,
@@ -56,11 +59,7 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
         ),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverToBoxAdapter(child: _screens[_selectedIndex]),
-          ],
-        ),
+        child: IndexedStack(index: _selectedIndex, children: _screens),
       ),
     );
   }
