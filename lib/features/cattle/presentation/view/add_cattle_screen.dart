@@ -1,10 +1,24 @@
+import 'package:digital_dairy/core/di/init_di.dart';
+import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
+import 'package:digital_dairy/core/utils/show_loading.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
+import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
+import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
+import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
+import 'package:digital_dairy/services/cattle_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart' hide State;
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+/// A StatefulWidget for adding cattle details in the application.
 class AddCattleScreen extends StatefulWidget {
+  /// Initializes a new instance of the [AddCattleScreen] widget.
   const AddCattleScreen({super.key});
 
   @override
@@ -12,26 +26,24 @@ class AddCattleScreen extends StatefulWidget {
 }
 
 class _AddCattleScreenState extends State<AddCattleScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _tagController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
-  // Image picker
-  final ImagePicker _imagePicker = ImagePicker();
+  // Image
   File? _selectedImage;
 
   // Form values
   String _selectedBreed = 'Holstein';
   String _selectedGender = 'Female';
   String _selectedStatus = 'Active';
-  DateTime _selectedDob = DateTime.now().subtract(const Duration(days: 365));
-  DateTime _selectedCalvingDate = DateTime.now().add(const Duration(days: 280));
+  DateTime? _selectedDob;
+  DateTime? _selectedCalvingDate;
 
-  // Options
-  final List<String> _breeds = [
+  final List<String> _breeds = <String>[
     'Holstein',
     'Jersey',
     'Gir',
@@ -45,11 +57,14 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     'Cross Breed',
     'Other',
   ];
-
-  final List<String> _genders = ['Female', 'Male'];
-  final List<String> _statuses = ['Active', 'Pregnant', 'Sick', 'Dry', 'Sold'];
-
-  bool _isLoading = false;
+  final List<String> _genders = <String>['Female', 'Male'];
+  final List<String> _statuses = <String>[
+    'Active',
+    'Pregnant',
+    'Sick',
+    'Dry',
+    'Sold',
+  ];
 
   @override
   void dispose() {
@@ -61,35 +76,53 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = context.colorScheme;
-    return Scaffold(
-      extendBody: true,
-      body: Container(
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[
-              colorScheme.primary.withAlpha(100),
-              colorScheme.surface,
-              colorScheme.secondary.withAlpha(90),
-            ],
+    final ColorScheme colorScheme = context.colorScheme;
+    return BlocListener<CattleCubit, CattleState>(
+      listener: (BuildContext context, CattleState state) {
+        if (state is CattleCreatedFailure) {
+          showAppSnackbar(
+            context,
+            message: state.msg,
+            type: SnackbarType.error,
+          );
+          context.pop();
+        }
+        if (state is CattleCreatedSuccess) {
+          showAppSnackbar(
+            context,
+            message: 'Cattle registered successfully!',
+            type: SnackbarType.success,
+          );
+          context
+            ..pop()
+            ..pop();
+        }
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[
+                colorScheme.primary.withAlpha(100),
+                colorScheme.surface,
+                colorScheme.secondary.withAlpha(90),
+              ],
+            ),
           ),
-        ),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              expandedHeight: 120,
-              floating: false,
-              pinned: true,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-              ),
-              flexibleSpace: FlexibleSpaceBar(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                systemOverlayStyle: const SystemUiOverlayStyle(),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                ),
                 title: Text(
                   'Add New Cattle',
                   style: context.textTheme.headlineSmall?.copyWith(
@@ -97,61 +130,63 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                     color: colorScheme.onSurface,
                   ),
                 ),
-                centerTitle: true,
               ),
-            ),
-            SliverToBoxAdapter(
-              child: SafeArea(
-                minimum: const EdgeInsets.all(18),
+              SliverToBoxAdapter(
                 child: Form(
                   key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionHeader(
-                        context,
-                        'Basic Information',
-                        Icons.info,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildBasicInfoSection(context),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _buildSectionHeader(
+                          context,
+                          'Basic Information',
+                          Icons.info,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildBasicInfoSection(context),
 
-                      const SizedBox(height: 32),
-                      _buildSectionHeader(
-                        context,
-                        'Physical Details',
-                        Icons.pets,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildPhysicalDetailsSection(context),
+                        const SizedBox(height: 32),
+                        _buildSectionHeader(
+                          context,
+                          'Physical Details',
+                          Icons.pets,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildPhysicalDetailsSection(context),
 
-                      const SizedBox(height: 32),
-                      _buildSectionHeader(
-                        context,
-                        'Important Dates',
-                        Icons.calendar_today,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildDatesSection(context),
+                        const SizedBox(height: 32),
+                        _buildSectionHeader(
+                          context,
+                          'Important Dates',
+                          Icons.calendar_today,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildDatesSection(context),
 
-                      const SizedBox(height: 32),
-                      _buildSectionHeader(
-                        context,
-                        'Additional Information',
-                        Icons.note,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildAdditionalInfoSection(context),
+                        const SizedBox(height: 32),
+                        _buildSectionHeader(
+                          context,
+                          'Additional Information',
+                          Icons.note,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildAdditionalInfoSection(context),
 
-                      const SizedBox(height: 40),
-                      _buildActionButtons(context),
-                      const SizedBox(height: 20),
-                    ],
+                        const SizedBox(height: 40),
+                        _buildActionButtons(context),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -161,185 +196,151 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     BuildContext context,
     String title,
     IconData icon,
-  ) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: context.colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            color: context.colorScheme.onPrimaryContainer,
-            size: 20,
-          ),
+  ) => Row(
+    children: <Widget>[
+      Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: context.colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(8),
         ),
-        const SizedBox(width: 12),
-        Text(
-          title,
-          style: context.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: context.colorScheme.onSurface,
-          ),
+        child: Icon(
+          icon,
+          color: context.colorScheme.onPrimaryContainer,
+          size: 20,
         ),
+      ),
+      const SizedBox(width: 12),
+      Text(
+        title,
+        style: context.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: context.colorScheme.onSurface,
+        ),
+      ),
+    ],
+  );
+
+  Widget _buildBasicInfoSection(BuildContext context) => CustomContainer(
+    child: Column(
+      children: <Widget>[
+        CustomTextField(
+          labelText: 'Cattle Name *',
+          controller: _nameController,
+          hintText: 'Enter cattle name (e.g., Ganga, Kamdhenu)',
+          suffixIcon: const Icon(Icons.pets),
+          validator: (String? value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Cattle name is required';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        CustomTextField(
+          labelText: 'Tag ID *',
+          controller: _tagController,
+          hintText: 'Enter unique tag ID (e.g., C001, TAG123)',
+          suffixIcon: const Icon(Icons.qr_code),
+          validator: (String? value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Tag ID is required';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+        _buildImagePickerSection(context),
       ],
-    );
-  }
+    ),
+  );
 
-  Widget _buildBasicInfoSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface.withAlpha(200),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
-      ),
-      child: Column(
-        children: [
-          CustomTextField(
-            labelText: 'Cattle Name *',
-            controller: _nameController,
-            hintText: 'Enter cattle name (e.g., Ganga, Kamdhenu)',
-            suffixIcon: const Icon(Icons.pets),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Cattle name is required';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          CustomTextField(
-            labelText: 'Tag ID *',
-            controller: _tagController,
-            hintText: 'Enter unique tag ID (e.g., C001, TAG123)',
-            suffixIcon: const Icon(Icons.qr_code),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Tag ID is required';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          _buildImagePickerSection(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPhysicalDetailsSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface.withAlpha(200),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
-      ),
-      child: Column(
-        children: [
-          _buildDropdownField(
-            context,
-            'Breed *',
-            _selectedBreed,
-            _breeds,
-            Icons.category,
-            (value) => setState(() => _selectedBreed = value!),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDropdownField(
-                  context,
-                  'Gender *',
-                  _selectedGender,
-                  _genders,
-                  _selectedGender == 'Female' ? Icons.female : Icons.male,
-                  (value) => setState(() => _selectedGender = value!),
-                ),
+  Widget _buildPhysicalDetailsSection(BuildContext context) => CustomContainer(
+    child: Column(
+      children: <Widget>[
+        _buildDropdownField(
+          context,
+          'Breed',
+          _selectedBreed,
+          _breeds,
+          Icons.category,
+          (String? value) => setState(() => _selectedBreed = value!),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildDropdownField(
+                context,
+                'Gender',
+                _selectedGender,
+                _genders,
+                _selectedGender == 'Female' ? Icons.female : Icons.male,
+                (String? value) => setState(() => _selectedGender = value!),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildDropdownField(
-                  context,
-                  'Status *',
-                  _selectedStatus,
-                  _statuses,
-                  Icons.health_and_safety,
-                  (value) => setState(() => _selectedStatus = value!),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDatesSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface.withAlpha(200),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
-      ),
-      child: Column(
-        children: [
-          _buildDateField(
-            context,
-            'Date of Birth *',
-            _selectedDob,
-            Icons.cake,
-            (date) => setState(() => _selectedDob = date),
-            firstDate: DateTime(2000),
-            lastDate: DateTime.now(),
-          ),
-          const SizedBox(height: 16),
-          if (_selectedGender == 'Female') ...[
-            _buildDateField(
-              context,
-              'Expected Calving Date',
-              _selectedCalvingDate,
-              Icons.baby_changing_station,
-              (date) => setState(() => _selectedCalvingDate = date),
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Leave empty if not applicable or unknown',
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurface.withAlpha(150),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildDropdownField(
+                context,
+                'Status',
+                _selectedStatus,
+                _statuses,
+                Icons.health_and_safety,
+                (String? value) => setState(() => _selectedStatus = value!),
               ),
             ),
           ],
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 
-  Widget _buildAdditionalInfoSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface.withAlpha(200),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
-      ),
-      child: CustomTextField(
-        labelText: 'Notes (Optional)',
-        controller: _notesController,
-        hintText: 'Add any additional notes about this cattle...',
-        suffixIcon: const Icon(Icons.note_add),
-        maxLines: 4,
-        textInputAction: TextInputAction.done,
-      ),
-    );
-  }
+  Widget _buildDatesSection(BuildContext context) => CustomContainer(
+    child: Column(
+      children: <Widget>[
+        _buildDateField(
+          context,
+          'Date of Birth',
+          _selectedDob,
+          Icons.cake,
+          (DateTime date) => setState(() => _selectedDob = date),
+          firstDate: DateTime(2000),
+          lastDate: DateTime.now(),
+        ),
+        const SizedBox(height: 16),
+        if (_selectedGender == 'Female') ...<Widget>[
+          _buildDateField(
+            context,
+            'Expected Calving Date',
+            _selectedCalvingDate,
+            Icons.baby_changing_station,
+            (DateTime date) => setState(() => _selectedCalvingDate = date),
+            firstDate: DateTime.now(),
+            lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Leave empty if not applicable or unknown',
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurface.withAlpha(150),
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
+
+  Widget _buildAdditionalInfoSection(BuildContext context) => CustomContainer(
+    child: CustomTextField(
+      labelText: 'Notes (Optional)',
+      controller: _notesController,
+      hintText: 'Add any additional notes about this cattle...',
+      suffixIcon: const Icon(Icons.notes_rounded),
+      maxLines: 4,
+      textInputAction: TextInputAction.done,
+    ),
+  );
 
   Widget _buildDropdownField(
     BuildContext context,
@@ -348,168 +349,134 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     List<String> options,
     IconData icon,
     void Function(String?) onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: context.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-            color: context.colorScheme.onSurface,
-          ),
+  ) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Text(
+        label,
+        style: context.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+          color: context.colorScheme.onSurface,
         ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: context.colorScheme.outline.withAlpha(100),
-            ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              prefixIcon: Icon(icon, color: context.colorScheme.primary),
-            ),
-            items: options
-                .map(
-                  (option) =>
-                      DropdownMenuItem(value: option, child: Text(option)),
-                )
-                .toList(),
-            onChanged: onChanged,
-          ),
+      ),
+      const SizedBox(height: 8),
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: context.colorScheme.outline.withAlpha(100)),
+          borderRadius: BorderRadius.circular(8),
         ),
-      ],
-    );
-  }
+        child: DropdownButtonFormField<String>(
+          padding: const EdgeInsets.only(left: 10, right: 4),
+          decoration: const InputDecoration(border: InputBorder.none),
+          icon: Icon(
+            Icons.keyboard_arrow_down,
+            color: context.colorScheme.primary.withAlpha(100),
+          ),
+          value: value,
+
+          items: options
+              .map(
+                (String option) => DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+        ),
+      ),
+    ],
+  );
 
   Widget _buildDateField(
     BuildContext context,
     String label,
-    DateTime selectedDate,
+    DateTime? selectedDate,
     IconData icon,
     void Function(DateTime) onDateSelected, {
     required DateTime firstDate,
     required DateTime lastDate,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: context.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-            color: context.colorScheme.onSurface,
-          ),
+  }) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Text(
+        label,
+        style: context.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+          color: context.colorScheme.onSurface,
         ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: context.colorScheme.outline.withAlpha(100),
-            ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: ListTile(
-            leading: Icon(icon, color: context.colorScheme.primary),
-            title: Text(
-              _formatDate(selectedDate),
-              style: context.textTheme.bodyMedium,
-            ),
-            trailing: const Icon(Icons.calendar_today),
-            onTap: () async {
-              final date = await showDatePicker(
-                context: context,
-                initialDate: selectedDate,
-                firstDate: firstDate,
-                lastDate: lastDate,
-              );
-              if (date != null) {
-                onDateSelected(date);
-              }
-            },
-          ),
+      ),
+      const SizedBox(height: 8),
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: context.colorScheme.outline.withAlpha(100)),
+          borderRadius: BorderRadius.circular(8),
         ),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed: _isLoading ? null : _saveCattle,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colorScheme.primary,
-              foregroundColor: context.colorScheme.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: _isLoading
-                ? SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: context.colorScheme.onPrimary,
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.save),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Save Cattle',
-                        style: context.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: context.colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
+        child: ListTile(
+          title: selectedDate != null
+              ? Text(
+                  _formatDate(selectedDate),
+                  style: context.textTheme.bodyMedium,
+                )
+              : Text(
+                  'Select Date',
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colorScheme.onSurface.withAlpha(100),
                   ),
-          ),
+                ),
+          trailing: const Icon(Icons.calendar_month),
+          onTap: () async {
+            final DateTime? date = await showDatePicker(
+              context: context,
+              initialDate: selectedDate,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            );
+            if (date != null) {
+              onDateSelected(date);
+            }
+          },
         ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: TextButton(
-            onPressed: _isLoading ? null : () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                  color: context.colorScheme.outline.withAlpha(100),
+      ),
+    ],
+  );
+
+  Widget _buildActionButtons(BuildContext context) => Column(
+    children: <Widget>[
+      SizedBox(
+        width: double.infinity,
+        height: 56,
+        child: ElevatedButton(
+          onPressed: _saveCattle,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: context.colorScheme.primary,
+            foregroundColor: context.colorScheme.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(Icons.save),
+              const SizedBox(width: 8),
+              Text(
+                'Save Cattle',
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: context.colorScheme.onPrimary,
                 ),
               ),
-            ),
-            child: Text(
-              'Cancel',
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: context.colorScheme.onSurface,
-              ),
-            ),
+            ],
           ),
         ),
-      ],
-    );
-  }
+      ),
+      const SizedBox(height: 12),
+    ],
+  );
 
-  String _formatDate(DateTime date) {
-    const months = [
+  String _formatDate(DateTime? date) {
+    const List<String> months = <String>[
       'Jan',
       'Feb',
       'Mar',
@@ -523,93 +490,75 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
       'Nov',
       'Dec',
     ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
+    if (date != null) {
+      return '${date.day} ${months[date.month - 1]} ${date.year}';
+    }
+    return '';
   }
 
   Future<void> _saveCattle() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
-    setState(() => _isLoading = true);
-
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Create cattle object with all required fields
-      final cattleData = {
-        'userId': 'current_user_id', // Get from auth service
-        'name': _nameController.text.trim(),
-        'tagId': _tagController.text.trim(),
-
-        'breed': _selectedBreed,
-        'gender': _selectedGender,
-        'dob': _selectedDob.toIso8601String(),
-        'calvingDate': _selectedCalvingDate.toIso8601String(),
-        'status': _selectedStatus,
-        'notes': _notesController.text.trim(),
-        'createdAt': DateTime.now().toIso8601String(),
-        'updatedAt': DateTime.now().toIso8601String(),
-      };
-
-      // TODO: Send to your API/database
-      print('Cattle data to save: $cattleData');
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${_nameController.text} added successfully!'),
-            backgroundColor: context.colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        Navigator.pop(context, cattleData); // Return data to previous screen
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error adding cattle: $e'),
-            backgroundColor: context.colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+    showLoading(context);
+    String? img;
+    if (_selectedImage != null) {
+      final Either<Failure, String> resposne =
+          await serviceLocator<CattleService>().uploadImage(_selectedImage!);
+      resposne.fold((Failure l) {
+        showAppSnackbar(context, message: 'Fail to Upload Image');
+      }, (String imageUrl) => img = imageUrl);
     }
+
+    final Cattle newCattle = Cattle(
+      userId: '', // passing from service file.
+      name: _nameController.text.trim(),
+      tagId: _tagController.text.trim(),
+      imageUrl: img ?? '',
+      breed: _selectedBreed,
+      gender: _selectedGender,
+      dob: _selectedDob,
+      calvingDate: _selectedCalvingDate,
+      status: _selectedStatus,
+      notes: _notesController.text.trim(),
+      createdAt: DateTime.now(),
+    );
+    if (!mounted) {
+      return;
+    }
+    await context.read<CattleCubit>().createCattle(newCattle);
+    if (!mounted) {
+      return;
+    }
+    await context.read<CattleCubit>().getAllCattle();
   }
 
-  Widget _buildImagePickerSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Cattle Photo (Optional)',
-          style: context.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-            color: context.colorScheme.onSurface,
-          ),
+  Widget _buildImagePickerSection(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Text(
+        'Cattle Photo (Optional)',
+        style: context.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+          color: context.colorScheme.onSurface,
         ),
-        const SizedBox(height: 8),
-        Container(
+      ),
+      const SizedBox(height: 8),
+      GestureDetector(
+        onTap: () => _pickImage(ImageSource.gallery),
+        child: Container(
           width: double.infinity,
           height: 200,
           decoration: BoxDecoration(
             border: Border.all(
               color: context.colorScheme.outline.withAlpha(100),
               width: 2,
-              style: BorderStyle.solid,
             ),
             borderRadius: BorderRadius.circular(12),
-            color: context.colorScheme.surfaceVariant.withAlpha(50),
           ),
           child: _selectedImage != null
               ? Stack(
-                  children: [
+                  children: <Widget>[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.file(
@@ -645,7 +594,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                 )
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
                     Icon(
                       Icons.add_a_photo,
                       size: 48,
@@ -661,13 +610,13 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                   ],
                 ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? pickedFile = await _imagePicker.pickImage(
+      final XFile? pickedFile = await ImagePicker().pickImage(
         source: source,
         maxWidth: 1024,
         maxHeight: 1024,

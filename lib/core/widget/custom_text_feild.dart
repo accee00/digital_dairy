@@ -150,7 +150,7 @@ class CustomTextField extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: textTheme.bodyLarge?.copyWith(
-                color: colorScheme.onSurface.withOpacity(0.5),
+                color: colorScheme.onSurface.withAlpha(100),
               ),
               prefixIcon: prefixIcon != null
                   ? Container(

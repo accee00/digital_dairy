@@ -17,7 +17,7 @@ class AuthService {
   Future<Session?> getInitialSession() async => currentUserSession;
 
   ///
-  Future<Either<Failure, void>> signUpUser({
+  Future<Either<Failure, User>> signUpUser({
     required String name,
     required String email,
     required String password,
@@ -30,7 +30,7 @@ class AuthService {
         data: <String, dynamic>{'full_name': name, 'phone_number': phoneNumber},
       );
       if (response.user != null) {
-        return right(null);
+        return right(response.user!);
       }
       return left(Failure('Unexpected error occurred'));
     } on AuthException catch (e) {
@@ -41,7 +41,7 @@ class AuthService {
   }
 
   ///
-  Future<Either<Failure, void>> signInUser({
+  Future<Either<Failure, User>> signInUser({
     required String email,
     required String password,
   }) async {
@@ -51,7 +51,7 @@ class AuthService {
         password: password,
       );
       if (response.user != null) {
-        return right(null);
+        return right(response.user!);
       }
       return left(Failure('Unexpected error occurred'));
     } on AuthException catch (e) {

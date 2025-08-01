@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 /// Represents a Cattle entity with various attributes related to cattle management.
@@ -15,13 +16,13 @@ class Cattle extends Equatable {
     required this.userId,
     required this.name,
     required this.tagId,
-    required this.imageUrl,
     required this.breed,
     required this.gender,
-    required this.dob,
-    required this.calvingDate,
     required this.status,
     required this.notes,
+    this.imageUrl,
+    this.dob,
+    this.calvingDate,
     this.id,
     this.createdAt,
     this.updatedAt,
@@ -29,15 +30,17 @@ class Cattle extends Equatable {
 
   ///
   factory Cattle.fromMap(Map<String, dynamic> map) => Cattle(
-    id: map['id'] as String?,
+    id: map['id'] as String,
     userId: map['user_id'] as String,
     name: map['name'] as String,
     tagId: map['tag_id'] as String,
-    imageUrl: map['image_url'] as String,
+    imageUrl: map['image_url']?.toString(),
     breed: map['breed'] as String,
     gender: map['gender'] as String,
-    dob: DateTime.parse(map['dob'] as String),
-    calvingDate: DateTime.parse(map['calving_date'] as String),
+    dob: map['dob'] != null ? DateTime.parse(map['dob'] as String) : null,
+    calvingDate: map['calving_date'] != null
+        ? DateTime.parse(map['calving_date'] as String)
+        : null,
     status: map['status'] as String,
     notes: map['notes'] as String,
     createdAt: map['created_at'] != null
@@ -61,7 +64,7 @@ class Cattle extends Equatable {
   final String tagId;
 
   /// The URL of the cattle's image.
-  final String imageUrl;
+  final String? imageUrl;
 
   /// The breed of the cattle.
   final String breed;
@@ -70,10 +73,10 @@ class Cattle extends Equatable {
   final String gender;
 
   /// The date of birth of the cattle.
-  final DateTime dob;
+  final DateTime? dob;
 
   /// The expected calving date of the cattle.
-  final DateTime calvingDate;
+  final DateTime? calvingDate;
 
   /// The current status of the cattle (e.g., active, inactive).
   final String status;
@@ -132,8 +135,8 @@ class Cattle extends Equatable {
     'image_url': imageUrl,
     'breed': breed,
     'gender': gender,
-    'dob': dob.toIso8601String().split('T').first,
-    'calving_date': calvingDate.toIso8601String().split('T').first,
+    'dob': dob?.toIso8601String().split('T').first,
+    'calving_date': calvingDate?.toIso8601String().split('T').first,
     'status': status,
     'notes': notes,
     'created_at': createdAt?.toIso8601String(),
@@ -148,10 +151,30 @@ class Cattle extends Equatable {
     'image_url': imageUrl,
     'breed': breed,
     'gender': gender,
-    'dob': dob.toIso8601String().split('T').first,
-    'calving_date': calvingDate.toIso8601String().split('T').first,
+    'dob': dob?.toIso8601String().split('T').first,
+    'calving_date': calvingDate?.toIso8601String().split('T').first,
     'status': status,
     'notes': notes,
     'updated_at': createdAt?.toIso8601String(),
   };
+  @override
+  String toString() =>
+      'Cattle('
+      'id: $id, '
+      'userId: $userId, '
+      'name: $name, '
+      'tagId: $tagId, '
+      'imageUrl: $imageUrl, '
+      'breed: $breed, '
+      'gender: $gender, '
+      'dob: $dob, '
+      'calvingDate: $calvingDate, '
+      'status: $status, '
+      'notes: $notes, '
+      'createdAt: $createdAt, '
+      'updatedAt: $updatedAt'
+      ')';
+
+  @override
+  bool get stringify => true;
 }
