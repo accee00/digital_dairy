@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final List<Widget> _screens = <Widget>[
     const HomeScreen(),
-    const MilkLogScreen(),
+    const MilkScreen(),
     const CattleScreen(),
     const Center(child: Text('data')),
   ];

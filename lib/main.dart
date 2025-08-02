@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
     child: BlocBuilder<LocaleBloc, LocaleState>(
       builder: (BuildContext context, LocaleState state) => MaterialApp.router(
         routerConfig: AppRouteConfig.router,
+        debugShowCheckedModeBanner: false,
         title: 'Digital Dairy',
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

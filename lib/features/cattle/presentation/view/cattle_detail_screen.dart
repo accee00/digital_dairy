@@ -46,6 +46,35 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: context.colorScheme.surface,
+                            width: 4,
+                          ),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: context.colorScheme.shadow.withAlpha(50),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                (widget.cattle.imageUrl?.isNotEmpty ?? false)
+                                ? widget.cattle.imageUrl!
+                                : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     _buildHeaderCard(context),
                     const SizedBox(height: 20),
                     _buildBasicInfoCard(context),
@@ -71,13 +100,12 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
   }
 
   Widget _buildAppBar(BuildContext context) => SliverAppBar(
-    expandedHeight: 200,
-    pinned: true,
     systemOverlayStyle: const SystemUiOverlayStyle(
       statusBarBrightness: Brightness.light,
     ),
     backgroundColor: Colors.transparent,
     elevation: 0,
+    title: const Text('Cattle Deatils'),
     leading: Container(
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -104,46 +132,6 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         ),
       ),
     ],
-    flexibleSpace: FlexibleSpaceBar(
-      background: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: <Color>[
-              context.colorScheme.primary.withAlpha(150),
-              Colors.transparent,
-            ],
-          ),
-        ),
-        child: Center(
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(60),
-              border: Border.all(color: context.colorScheme.surface, width: 4),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: context.colorScheme.shadow.withAlpha(50),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(56),
-              child: CachedNetworkImage(
-                imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
-                    ? widget.cattle.imageUrl!
-                    : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
   );
 
   Widget _buildHeaderCard(BuildContext context) => Container(
