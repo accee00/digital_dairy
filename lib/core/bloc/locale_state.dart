@@ -14,7 +14,7 @@ abstract class LocaleState extends Equatable {
 class LocaleInitial extends LocaleState {
   ///
   const LocaleInitial()
-    : super(const Locale('en'), hasShownLanguageDialog: true);
+    : super(const Locale('en'), hasShownLanguageDialog: false);
 }
 
 ///

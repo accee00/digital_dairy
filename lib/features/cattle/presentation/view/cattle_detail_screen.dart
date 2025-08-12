@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
+import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -19,85 +20,67 @@ class CattleDetailScreen extends StatefulWidget {
 
 class _CattleDetailScreenState extends State<CattleDetailScreen> {
   @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = context.colorScheme;
-
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: Container(
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[
-              colorScheme.primary.withAlpha(80),
-              colorScheme.surface,
-              colorScheme.secondary.withAlpha(60),
-            ],
-          ),
-        ),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _buildAppBar(context),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            color: context.colorScheme.surface,
-                            width: 4,
-                          ),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                              color: context.colorScheme.shadow.withAlpha(50),
-                              blurRadius: 15,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                (widget.cattle.imageUrl?.isNotEmpty ?? false)
-                                ? widget.cattle.imageUrl!
-                                : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildHeaderCard(context),
-                    const SizedBox(height: 20),
-                    _buildBasicInfoCard(context),
+  Widget build(BuildContext context) => Scaffold(
+    extendBodyBehindAppBar: true,
+    body: CustomContainer(
+      child: CustomScrollView(
+        slivers: <Widget>[
+          _buildAppBar(context),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  _cattleImage(context),
+                  const SizedBox(height: 20),
+                  _buildHeaderCard(context),
+                  const SizedBox(height: 20),
+                  _buildBasicInfoCard(context),
+                  const SizedBox(height: 16),
+                  _buildPhysicalDetailsCard(context),
+                  const SizedBox(height: 16),
+                  _buildDatesCard(context),
+                  if (widget.cattle.notes.isNotEmpty) ...<Widget>[
                     const SizedBox(height: 16),
-                    _buildPhysicalDetailsCard(context),
-                    const SizedBox(height: 16),
-                    _buildDatesCard(context),
-                    if (widget.cattle.notes.isNotEmpty) ...<Widget>[
-                      const SizedBox(height: 16),
-                      _buildNotesCard(context),
-                    ],
-                    const SizedBox(height: 16),
-                    _buildActionButtons(context),
-                    const SizedBox(height: 20),
+                    _buildNotesCard(context),
                   ],
-                ),
+                  const SizedBox(height: 16),
+                  _buildActionButtons(context),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-          ],
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Center _cattleImage(BuildContext context) => Center(
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        border: Border.all(color: context.colorScheme.surface, width: 4),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: context.colorScheme.shadow.withAlpha(50),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(50),
+        child: CachedNetworkImage(
+          imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
+              ? widget.cattle.imageUrl!
+              : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
+          fit: BoxFit.fill,
         ),
       ),
-    );
-  }
+    ),
+  );
 
   Widget _buildAppBar(BuildContext context) => SliverAppBar(
     systemOverlayStyle: const SystemUiOverlayStyle(

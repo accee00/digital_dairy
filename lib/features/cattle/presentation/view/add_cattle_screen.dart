@@ -100,19 +100,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
       },
       child: Scaffold(
         extendBody: true,
-        body: Container(
-          height: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: <Color>[
-                colorScheme.primary.withAlpha(100),
-                colorScheme.surface,
-                colorScheme.secondary.withAlpha(90),
-              ],
-            ),
-          ),
+        body: CustomContainer(
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(

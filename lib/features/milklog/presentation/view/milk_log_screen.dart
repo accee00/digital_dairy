@@ -2,7 +2,6 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 ///
 class MilkScreen extends StatefulWidget {
@@ -140,53 +139,17 @@ class _MilkScreenState extends State<MilkScreen> {
         child: Column(
           children: <Widget>[
             // Custom App Bar
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.surface.withAlpha(200),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: context.colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      'Milk Records',
-                      style: context.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.surface.withAlpha(200),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        // TODO: Implement add milk entry
-                      },
-                      icon: Icon(Icons.add, color: context.colorScheme.primary),
-                    ),
-                  ),
-                ],
-              ),
+            HeaderForAdd(
+              title: 'Milk Log',
+              subTitle: '${3} Cattle',
+              onTap: () {},
             ),
             // Content
             Expanded(
               child: Column(
                 children: <Widget>[
                   _buildSearchAndFilters(context),
-                  _buildSummaryRow(context),
+
                   Expanded(child: _buildMilkEntriesList(context)),
                 ],
               ),
@@ -220,46 +183,35 @@ class _MilkScreenState extends State<MilkScreen> {
         Row(
           children: <Widget>[
             Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => _showSortOptions(context),
-                icon: const Icon(Icons.sort, size: 18),
-                label: Text(_getSortDisplayText()),
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: context.colorScheme.surface.withAlpha(150),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+              child: GestureDetector(
+                onTap: () => _showSortOptions(context),
+                child: Text(_getSortDisplayText()),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        // const SizedBox(height: 16),
       ],
     ),
   );
 
   Widget _buildSummaryRow(BuildContext context) {
     final double totalMilk = _filteredMilkEntries.fold(
-      0.0,
-      (sum, entry) => sum + entry.quantityInLiter,
+      0,
+      (double sum, MilkModel entry) => sum + entry.quantityInLiter,
     );
 
     final double morningMilk = _filteredMilkEntries
-        .where((entry) => entry.shift == 'Morning')
-        .fold(0.0, (sum, entry) => sum + entry.quantityInLiter);
+        .where((MilkModel entry) => entry.shift == 'Morning')
+        .fold(0, (double sum, MilkModel entry) => sum + entry.quantityInLiter);
 
     final double eveningMilk = _filteredMilkEntries
-        .where((entry) => entry.shift == 'Evening')
-        .fold(0.0, (sum, entry) => sum + entry.quantityInLiter);
+        .where((MilkModel entry) => entry.shift == 'Evening')
+        .fold(0, (double sum, MilkModel entry) => sum + entry.quantityInLiter);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: context.colorScheme.surface.withAlpha(150),
         borderRadius: BorderRadius.circular(12),
@@ -319,7 +271,6 @@ class _MilkScreenState extends State<MilkScreen> {
       ),
     ],
   );
-
   Widget _buildMilkEntriesList(BuildContext context) {
     if (_filteredMilkEntries.isEmpty) {
       return Center(
@@ -347,9 +298,13 @@ class _MilkScreenState extends State<MilkScreen> {
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: _filteredMilkEntries.length,
-      itemBuilder: (BuildContext context, int index) =>
-          _buildMilkEntryCard(context, _filteredMilkEntries[index]),
+      itemCount: _filteredMilkEntries.length + 1,
+      itemBuilder: (BuildContext context, int index) {
+        if (index == 0) {
+          return _buildSummaryRow(context);
+        }
+        return _buildMilkEntryCard(context, _filteredMilkEntries[index - 1]);
+      },
     );
   }
 
@@ -471,7 +426,7 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   void _showSortOptions(BuildContext context) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: context.colorScheme.surface,
       shape: const RoundedRectangleBorder(
@@ -574,7 +529,7 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   void _showMilkEntryDetail(BuildContext context, MilkModel milkEntry) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: context.colorScheme.surface,

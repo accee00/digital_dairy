@@ -2,9 +2,10 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_circular_indicator.dart';
-import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/elevated_button.dart';
+import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
+import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -82,19 +83,7 @@ class _SignInPageState extends State<SignInPage> {
         body: Stack(
           children: <Widget>[
             // Main content
-            Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    colorScheme.primary.withAlpha(100),
-                    colorScheme.surface,
-                    colorScheme.secondary.withAlpha(90),
-                  ],
-                ),
-              ),
+            CustomContainer(
               child: SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 25),

@@ -103,7 +103,7 @@ class CustomElevatedButton extends StatelessWidget {
           boxShadow: onPressed != null && !isLoading
               ? <BoxShadow>[
                   BoxShadow(
-                    color: effectiveBorderColor.withOpacity(0.2),
+                    color: effectiveBorderColor.withAlpha(60),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -112,32 +112,16 @@ class CustomElevatedButton extends StatelessWidget {
         ),
         child: OutlinedButton(
           onPressed: onPressed,
-          style:
-              OutlinedButton.styleFrom(
-                backgroundColor: effectiveBackgroundColor,
-                foregroundColor: effectiveForegroundColor,
-                side: BorderSide(color: effectiveBorderColor, width: 1.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                ),
-                padding:
-                    padding ??
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                elevation: 0,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ).copyWith(
-                overlayColor: WidgetStateProperty.resolveWith((
-                  Set<WidgetState> states,
-                ) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return effectiveBorderColor.withOpacity(0.1);
-                  }
-                  if (states.contains(WidgetState.hovered)) {
-                    return effectiveBorderColor.withOpacity(0.05);
-                  }
-                  return null;
-                }),
-              ),
+          style: OutlinedButton.styleFrom(
+            backgroundColor: effectiveBackgroundColor,
+            foregroundColor: effectiveForegroundColor,
+            side: BorderSide(color: effectiveBorderColor, width: 1.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            elevation: 0,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
           child: buildButtonContent(),
         ),
       );
@@ -200,7 +184,7 @@ class CustomElevatedButton extends StatelessWidget {
   }
 }
 
-// Extension for quick button variants
+/// Extension for quick button variants
 extension CustomElevatedButtonVariants on CustomElevatedButton {
   ///
   static CustomElevatedButton primary({

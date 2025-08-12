@@ -4,7 +4,6 @@ import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
-import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -192,12 +191,7 @@ class _CattleScreenState extends State<CattleScreen> {
     ),
     child: InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CattleDetailScreen(cattle: cattle),
-        ),
-      ),
+      onTap: () {},
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
