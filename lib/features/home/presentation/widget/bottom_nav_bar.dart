@@ -43,7 +43,7 @@ class CustomBottomNavBar extends StatelessWidget {
           ),
         ],
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 25),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: GNav(
         selectedIndex: selectedIndex,
         onTabChange: onTabChange,

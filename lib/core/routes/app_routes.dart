@@ -17,4 +17,7 @@ class AppRoutes {
 
   ///
   static const String addCattle = '/add-cattle';
+
+  ///
+  static const String cattleDetail = '/cattle-detail';
 }

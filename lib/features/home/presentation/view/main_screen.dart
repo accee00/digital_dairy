@@ -1,5 +1,4 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
-import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_screen.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/home_screen.dart';
 import 'package:digital_dairy/features/home/presentation/widget/bottom_nav_bar.dart';

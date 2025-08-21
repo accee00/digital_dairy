@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
-import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +22,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     extendBodyBehindAppBar: true,
-    body: CustomContainer(
+    body: CustomScaffoldContainer(
       child: CustomScrollView(
         slivers: <Widget>[
           _buildAppBar(context),

@@ -191,7 +191,7 @@ class _CattleScreenState extends State<CattleScreen> {
     ),
     child: InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: () {},
+      onTap: () => context.push(AppRoutes.cattleDetail, extra: cattle),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

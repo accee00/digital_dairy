@@ -67,11 +67,6 @@ class AppTheme {
         letterSpacing: 0.5,
       ),
       iconTheme: IconThemeData(color: textPrimary, size: 24),
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
     ),
 
     // Elevated Button Theme

@@ -10,11 +10,11 @@ import 'package:flutter/material.dart';
 /// The `child` parameter is required and it should be the widget that you want to display
 /// inside this container.
 
-class CustomContainer extends StatelessWidget {
-  /// Creates a [CustomContainer] widget.
+class CustomScaffoldContainer extends StatelessWidget {
+  /// Creates a [CustomScaffoldContainer] widget.
   ///
   /// The [child] parameter must not be null.
-  const CustomContainer({required this.child, super.key});
+  const CustomScaffoldContainer({required this.child, super.key});
 
   /// The widget below this widget in the tree.
   final Widget child;

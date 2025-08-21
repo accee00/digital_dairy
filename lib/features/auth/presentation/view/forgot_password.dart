@@ -79,7 +79,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         body: Stack(
           children: <Widget>[
             // Main content
-            CustomContainer(
+            CustomScaffoldContainer(
               child: SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 25),

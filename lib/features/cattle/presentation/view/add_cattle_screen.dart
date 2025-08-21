@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
+import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
@@ -14,7 +17,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 /// A StatefulWidget for adding cattle details in the application.
 class AddCattleScreen extends StatefulWidget {
@@ -100,19 +102,20 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
       },
       child: Scaffold(
         extendBody: true,
-        body: CustomContainer(
+        body: CustomScaffoldContainer(
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
                 systemOverlayStyle: const SystemUiOverlayStyle(),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
+                centerTitle: true,
                 leading: IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                 ),
                 title: Text(
-                  'Add New Cattle',
+                  'Add Cattle',
                   style: context.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
@@ -167,7 +170,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
 
                         const SizedBox(height: 40),
                         _buildActionButtons(context),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 40),
                       ],
                     ),
                   ),

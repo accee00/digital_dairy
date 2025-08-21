@@ -140,39 +140,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Flexible(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppTheme.success.withAlpha(51),
-                        AppTheme.success.withAlpha(30),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppTheme.success.withAlpha(76)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.trending_up_rounded,
-                        size: 16,
-                        color: AppTheme.success,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '+5% Today',
-
-                        style: context.textTheme.labelMedium?.copyWith(
-                          color: AppTheme.success,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 24),

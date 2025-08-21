@@ -145,7 +145,7 @@ class _SignUpPageState extends State<SignUpPage> {
       builder: (BuildContext context, AuthState state) => Scaffold(
         body: Stack(
           children: <Widget>[
-            CustomContainer(
+            CustomScaffoldContainer(
               child: SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(left: 25, right: 25),
