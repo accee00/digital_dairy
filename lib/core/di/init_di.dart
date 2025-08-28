@@ -1,4 +1,5 @@
 import 'package:digital_dairy/core/bloc/locale_bloc.dart';
+import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/services/auth_service.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,6 +17,7 @@ final GetIt serviceLocator = GetIt.instance;
 
 ///
 Future<void> initDi() async {
+  initLogger(level: kDebugMode ? Level.ALL : Level.SEVERE);
   final Supabase supabase = await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
