@@ -1,5 +1,4 @@
 import 'package:digital_dairy/core/exceptions/failure.dart';
-import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
