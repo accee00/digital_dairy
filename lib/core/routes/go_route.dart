@@ -5,6 +5,7 @@ import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_scree
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
 import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
+import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -62,6 +63,11 @@ class AppRouteConfig {
           final Cattle cattle = state.extra! as Cattle;
           return CattleDetailScreen(cattle: cattle);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.addMilk,
+        builder: (BuildContext context, GoRouterState state) =>
+            const AddMilkScreen(),
       ),
     ],
   );

@@ -3,7 +3,7 @@ import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:digital_dairy/services/cattle_service.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart';
 
 part 'cattle_state.dart';
 

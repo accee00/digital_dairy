@@ -5,6 +5,7 @@ import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/routes/go_route.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
+import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/l10n/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,16 +20,6 @@ Future<void> main() async {
   await initDi();
   runApp(const MyApp());
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarDividerColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-    );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   });
 }
@@ -44,6 +35,7 @@ class MyApp extends StatelessWidget {
       BlocProvider<LocaleBloc>(create: (_) => serviceLocator<LocaleBloc>()),
       BlocProvider<AuthCubit>(create: (_) => serviceLocator<AuthCubit>()),
       BlocProvider<CattleCubit>(create: (_) => serviceLocator<CattleCubit>()),
+      BlocProvider<MilkCubit>(create: (_) => serviceLocator<MilkCubit>()),
     ],
     child: BlocBuilder<LocaleBloc, LocaleState>(
       builder: (BuildContext context, LocaleState state) => MaterialApp.router(

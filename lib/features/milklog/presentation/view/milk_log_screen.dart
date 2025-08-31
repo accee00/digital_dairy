@@ -1,6 +1,10 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/routes/app_routes.dart';
+import 'package:digital_dairy/core/utils/enums.dart';
+import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 ///
 class MilkScreen extends StatefulWidget {
@@ -18,7 +22,7 @@ class _MilkScreenState extends State<MilkScreen> {
       id: '1',
       cattleId: 'COW001',
       date: DateTime.now(),
-      shift: 'Morning',
+      shift: ShiftType.morning,
       quantityInLiter: 12.5,
       notes: 'Good quality milk, cow seems healthy',
       createdAt: DateTime.now().subtract(const Duration(hours: 2)),
@@ -27,7 +31,7 @@ class _MilkScreenState extends State<MilkScreen> {
       id: '2',
       cattleId: 'COW001',
       date: DateTime.now(),
-      shift: 'Evening',
+      shift: ShiftType.morning,
       quantityInLiter: 10.8,
       notes: 'Normal production',
       createdAt: DateTime.now().subtract(const Duration(hours: 1)),
@@ -36,7 +40,7 @@ class _MilkScreenState extends State<MilkScreen> {
       id: '3',
       cattleId: 'COW002',
       date: DateTime.now().subtract(const Duration(days: 1)),
-      shift: 'Morning',
+      shift: ShiftType.morning,
       quantityInLiter: 15.2,
       notes: 'Excellent production today',
       createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 12)),
@@ -45,7 +49,7 @@ class _MilkScreenState extends State<MilkScreen> {
       id: '4',
       cattleId: 'COW002',
       date: DateTime.now().subtract(const Duration(days: 1)),
-      shift: 'Evening',
+      shift: ShiftType.morning,
       quantityInLiter: 13.7,
       notes: '',
       createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 8)),
@@ -54,7 +58,7 @@ class _MilkScreenState extends State<MilkScreen> {
       id: '5',
       cattleId: 'COW003',
       date: DateTime.now().subtract(const Duration(days: 2)),
-      shift: 'Morning',
+      shift: ShiftType.morning,
       quantityInLiter: 9.3,
       notes: 'Slightly lower than usual, monitoring',
       createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 10)),
@@ -63,7 +67,7 @@ class _MilkScreenState extends State<MilkScreen> {
       id: '6',
       cattleId: 'COW003',
       date: DateTime.now().subtract(const Duration(days: 2)),
-      shift: 'Evening',
+      shift: ShiftType.morning,
       quantityInLiter: 11.1,
       notes: 'Back to normal levels',
       createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 6)),
@@ -137,60 +141,19 @@ class _MilkScreenState extends State<MilkScreen> {
       child: SafeArea(
         child: Column(
           children: <Widget>[
-            // // Custom App Bar
-            // HeaderForAdd(
-            //   title: 'Milk Log',
-            //   subTitle: '${3} Cattle',
-            //   onTap: () =>
-            //       showMenu<String>(
-            //         context: context,
-            //         position: const RelativeRect.fromLTRB(
-            //           100,
-            //           100,
-            //           0,
-            //           0,
-            //         ), // Position of menu
-            //         items: const [
-            //           PopupMenuItem<String>(
-            //             value: 'option1',
-            //             child: Row(
-            //               children: [
-            //                 Icon(Icons.add),
-            //                 SizedBox(width: 8),
-            //                 Text('Add Item'),
-            //               ],
-            //             ),
-            //           ),
-            //           PopupMenuItem<String>(
-            //             value: 'option2',
-            //             child: Row(
-            //               children: [
-            //                 Icon(Icons.edit),
-            //                 SizedBox(width: 8),
-            //                 Text('Edit Item'),
-            //               ],
-            //             ),
-            //           ),
-            //         ],
-            //       ).then((value) {
-            //         if (value != null) {
-            //           // Handle selection
-            //           switch (value) {
-            //             case 'option1':
-            //               // Handle add
-            //               break;
-            //             case 'option2':
-            //               // Handle edit
-            //               break;
-            //           }
-            //         }
-            //       }),
-            // ),
+            // Custom App Bar
+            HeaderForAdd(
+              title: 'Milk Log',
+              subTitle: '',
+              onTap: () {
+                context.push(AppRoutes.addMilk);
+              },
+            ),
             // Content
             Expanded(
               child: Column(
                 children: <Widget>[
-                  // _buildSearchAndFilters(context),
+                  _buildSearchAndFilters(context),
                   Expanded(child: _buildMilkEntriesList(context)),
                 ],
               ),
@@ -378,7 +341,10 @@ class _MilkScreenState extends State<MilkScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getShiftColor(milkEntry.shift, context).withAlpha(50),
+                  color: _getShiftColor(
+                    milkEntry.shift.value,
+                    context,
+                  ).withAlpha(50),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -389,13 +355,13 @@ class _MilkScreenState extends State<MilkScreen> {
                           ? Icons.wb_sunny
                           : Icons.nights_stay,
                       size: 14,
-                      color: _getShiftColor(milkEntry.shift, context),
+                      color: _getShiftColor(milkEntry.shift.value, context),
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      milkEntry.shift,
+                      milkEntry.shift.name,
                       style: context.textTheme.labelSmall?.copyWith(
-                        color: _getShiftColor(milkEntry.shift, context),
+                        color: _getShiftColor(milkEntry.shift.value, context),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
