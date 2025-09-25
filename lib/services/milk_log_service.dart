@@ -33,15 +33,14 @@ class MilkLogService {
     int limit = 10,
   }) async {
     try {
-      final int from = page * limit;
-      final int to = from + limit - 1;
-
-      final PostgrestList response = await _client
-          .from('milk_entries')
-          .select()
-          .eq('user_id', _userId)
-          .order('created_at', ascending: false)
-          .range(from, to);
+      final PostgrestList response = await _client.rpc(
+        'get_milk_log_with_cattle',
+        params: <String, dynamic>{
+          'p_user_id': _userId,
+          'p_page': page,
+          'p_limit': limit,
+        },
+      );
 
       final List<MilkModel> milkLogList = response
           .map(MilkModel.fromMap)

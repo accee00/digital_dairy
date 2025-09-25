@@ -231,7 +231,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                inputFormatters: [
+                inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                 ],
                 validator: (String? value) {

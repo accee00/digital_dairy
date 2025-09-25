@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 /// Represents a Cattle entity with various attributes related to cattle management.
@@ -28,7 +27,9 @@ class Cattle extends Equatable {
     this.updatedAt,
   });
 
+  /// Creates a [Cattle] instance from a map.
   ///
+  /// This factory constructor is used to deserialize a map object into a [Cattle] instance.
   factory Cattle.fromMap(Map<String, dynamic> map) => Cattle(
     id: map['id'] as String,
     userId: map['user_id'] as String,
@@ -127,7 +128,9 @@ class Cattle extends Equatable {
     updatedAt: updatedAt ?? this.updatedAt,
   );
 
+  /// Converts the [Cattle] instance into a map for insertion into a database.
   ///
+  /// This method is used to serialize the [Cattle] instance into a map, excluding null values.
   Map<String, dynamic> tojsonForInsert() => <String, dynamic>{
     'user_id': userId,
     'name': name,
@@ -142,7 +145,9 @@ class Cattle extends Equatable {
     'created_at': createdAt?.toIso8601String(),
   }..removeWhere((String key, dynamic value) => value == null);
 
+  /// Converts the [Cattle] instance into a map for updating a database record.
   ///
+  /// This method is used to serialize the [Cattle] instance into a map, including the 'updated_at' field.
   Map<String, dynamic> tojsonForUpdate() => <String, dynamic>{
     'id': id,
     'user_id': userId,
@@ -157,6 +162,7 @@ class Cattle extends Equatable {
     'notes': notes,
     'updated_at': createdAt?.toIso8601String(),
   };
+
   @override
   String toString() =>
       'Cattle('

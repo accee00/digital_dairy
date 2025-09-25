@@ -284,7 +284,7 @@ class _MilkScreenState extends State<MilkScreen> {
           Row(
             children: <Widget>[
               Text(
-                milkEntry.cattleId,
+                milkEntry.cattle!.name,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
