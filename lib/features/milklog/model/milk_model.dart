@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:digital_dairy/core/utils/enums.dart';
 import 'package:equatable/equatable.dart';
 
@@ -41,7 +42,7 @@ class MilkModel extends Equatable {
     'user_id': userId,
     'cattle_id': cattleId,
     'date': date.toIso8601String().split('T').first,
-    'shift': shift,
+    'shift': shift.value,
     'quantity_litres': quantityInLiter,
     'notes': notes,
     'created_at': createdAt?.toIso8601String(),
@@ -62,5 +63,27 @@ class MilkModel extends Equatable {
     updatedAt: map['updated_at'] != null
         ? DateTime.parse(map['updated_at'] as String)
         : null,
+  );
+
+  MilkModel copyWith({
+    String? id,
+    String? userId,
+    String? cattleId,
+    DateTime? date,
+    ShiftType? shift,
+    double? quantityInLiter,
+    String? notes,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => MilkModel(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    cattleId: cattleId ?? this.cattleId,
+    date: date ?? this.date,
+    shift: shift ?? this.shift,
+    quantityInLiter: quantityInLiter ?? this.quantityInLiter,
+    notes: notes ?? this.notes,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
 }

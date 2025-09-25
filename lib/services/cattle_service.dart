@@ -9,13 +9,13 @@ import 'package:uuid/uuid.dart';
 ///
 class CattleService {
   ///
-  CattleService(this.client);
+  CattleService(this._client);
 
   ///
-  final SupabaseClient client;
+  final SupabaseClient _client;
 
   ///
-  Session? get currentUserSession => client.auth.currentSession;
+  String get _userId => _client.auth.currentSession!.user.id;
 
   ///
   Future<Either<Failure, String>> uploadImage(File image) async {
@@ -24,9 +24,9 @@ class CattleService {
       final String extension = image.path.split('.').last;
       final String path = 'image/$uniqueName.$extension';
 
-      await client.storage.from('cattleimage').upload(path, image);
+      await _client.storage.from('cattleimage').upload(path, image);
 
-      final String publicUrl = client.storage
+      final String publicUrl = _client.storage
           .from('cattleimage')
           .getPublicUrl(path);
 
@@ -41,16 +41,15 @@ class CattleService {
   ///
   Future<Either<Failure, List<Cattle>>> createCattle(Cattle cattle) async {
     try {
-      final Cattle i = cattle.copyWith(userId: currentUserSession!.user.id);
-      final PostgrestList response = await client
+      final Cattle updatedData = cattle.copyWith(userId: _userId);
+      final PostgrestList response = await _client
           .from('cattle')
-          .insert(i.tojsonForInsert())
+          .insert(updatedData.tojsonForInsert())
           .select();
 
       final List<Cattle> data = response.map(Cattle.fromMap).toList();
       return right(data);
     } on PostgrestException catch (e) {
-      print(e.toString());
       return left(Failure(e.message));
     }
   }
@@ -58,18 +57,12 @@ class CattleService {
   ///
   Future<Either<Failure, List<Cattle>>> getAllCattle() async {
     try {
-      final User? user = currentUserSession?.user;
-      if (user == null) {
-        return left(Failure('User not logged in.'));
-      }
-
-      final PostgrestList response = await client
+      final PostgrestList response = await _client
           .from('cattle')
           .select()
-          .eq('user_id', user.id);
+          .eq('user_id', _userId);
 
       final List<Cattle> data = response.map(Cattle.fromMap).toList();
-      print(data.toString());
       return right(data);
     } on PostgrestException catch (e) {
       return left(Failure(e.message));

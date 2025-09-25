@@ -2,13 +2,13 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
+import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-///
 class MilkScreen extends StatefulWidget {
-  ///
   const MilkScreen({super.key});
 
   @override
@@ -16,64 +16,7 @@ class MilkScreen extends StatefulWidget {
 }
 
 class _MilkScreenState extends State<MilkScreen> {
-  // Dummy data for demonstration
-  final List<MilkModel> _dummyMilkEntries = [
-    MilkModel(
-      id: '1',
-      cattleId: 'COW001',
-      date: DateTime.now(),
-      shift: ShiftType.morning,
-      quantityInLiter: 12.5,
-      notes: 'Good quality milk, cow seems healthy',
-      createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-    ),
-    MilkModel(
-      id: '2',
-      cattleId: 'COW001',
-      date: DateTime.now(),
-      shift: ShiftType.morning,
-      quantityInLiter: 10.8,
-      notes: 'Normal production',
-      createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-    ),
-    MilkModel(
-      id: '3',
-      cattleId: 'COW002',
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      shift: ShiftType.morning,
-      quantityInLiter: 15.2,
-      notes: 'Excellent production today',
-      createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 12)),
-    ),
-    MilkModel(
-      id: '4',
-      cattleId: 'COW002',
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      shift: ShiftType.morning,
-      quantityInLiter: 13.7,
-      notes: '',
-      createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 8)),
-    ),
-    MilkModel(
-      id: '5',
-      cattleId: 'COW003',
-      date: DateTime.now().subtract(const Duration(days: 2)),
-      shift: ShiftType.morning,
-      quantityInLiter: 9.3,
-      notes: 'Slightly lower than usual, monitoring',
-      createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 10)),
-    ),
-    MilkModel(
-      id: '6',
-      cattleId: 'COW003',
-      date: DateTime.now().subtract(const Duration(days: 2)),
-      shift: ShiftType.morning,
-      quantityInLiter: 11.1,
-      notes: 'Back to normal levels',
-      createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 6)),
-    ),
-  ];
-
+  final ScrollController _controller = ScrollController();
   String _searchQuery = '';
   String _sortBy = 'Date';
 
@@ -86,21 +29,24 @@ class _MilkScreenState extends State<MilkScreen> {
     'All Shifts',
   ];
 
-  List<MilkModel> get _filteredMilkEntries {
-    final List<MilkModel> milkEntries = _dummyMilkEntries;
+  @override
+  void initState() {
+    super.initState();
+    context.read<MilkCubit>().getMilkLog();
+  }
 
-    final List<MilkModel> filtered = milkEntries.where((MilkModel entry) {
-      final bool matchesSearch =
+  List<MilkModel> get _filteredMilkEntries {
+    final milkEntries = context.read<MilkCubit>().state.milkLogList;
+
+    final filtered = milkEntries.where((entry) {
+      final matchesSearch =
           entry.cattleId.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           entry.notes.toLowerCase().contains(_searchQuery.toLowerCase());
 
-      // Apply shift filter based on sort selection
-      if (_sortBy == 'Morning Shift') {
+      if (_sortBy == 'Morning Shift')
         return matchesSearch && entry.shift == 'Morning';
-      } else if (_sortBy == 'Evening Shift') {
+      if (_sortBy == 'Evening Shift')
         return matchesSearch && entry.shift == 'Evening';
-      }
-
       return matchesSearch;
     }).toList();
 
@@ -110,10 +56,6 @@ class _MilkScreenState extends State<MilkScreen> {
         break;
       case 'Cattle Name':
         filtered.sort((a, b) => a.cattleId.compareTo(b.cattleId));
-        break;
-      case 'Morning Shift':
-      case 'Evening Shift':
-        filtered.sort((a, b) => b.date.compareTo(a.date));
         break;
       default:
         filtered.sort((a, b) => b.date.compareTo(a.date));
@@ -141,7 +83,6 @@ class _MilkScreenState extends State<MilkScreen> {
       child: SafeArea(
         child: Column(
           children: <Widget>[
-            // Custom App Bar
             HeaderForAdd(
               title: 'Milk Log',
               subTitle: '',
@@ -149,7 +90,6 @@ class _MilkScreenState extends State<MilkScreen> {
                 context.push(AppRoutes.addMilk);
               },
             ),
-            // Content
             Expanded(
               child: Column(
                 children: <Widget>[
@@ -163,13 +103,13 @@ class _MilkScreenState extends State<MilkScreen> {
       ),
     ),
   );
+
   Widget _buildSearchAndFilters(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
     child: Column(
       children: <Widget>[
-        // Search bar
         TextField(
-          onChanged: (String value) => setState(() => _searchQuery = value),
+          onChanged: (value) => setState(() => _searchQuery = value),
           decoration: InputDecoration(
             hintText: 'Search by cattle ID or notes...',
             prefixIcon: const Icon(Icons.search),
@@ -182,7 +122,6 @@ class _MilkScreenState extends State<MilkScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        // Sort button
         Row(
           children: <Widget>[
             Expanded(
@@ -193,24 +132,74 @@ class _MilkScreenState extends State<MilkScreen> {
             ),
           ],
         ),
-        // const SizedBox(height: 16),
       ],
     ),
   );
 
+  Widget _buildMilkEntriesList(BuildContext context) =>
+      BlocBuilder<MilkCubit, MilkState>(
+        builder: (BuildContext context, MilkState state) {
+          if (state is MilkLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is MilkFailure && state.milkLogList.isEmpty) {
+            return Center(child: Text(state.message));
+          } else if (_filteredMilkEntries.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.water_drop_outlined,
+                    size: 64,
+                    color: context.colorScheme.onSurface.withAlpha(100),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No milk entries found',
+                    style: context.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Try adjusting your filters',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: context.colorScheme.onSurface.withAlpha(150),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final List<MilkModel> entries = _filteredMilkEntries;
+
+          return RefreshIndicator(
+            onRefresh: () => context.read<MilkCubit>().refreshMilkLog(),
+            child: ListView.builder(
+              controller: _controller,
+              padding: const EdgeInsets.all(16),
+              itemCount: entries.length + 1,
+              itemBuilder: (BuildContext context, int index) {
+                if (index == 0) {
+                  return _buildSummaryRow(context);
+                }
+                return _buildMilkEntryCard(context, entries[index - 1]);
+              },
+            ),
+          );
+        },
+      );
+
   Widget _buildSummaryRow(BuildContext context) {
-    final double totalMilk = _filteredMilkEntries.fold(
-      0,
-      (double sum, MilkModel entry) => sum + entry.quantityInLiter,
+    final totalMilk = _filteredMilkEntries.fold(
+      0.0,
+      (sum, e) => sum + e.quantityInLiter,
     );
-
-    final double morningMilk = _filteredMilkEntries
-        .where((MilkModel entry) => entry.shift == 'Morning')
-        .fold(0, (double sum, MilkModel entry) => sum + entry.quantityInLiter);
-
-    final double eveningMilk = _filteredMilkEntries
-        .where((MilkModel entry) => entry.shift == 'Evening')
-        .fold(0, (double sum, MilkModel entry) => sum + entry.quantityInLiter);
+    final morningMilk = _filteredMilkEntries
+        .where((e) => e.shift == 'Morning')
+        .fold(0.0, (sum, e) => sum + e.quantityInLiter);
+    final eveningMilk = _filteredMilkEntries
+        .where((e) => e.shift == 'Evening')
+        .fold(0.0, (sum, e) => sum + e.quantityInLiter);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -274,42 +263,6 @@ class _MilkScreenState extends State<MilkScreen> {
       ),
     ],
   );
-  Widget _buildMilkEntriesList(BuildContext context) {
-    if (_filteredMilkEntries.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.water_drop_outlined,
-              size: 64,
-              color: context.colorScheme.onSurface.withAlpha(100),
-            ),
-            const SizedBox(height: 16),
-            Text('No milk entries found', style: context.textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Text(
-              'Try adjusting your filters',
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colorScheme.onSurface.withAlpha(150),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _filteredMilkEntries.length + 1,
-      itemBuilder: (BuildContext context, int index) {
-        if (index == 0) {
-          return _buildSummaryRow(context);
-        }
-        return _buildMilkEntryCard(context, _filteredMilkEntries[index - 1]);
-      },
-    );
-  }
 
   Widget _buildMilkEntryCard(
     BuildContext context,
@@ -328,7 +281,6 @@ class _MilkScreenState extends State<MilkScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Header row
           Row(
             children: <Widget>[
               Text(
@@ -351,7 +303,7 @@ class _MilkScreenState extends State<MilkScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(
-                      milkEntry.shift == 'Morning'
+                      milkEntry.shift.value == 'Morning'
                           ? Icons.wb_sunny
                           : Icons.nights_stay,
                       size: 14,
@@ -371,7 +323,6 @@ class _MilkScreenState extends State<MilkScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          // Details row
           Row(
             children: <Widget>[
               Icon(
@@ -506,32 +457,29 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   String _formatDate(DateTime date) {
-    final DateTime now = DateTime.now();
-    final DateTime today = DateTime(now.year, now.month, now.day);
-    final DateTime yesterday = today.subtract(const Duration(days: 1));
-    final DateTime entryDate = DateTime(date.year, date.month, date.day);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final entryDate = DateTime(date.year, date.month, date.day);
 
-    if (entryDate.isAtSameMomentAs(today)) {
-      return 'Today';
-    } else if (entryDate.isAtSameMomentAs(yesterday)) {
-      return 'Yesterday';
-    } else {
-      const List<String> months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
-      return '${date.day} ${months[date.month - 1]}';
-    }
+    if (entryDate.isAtSameMomentAs(today)) return 'Today';
+    if (entryDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return '${date.day} ${months[date.month - 1]}';
   }
 
   void _showMilkEntryDetail(BuildContext context, MilkModel milkEntry) {

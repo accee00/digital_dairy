@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
+import 'package:digital_dairy/core/utils/enums.dart';
+import 'package:digital_dairy/core/utils/show_loading.dart';
 
 import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
@@ -8,6 +12,7 @@ import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
+import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +38,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
   // Form values
   String? _selectedCattleId;
   DateTime? _selectedDate;
-  String _selectedShift = 'Morning';
+  ShiftType _selectedShift = ShiftType.morning;
 
   final List<String> _shifts = <String>['Morning', 'Evening'];
 
@@ -55,15 +60,15 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     final ColorScheme colorScheme = context.colorScheme;
     return BlocListener<MilkCubit, MilkState>(
       listener: (BuildContext context, MilkState state) {
-        if (state is MilkCreatedFailure) {
+        if (state is MilkFailure) {
           showAppSnackbar(
             context,
-            message: state.msg,
+            message: state.message,
             type: SnackbarType.error,
           );
           context.pop();
         }
-        if (state is MilkCreatedSuccess) {
+        if (state is MilkSuccess) {
           showAppSnackbar(
             context,
             message: 'Milk entry recorded successfully!',
@@ -210,9 +215,11 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
               child: _buildDropdownField(
                 context,
                 'Shift *',
-                _selectedShift,
+                _selectedShift.value,
                 _shifts,
-                (String? value) => setState(() => _selectedShift = value!),
+                (String? value) => setState(
+                  () => _selectedShift = ShiftTypeValue.from(value!),
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -466,7 +473,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('💾', style: TextStyle(fontSize: 18)),
+              const Icon(Icons.save),
               const SizedBox(width: 8),
               Text(
                 'Save Milk Entry',
@@ -518,26 +525,18 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       return;
     }
 
-    //   showLoading(context);
+    showLoading(context);
 
-    //   final MilkEntry newMilkEntry = MilkEntry(
-    //     userId: '', // passing from service file
-    //     cattleId: _selectedCattleId!,
-    //     date: _selectedDate!,
-    //     shift: _selectedShift,
-    //     quantityLitres: double.parse(_quantityController.text.trim()),
-    //     notes: _notesController.text.trim(),
-    //     createdAt: DateTime.now(),
-    //   );
+    final MilkModel newMilkEntry = MilkModel(
+      cattleId: _selectedCattleId!,
+      date: _selectedDate!,
+      shift: _selectedShift,
 
-    //   if (!mounted) {
-    //     return;
-    //   }
-    //   await context.read<MilkCubit>().createMilkEntry(newMilkEntry);
-    //   if (!mounted) {
-    //     return;
-    //   }
-    //   await context.read<MilkCubit>().getAllMilkEntries();
-    // }
+      notes: _notesController.text.trim(),
+      createdAt: DateTime.now(),
+      quantityInLiter: double.parse(_quantityController.text.trim()),
+    );
+
+    unawaited(context.read<MilkCubit>().addMilkLog(newMilkEntry));
   }
 }

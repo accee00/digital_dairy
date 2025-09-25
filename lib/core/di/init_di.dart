@@ -5,6 +5,7 @@ import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:digital_dairy/services/cattle_service.dart';
+import 'package:digital_dairy/services/milk_log_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -41,8 +42,9 @@ Future<void> initDi() async {
 ///
 void initService() {
   serviceLocator
-    ..registerFactory(() => AuthService(serviceLocator()))
-    ..registerFactory(() => CattleService(serviceLocator()));
+    ..registerFactory(() => AuthService(serviceLocator<SupabaseClient>()))
+    ..registerFactory(() => CattleService(serviceLocator<SupabaseClient>()))
+    ..registerFactory(() => MilkLogService(serviceLocator<SupabaseClient>()));
 }
 
 ///
@@ -51,5 +53,5 @@ void initCubits() {
     ..registerLazySingleton<LocaleBloc>(LocaleBloc.new)
     ..registerFactory<AuthCubit>(() => AuthCubit(serviceLocator<AuthService>()))
     ..registerFactory(() => CattleCubit(serviceLocator<CattleService>()))
-    ..registerFactory(MilkCubit.new);
+    ..registerFactory(() => MilkCubit(serviceLocator<MilkLogService>()));
 }

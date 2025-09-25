@@ -1,17 +1,33 @@
 part of 'milk_cubit.dart';
 
-sealed class MilkState extends Equatable {
-  const MilkState();
+abstract class MilkState extends Equatable {
+  const MilkState({this.milkLogList = const <MilkModel>[]});
+  final List<MilkModel> milkLogList;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[milkLogList];
 }
 
-final class MilkInitial extends MilkState {}
-
-class MilkCreatedFailure extends MilkState {
-  final String msg;
-  MilkCreatedFailure(this.msg);
+class MilkInitial extends MilkState {
+  const MilkInitial() : super(milkLogList: const <MilkModel>[]);
 }
 
-class MilkCreatedSuccess extends MilkState {}
+class MilkLoading extends MilkState {
+  const MilkLoading({required super.milkLogList});
+}
+
+class MilkSuccess extends MilkState {
+  final bool hasMore;
+  const MilkSuccess({required this.hasMore, required super.milkLogList});
+
+  @override
+  List<Object> get props => <Object>[milkLogList, hasMore];
+}
+
+class MilkFailure extends MilkState {
+  const MilkFailure(this.message, {required super.milkLogList});
+  final String message;
+
+  @override
+  List<Object> get props => <Object>[message, milkLogList];
+}

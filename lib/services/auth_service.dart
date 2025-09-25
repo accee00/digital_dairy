@@ -5,16 +5,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 ///
 class AuthService {
   ///
-  AuthService(this.client);
+  AuthService(this._client);
 
   ///
-  final SupabaseClient client;
+  final SupabaseClient _client;
 
   ///
-  Session? get currentUserSession => client.auth.currentSession;
+  Session? get _currentUserSession => _client.auth.currentSession;
 
   ///
-  Future<Session?> getInitialSession() async => currentUserSession;
+  Future<Session?> getInitialSession() async => _currentUserSession;
 
   ///
   Future<Either<Failure, User>> signUpUser({
@@ -24,7 +24,7 @@ class AuthService {
     required String phoneNumber,
   }) async {
     try {
-      final AuthResponse response = await client.auth.signUp(
+      final AuthResponse response = await _client.auth.signUp(
         password: password,
         email: email,
         data: <String, dynamic>{
@@ -38,7 +38,6 @@ class AuthService {
       }
       return left(Failure('Unexpected error occurred'));
     } on AuthException catch (e) {
-      print(e.toString());
       return left(mapAuthError(e));
     } catch (_) {
       return left(Failure('Something went wrong. Please try again.'));
@@ -51,7 +50,7 @@ class AuthService {
     required String password,
   }) async {
     try {
-      final AuthResponse response = await client.auth.signInWithPassword(
+      final AuthResponse response = await _client.auth.signInWithPassword(
         email: email,
         password: password,
       );
@@ -69,7 +68,7 @@ class AuthService {
   ///
   Future<Either<Failure, bool>> forgotPassword({required String email}) async {
     try {
-      await client.auth.resetPasswordForEmail(email);
+      await _client.auth.resetPasswordForEmail(email);
       return right(true);
     } on AuthException catch (e) {
       return left(mapAuthError(e));
@@ -79,13 +78,14 @@ class AuthService {
   ///
   Future<Either<Failure, bool>> logOutUser() async {
     try {
-      await client.auth.signOut();
+      await _client.auth.signOut();
       return right(true);
     } on AuthException catch (e) {
       return left(mapAuthError(e));
     }
   }
 
+  ///
   Failure mapAuthError(dynamic e) {
     if (e is AuthException) {
       final String msg = e.message.toLowerCase();
