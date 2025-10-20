@@ -1,16 +1,15 @@
 import 'package:digital_dairy/core/bloc/locale_bloc.dart';
+import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_circular_indicator.dart';
 import 'package:digital_dairy/core/widget/custom_container.dart';
-import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/elevated_button.dart';
+import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/auth/presentation/widget/language_selection_dialog_box.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 

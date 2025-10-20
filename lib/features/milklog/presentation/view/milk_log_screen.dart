@@ -109,7 +109,7 @@ class _MilkScreenState extends State<MilkScreen> {
     child: Column(
       children: <Widget>[
         TextField(
-          onChanged: (value) => setState(() => _searchQuery = value),
+          onChanged: (String value) => setState(() => _searchQuery = value),
           decoration: InputDecoration(
             hintText: 'Search by cattle ID or notes...',
             prefixIcon: const Icon(Icons.search),
@@ -389,12 +389,12 @@ class _MilkScreenState extends State<MilkScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => Container(
+      builder: (BuildContext context) => Container(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Text(
               'Sort & Filter Options',
               style: context.textTheme.titleMedium?.copyWith(
@@ -513,7 +513,7 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   String _formatFullDate(DateTime date) {
-    const months = [
+    const List<String> months = <String>[
       'Jan',
       'Feb',
       'Mar',

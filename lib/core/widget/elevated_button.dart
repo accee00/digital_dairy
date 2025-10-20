@@ -3,9 +3,9 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   const CustomElevatedButton({
-    Key? key,
     required this.onPressed,
     required this.text,
+    super.key,
     this.icon,
     this.isLoading = false,
     this.isOutlined = false,
@@ -19,7 +19,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
     this.padding,
-  }) : super(key: key);
+  });
 
   final VoidCallback? onPressed;
   final String text;
@@ -133,7 +133,7 @@ class CustomElevatedButton extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: onPressed != null && !isLoading
-            ? [
+            ? <BoxShadow>[
                 BoxShadow(
                   color: effectiveBackgroundColor.withOpacity(0.3),
                   blurRadius: 8,

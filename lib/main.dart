@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:digital_dairy/core/bloc/locale_bloc.dart';
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/routes/go_route.dart';
+import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
@@ -42,6 +43,8 @@ class MyApp extends StatelessWidget {
         routerConfig: AppRouteConfig.router,
         debugShowCheckedModeBanner: false,
         title: 'Digital Dairy',
+        darkTheme: AppTheme.darkTheme,
+        theme: AppTheme.lightTheme,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: state.locale,
