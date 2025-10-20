@@ -65,5 +65,9 @@
     "authRememberPassword": "Remember your password?",
     "authBackToSignIn": "Back to Sign In",
     "authResetLinkSent": "Reset link sent to your email successfully!",
-    "authResetPasswordHelp": "If you don't receive the email within a few minutes, please check your spam folder or contact support."
+    "authResetPasswordHelp": "If you don't receive the email within a few minutes, please check your spam folder or contact support.",
+    "navbarHome": "Home",
+    "navbarMilKLog": "Milk Log",
+    "navbarCattle": "Cattle",
+    "navbarReports": "Reports"
 }

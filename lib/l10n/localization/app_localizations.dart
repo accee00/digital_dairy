@@ -448,6 +448,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If you don\'t receive the email within a few minutes, please check your spam folder or contact support.'**
   String get authResetPasswordHelp;
+
+  /// No description provided for @navbarHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navbarHome;
+
+  /// No description provided for @navbarMilKLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk Log'**
+  String get navbarMilKLog;
+
+  /// No description provided for @navbarCattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle'**
+  String get navbarCattle;
+
+  /// No description provided for @navbarReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navbarReports;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -1,17 +1,21 @@
+import 'package:digital_dairy/core/bloc/locale_bloc.dart';
+import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_circular_indicator.dart';
-import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
+import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/elevated_button.dart';
-
+import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
+import 'package:digital_dairy/features/auth/presentation/widget/language_selection_dialog_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class SignUpPage extends StatefulWidget {
+  ///
   const SignUpPage({super.key});
 
   @override
@@ -41,6 +45,21 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final LocaleState localeState = context.read<LocaleBloc>().state;
+
+      if (!localeState.hasShownLanguageDialog) {
+        showLanguageSelectionDialog(context: context);
+        context.read<LocaleBloc>().add(
+          LocaleChangeEvent(localeState.locale, hasShownLanguageDialog: true),
+        );
+      }
+    });
+  }
+
   Future<void> _handleSignUp() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -61,12 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: context.colorScheme.error,
-      ),
-    );
+    showAppSnackbar(context, message: message);
   }
 
   String? _validateEmail(String? value) {
@@ -130,19 +144,7 @@ class _SignUpPageState extends State<SignUpPage> {
       builder: (BuildContext context, AuthState state) => Scaffold(
         body: Stack(
           children: <Widget>[
-            Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    colorScheme.primary.withAlpha(100),
-                    colorScheme.surface,
-                    colorScheme.secondary.withAlpha(90),
-                  ],
-                ),
-              ),
+            CustomScaffoldContainer(
               child: SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(left: 25, right: 25),
@@ -150,255 +152,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       const SizedBox(height: 10),
-                      Text(
-                        context.strings.authCreateAccount,
-                        style: textTheme.displaySmall?.copyWith(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        context.strings.welcome,
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurface.withAlpha(180),
-                        ),
-                      ),
+                      _headingAndSubHeading(context, textTheme, colorScheme),
                       const SizedBox(height: 15),
                       Form(
                         key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            CustomTextField(
-                              controller: _nameController,
-                              labelText: context.strings.authName,
-                              hintText: context.strings.authEnterName,
-                              prefixIcon: Icons.person_outline_rounded,
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return context.strings.authNameRequires;
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            CustomTextField(
-                              controller: _emailController,
-                              labelText: context.strings.authEmail,
-                              hintText: context.strings.authEnterEmail,
-                              prefixIcon: Icons.email_outlined,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: _validateEmail,
-                            ),
-                            const SizedBox(height: 20),
-                            CustomTextField(
-                              controller: _phoneController,
-                              labelText: context.strings.authPhone,
-                              hintText: context.strings.authEnterPhone,
-                              prefixIcon: Icons.phone_outlined,
-                              keyboardType: TextInputType.phone,
-                              validator: _validatePhone,
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9+\-\s]'),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            CustomTextField(
-                              controller: _passwordController,
-                              labelText: context.strings.authPassword,
-                              hintText: context.strings.authEnterPassword,
-                              prefixIcon: Icons.lock_outline_rounded,
-                              obscureText: !_isPasswordVisible,
-                              validator: _validatePassword,
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility_off_outlined
-                                      : Icons.visibility_outlined,
-                                  color: colorScheme.onSurface.withAlpha(120),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            CustomTextField(
-                              controller: _confirmPasswordController,
-                              labelText: context.strings.authConfirmPassword,
-                              hintText: context.strings.authConfirmPassword,
-                              prefixIcon: Icons.lock_outline_rounded,
-                              obscureText: !_isConfirmPasswordVisible,
-                              validator: _validateConfirmPassword,
-                              textInputAction: TextInputAction.done,
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isConfirmPasswordVisible =
-                                        !_isConfirmPasswordVisible;
-                                  });
-                                },
-                                icon: Icon(
-                                  _isConfirmPasswordVisible
-                                      ? Icons.visibility_off_outlined
-                                      : Icons.visibility_outlined,
-                                  color: colorScheme.onSurface.withAlpha(120),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 25),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Checkbox(
-                                  value: _acceptTerms,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _acceptTerms = value ?? false;
-                                    });
-                                  },
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: RichText(
-                                      text: TextSpan(
-                                        style: textTheme.bodyMedium?.copyWith(
-                                          color: colorScheme.onSurface
-                                              .withAlpha(180),
-                                        ),
-                                        children: <InlineSpan>[
-                                          TextSpan(
-                                            text:
-                                                context.strings.authAgreeTerms,
-                                          ),
-                                          TextSpan(
-                                            text: context
-                                                .strings
-                                                .authTermsConditions,
-                                            style: TextStyle(
-                                              color: colorScheme.primary,
-                                              fontWeight: FontWeight.w600,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                          ),
-                                          const TextSpan(text: ' and '),
-                                          TextSpan(
-                                            text: context
-                                                .strings
-                                                .authPrivacyPolicy,
-                                            style: TextStyle(
-                                              color: colorScheme.primary,
-                                              fontWeight: FontWeight.w600,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 30),
-                            CustomElevatedButton(
-                              onPressed: _handleSignUp,
-                              text: context.strings.authCreateAccountAction,
-                              icon: Icons.person_add_rounded,
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Divider(
-                                    color: colorScheme.onSurface.withAlpha(40),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Text(
-                                    context.strings.authOr,
-                                    style: textTheme.bodyMedium?.copyWith(
-                                      color: colorScheme.onSurface.withAlpha(
-                                        180,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: colorScheme.onSurface.withAlpha(40),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: CustomElevatedButton(
-                                    onPressed: () {},
-                                    text: context.strings.authWithGoogle,
-                                    icon: Icons.g_mobiledata_rounded,
-                                    isOutlined: true,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: CustomElevatedButton(
-                                    onPressed: () {},
-                                    text: context.strings.authWithApple,
-                                    icon: Icons.apple_rounded,
-                                    isOutlined: true,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            Center(
-                              child: RichText(
-                                text: TextSpan(
-                                  style: textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurface.withAlpha(150),
-                                  ),
-                                  children: <InlineSpan>[
-                                    TextSpan(
-                                      text: context
-                                          .strings
-                                          .authAlreadyHaveAccount,
-                                    ),
-                                    WidgetSpan(
-                                      child: GestureDetector(
-                                        onTap: () =>
-                                            context.push(AppRoutes.signIn),
-                                        child: Text(
-                                          context.strings.authSignIn,
-                                          style: textTheme.bodyMedium?.copyWith(
-                                            color: colorScheme.primary,
-                                            fontWeight: FontWeight.w600,
-                                            decoration:
-                                                TextDecoration.underline,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: _inputFeilds(context, colorScheme, textTheme),
                       ),
                     ],
                   ),
@@ -411,4 +169,256 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+
+  Column _inputFeilds(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+  ) => Column(
+    children: <Widget>[
+      CustomTextField(
+        controller: _nameController,
+        labelText: context.strings.authName,
+        hintText: context.strings.authEnterName,
+        prefixIcon: Icons.person_outline_rounded,
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return context.strings.authNameRequires;
+          }
+          return null;
+        },
+      ),
+      const SizedBox(height: 20),
+      CustomTextField(
+        controller: _emailController,
+        labelText: context.strings.authEmail,
+        hintText: context.strings.authEnterEmail,
+        prefixIcon: Icons.email_outlined,
+        keyboardType: TextInputType.emailAddress,
+        validator: _validateEmail,
+      ),
+      const SizedBox(height: 20),
+      CustomTextField(
+        controller: _phoneController,
+        labelText: context.strings.authPhone,
+        hintText: context.strings.authEnterPhone,
+        prefixIcon: Icons.phone_outlined,
+        keyboardType: TextInputType.phone,
+        validator: _validatePhone,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-\s]')),
+        ],
+      ),
+      const SizedBox(height: 20),
+      CustomTextField(
+        controller: _passwordController,
+        labelText: context.strings.authPassword,
+        hintText: context.strings.authEnterPassword,
+        prefixIcon: Icons.lock_outline_rounded,
+        obscureText: !_isPasswordVisible,
+        validator: _validatePassword,
+        suffixIcon: IconButton(
+          onPressed: () {
+            setState(() {
+              _isPasswordVisible = !_isPasswordVisible;
+            });
+          },
+          icon: Icon(
+            _isPasswordVisible
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            color: colorScheme.onSurface.withAlpha(120),
+          ),
+        ),
+      ),
+      const SizedBox(height: 20),
+      CustomTextField(
+        controller: _confirmPasswordController,
+        labelText: context.strings.authConfirmPassword,
+        hintText: context.strings.authConfirmPassword,
+        prefixIcon: Icons.lock_outline_rounded,
+        obscureText: !_isConfirmPasswordVisible,
+        validator: _validateConfirmPassword,
+        textInputAction: TextInputAction.done,
+        suffixIcon: IconButton(
+          onPressed: () {
+            setState(() {
+              _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+            });
+          },
+          icon: Icon(
+            _isConfirmPasswordVisible
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            color: colorScheme.onSurface.withAlpha(120),
+          ),
+        ),
+      ),
+      const SizedBox(height: 25),
+      _termsAndCondition(textTheme, colorScheme, context),
+      const SizedBox(height: 30),
+      _siginButton(context),
+      const SizedBox(height: 20),
+      _signInOptions(colorScheme, context, textTheme),
+      const SizedBox(height: 20),
+      _alreadyHaveAnAccount(textTheme, colorScheme, context),
+    ],
+  );
+
+  Column _signInOptions(
+    ColorScheme colorScheme,
+    BuildContext context,
+    TextTheme textTheme,
+  ) => Column(
+    children: <Widget>[
+      Row(
+        children: <Widget>[
+          Expanded(child: Divider(color: colorScheme.onSurface.withAlpha(40))),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              context.strings.authOr,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface.withAlpha(180),
+              ),
+            ),
+          ),
+          Expanded(child: Divider(color: colorScheme.onSurface.withAlpha(40))),
+        ],
+      ),
+      const SizedBox(height: 20),
+      Row(
+        children: <Widget>[
+          Expanded(
+            child: CustomElevatedButton(
+              onPressed: () {},
+              text: context.strings.authWithGoogle,
+              icon: Icons.g_mobiledata_rounded,
+              isOutlined: true,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: CustomElevatedButton(
+              onPressed: () {},
+              text: context.strings.authWithApple,
+              icon: Icons.apple_rounded,
+              isOutlined: true,
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+
+  Center _alreadyHaveAnAccount(
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+    BuildContext context,
+  ) => Center(
+    child: RichText(
+      text: TextSpan(
+        style: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurface.withAlpha(150),
+        ),
+        children: <InlineSpan>[
+          TextSpan(text: context.strings.authAlreadyHaveAccount),
+          WidgetSpan(
+            child: GestureDetector(
+              onTap: () => context.push(AppRoutes.signIn),
+              child: Text(
+                context.strings.authSignIn,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Column _headingAndSubHeading(
+    BuildContext context,
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+  ) => Column(
+    children: <Widget>[
+      Text(
+        context.strings.authCreateAccount,
+        style: textTheme.displaySmall?.copyWith(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      const SizedBox(height: 10),
+      Text(
+        context.strings.welcome,
+        style: textTheme.bodyLarge?.copyWith(
+          color: colorScheme.onSurface.withAlpha(180),
+        ),
+      ),
+    ],
+  );
+
+  CustomElevatedButton _siginButton(BuildContext context) =>
+      CustomElevatedButton(
+        onPressed: _handleSignUp,
+        text: context.strings.authCreateAccountAction,
+        icon: Icons.person_add_rounded,
+      );
+
+  Row _termsAndCondition(
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+    BuildContext context,
+  ) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Checkbox(
+        value: _acceptTerms,
+        onChanged: (bool? value) {
+          setState(() {
+            _acceptTerms = value ?? false;
+          });
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: RichText(
+            text: TextSpan(
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface.withAlpha(180),
+              ),
+              children: <InlineSpan>[
+                TextSpan(text: context.strings.authAgreeTerms),
+                TextSpan(
+                  text: context.strings.authTermsConditions,
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+                const TextSpan(text: ' and '),
+                TextSpan(
+                  text: context.strings.authPrivacyPolicy,
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }

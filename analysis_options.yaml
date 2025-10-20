@@ -9,9 +9,9 @@
 # packages, and plugins designed to encourage good coding practices.
 analyzer:
   errors:
-    directives_ordering: ignore
     depend_on_referenced_packages: ignore
     avoid_catches_without_on_clauses: ignore
+    lines_longer_than_80_chars: ignore
 include: package:hyper_lint/analysis_options.yaml
 
 linter:

@@ -1,8 +1,20 @@
+import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-enum SnackbarType { error, success, info }
+///
+enum SnackbarType {
+  ///
+  error,
 
+  ///
+  success,
+
+  ///
+  info,
+}
+
+///
 void showAppSnackbar(
   BuildContext context, {
   required String message,
@@ -20,7 +32,7 @@ void showAppSnackbar(
       backgroundColor = AppTheme.success;
       icon = Icons.check_circle_outline;
     case SnackbarType.info:
-      backgroundColor = AppTheme.info;
+      backgroundColor = context.colorScheme.primary;
       icon = Icons.info_outline;
   }
 

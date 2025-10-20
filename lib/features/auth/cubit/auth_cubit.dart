@@ -24,7 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
   }) async {
     emit(AuthLoading());
-    final Either<Failure, void> response = await authService.signUpUser(
+    final Either<Failure, User> response = await authService.signUpUser(
       name: name,
       email: email,
       password: password,
@@ -32,7 +32,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
     response.fold(
       (Failure failure) => emit(AuthFailureState(failure.message)),
-      (void success) => emit(AuthSuccessState()),
+      (User user) => emit(AuthSuccessState(user)),
     );
   }
 
@@ -42,14 +42,14 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
   }) async {
     emit(AuthLoading());
-    final Either<Failure, void> response = await authService.signInUser(
+    final Either<Failure, User> response = await authService.signInUser(
       email: email,
       password: password,
     );
 
     response.fold(
       (Failure failure) => emit(AuthFailureState(failure.message)),
-      (void success) => emit(AuthSuccessState()),
+      (User user) => emit(AuthSuccessState(user)),
     );
   }
 
@@ -71,7 +71,7 @@ class AuthCubit extends Cubit<AuthState> {
       final Session? session = await authService.getInitialSession();
       if (session != null) {
         print('[Session from Auth Cubit]=> $session');
-        emit(AuthSuccessState());
+        emit(AuthSuccessState(session.user));
       } else {
         emit(SessionNotFoundState());
       }

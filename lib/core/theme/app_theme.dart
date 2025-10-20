@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class AppTheme {
   // Primary Color Palette
@@ -67,11 +66,6 @@ class AppTheme {
         letterSpacing: 0.5,
       ),
       iconTheme: IconThemeData(color: textPrimary, size: 24),
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
     ),
 
     // Elevated Button Theme
@@ -124,7 +118,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: background,
       elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withAlpha(25),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
@@ -135,11 +129,11 @@ class AppTheme {
       fillColor: surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: textHint.withOpacity(0.3), width: 1),
+        borderSide: BorderSide(color: textHint.withAlpha(76), width: 1),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: textHint.withOpacity(0.3), width: 1),
+        borderSide: BorderSide(color: textHint.withAlpha(76), width: 1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -147,10 +141,10 @@ class AppTheme {
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: error, width: 1),
+        borderSide: const BorderSide(color: error),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      hintStyle: TextStyle(
+      hintStyle: const TextStyle(
         color: textHint,
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -288,47 +282,9 @@ class AppTheme {
 
     // Divider Theme
     dividerTheme: DividerThemeData(
-      color: textHint.withOpacity(0.2),
+      color: textHint.withAlpha(55),
       thickness: 1,
       space: 24,
-    ),
-
-    // Switch Theme
-    switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return primary;
-        }
-        return textHint;
-      }),
-      trackColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return primary.withOpacity(0.3);
-        }
-        return textHint.withOpacity(0.2);
-      }),
-    ),
-
-    // Checkbox Theme
-    checkboxTheme: CheckboxThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return primary;
-        }
-        return Colors.transparent;
-      }),
-      checkColor: MaterialStateProperty.all(textOnPrimary),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-    ),
-
-    // Radio Theme
-    radioTheme: RadioThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return primary;
-        }
-        return textSecondary;
-      }),
     ),
 
     // Slider Theme
@@ -361,28 +317,22 @@ class AppTheme {
     ),
   );
 
-  // Dark Theme
+  /// Dark Theme
   static ThemeData get darkTheme => ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
 
     colorScheme: const ColorScheme.dark(
-      primary: secondary, // Lighter blue for dark mode
+      primary: secondary,
       primaryContainer: Color(0xFF1A237E),
       secondary: primaryVariant,
       secondaryContainer: Color(0xFF4527A0),
       surface: Color(0xFF1E1E1E),
-      background: Color(0xFF121212),
-      error: Color(0xFFCF6679),
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: Colors.white,
-      onBackground: Colors.white,
       onError: Colors.black,
     ),
-
-    // Add similar theme configurations for dark mode...
-    // (Following similar pattern as light theme)
   );
 
   static BoxDecoration get primaryGradientDecoration => const BoxDecoration(
@@ -411,7 +361,7 @@ class AppTheme {
   }) => BoxDecoration(
     color: Colors.white.withOpacity(opacity),
     borderRadius: borderRadius ?? BorderRadius.circular(16),
-    border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+    border: Border.all(color: Colors.white.withAlpha(30), width: 1),
     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.1),

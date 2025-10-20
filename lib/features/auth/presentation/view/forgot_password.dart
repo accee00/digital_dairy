@@ -2,6 +2,7 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_circular_indicator.dart';
+import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/elevated_button.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
@@ -78,19 +79,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         body: Stack(
           children: <Widget>[
             // Main content
-            Container(
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    colorScheme.primary.withAlpha(100),
-                    colorScheme.surface,
-                    colorScheme.secondary.withAlpha(90),
-                  ],
-                ),
-              ),
+            CustomScaffoldContainer(
               child: SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -204,14 +193,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 ),
                               ),
                               const SizedBox(width: 5),
-                              GestureDetector(
-                                onTap: () => context.pop(),
-                                child: Text(
-                                  context.strings.authBackToSignIn,
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    color: colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => context.pop(),
+                                  child: Text(
+                                    maxLines: 1,
+                                    context.strings.authBackToSignIn,
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),

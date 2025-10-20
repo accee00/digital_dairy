@@ -10,7 +10,10 @@ sealed class AuthState extends Equatable {
 
 class AuthLoading extends AuthState {}
 
-class AuthSuccessState extends AuthState {}
+class AuthSuccessState extends AuthState {
+  final User user;
+  AuthSuccessState(this.user);
+}
 
 class AuthFailureState extends AuthState {
   final String msg;
