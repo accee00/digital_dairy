@@ -24,7 +24,7 @@ class MilkModel extends Equatable {
     userId: map['user_id'] != null ? map['user_id'] as String : null,
     cattleId: map['cattle_id'] as String,
     date: DateTime.parse(map['date'] as String),
-    shift: ShiftTypeValue.from(map['shift'] as String),
+    shift: ShiftType.from(map['shift'] as String),
     quantityInLiter: map['quantity_litres'] as double,
     notes: map['notes'] as String,
     createdAt: map['created_at'] != null

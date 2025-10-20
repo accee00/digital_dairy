@@ -7,6 +7,7 @@ import 'package:digital_dairy/core/utils/show_loading.dart';
 
 import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
+import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 
@@ -22,13 +23,15 @@ import 'package:go_router/go_router.dart';
 /// A StatefulWidget for adding milk production entries in the application.
 class AddMilkScreen extends StatefulWidget {
   /// Initializes a new instance of the [AddMilkScreen] widget.
-  const AddMilkScreen({super.key});
-
+  const AddMilkScreen({super.key, this.milkModel});
+  final MilkModel? milkModel;
   @override
   State<AddMilkScreen> createState() => _AddMilkScreenState();
 }
 
 class _AddMilkScreenState extends State<AddMilkScreen> {
+  late MilkModel _editMilkModel;
+  bool get isEdit => widget.milkModel != null;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers
@@ -45,6 +48,15 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
   @override
   void initState() {
     super.initState();
+    if (isEdit) {
+      _editMilkModel = widget.milkModel!;
+
+      _selectedCattleId = _editMilkModel.cattleId;
+      _selectedDate = _editMilkModel.date;
+      _selectedShift = _editMilkModel.shift;
+      _quantityController.text = _editMilkModel.quantityInLiter.toString();
+      _notesController.text = _editMilkModel.notes;
+    }
     _selectedDate = DateTime.now();
   }
 
@@ -71,7 +83,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
         if (state is MilkSuccess) {
           showAppSnackbar(
             context,
-            message: 'Milk entry recorded successfully!',
+            message: isEdit
+                ? 'Milk entry updated successfully!'
+                : 'Milk entry recorded successfully!',
             type: SnackbarType.success,
           );
           context
@@ -94,7 +108,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                   icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                 ),
                 title: Text(
-                  'Add Milk Entry',
+                  isEdit ? 'Edit Milk Entry' : 'Add Milk Entry',
                   style: context.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
@@ -170,32 +184,43 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
   );
   Widget _buildCattleSelectionSection(BuildContext context) =>
       BlocBuilder<CattleCubit, CattleState>(
-        builder: (BuildContext context, CattleState state) => CustomContainer(
-          child: _buildDropdownField(
-            context,
-            'Select Cattle *',
-            _selectedCattleId,
-            state.cattle
-                .map(
-                  (Cattle e) => '${e.tagId} - ${e.name}',
-                ) // show tag_id + name
-                .toList(),
-            (String? value) {
-              final Cattle selectedCattle = state.cattle.firstWhere(
-                (Cattle cattle) => '${cattle.tagId} - ${cattle.name}' == value,
-              );
-              setState(() {
-                _selectedCattleId = selectedCattle.id;
-              });
-            },
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select a cattle';
-              }
-              return null;
-            },
-          ),
-        ),
+        builder: (BuildContext context, CattleState state) {
+          String? selectedCattleDisplay;
+          if (_selectedCattleId != null) {
+            final Cattle cattle = state.cattle.firstWhere(
+              (Cattle c) => c.id == _selectedCattleId,
+              orElse: () => state.cattle.first,
+            );
+            selectedCattleDisplay = '${cattle.tagId} - ${cattle.name}';
+          }
+          return CustomContainer(
+            child: _buildDropdownField(
+              context,
+              'Select Cattle *',
+              selectedCattleDisplay,
+              state.cattle
+                  .map(
+                    (Cattle e) => '${e.tagId} - ${e.name}',
+                  ) // show tag_id + name
+                  .toList(),
+              (String? value) {
+                final Cattle selectedCattle = state.cattle.firstWhere(
+                  (Cattle cattle) =>
+                      '${cattle.tagId} - ${cattle.name}' == value,
+                );
+                setState(() {
+                  _selectedCattleId = selectedCattle.id;
+                });
+              },
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a cattle';
+                }
+                return null;
+              },
+            ),
+          );
+        },
       );
   Widget _buildMilkingDetailsSection(BuildContext context) => CustomContainer(
     child: Column(
@@ -217,9 +242,8 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                 'Shift *',
                 _selectedShift.value,
                 _shifts,
-                (String? value) => setState(
-                  () => _selectedShift = ShiftTypeValue.from(value!),
-                ),
+                (String? value) =>
+                    setState(() => _selectedShift = ShiftType.from(value!)),
               ),
             ),
             const SizedBox(width: 16),
@@ -439,7 +463,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                     color: context.colorScheme.onSurface.withAlpha(100),
                   ),
                 ),
-          trailing: Text('📅', style: TextStyle(fontSize: 20)),
+          trailing: const Icon(Icons.calendar_month),
           onTap: () async {
             final DateTime? date = await showDatePicker(
               context: context,
@@ -458,34 +482,11 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
 
   Widget _buildActionButtons(BuildContext context) => Column(
     children: <Widget>[
-      SizedBox(
-        width: double.infinity,
-        height: 56,
-        child: ElevatedButton(
-          onPressed: _saveMilkEntry,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.colorScheme.primary,
-            foregroundColor: context.colorScheme.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Icon(Icons.save),
-              const SizedBox(width: 8),
-              Text(
-                'Save Milk Entry',
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: context.colorScheme.onPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
+      SaveElevatedButton(
+        label: isEdit ? 'Update Milk Entry' : 'Save Milk Entry',
+        onTap: _saveMilkEntry,
       ),
+
       const SizedBox(height: 12),
     ],
   );
@@ -512,9 +513,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
   }
 
   Future<void> _saveMilkEntry() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    // if (!_formKey.currentState!.validate()) {
+    //   return;
+    // }
 
     if (_selectedCattleId == null) {
       showAppSnackbar(
@@ -528,15 +529,17 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     showLoading(context);
 
     final MilkModel newMilkEntry = MilkModel(
+      id: _editMilkModel.id,
+      userId: _editMilkModel.userId,
       cattleId: _selectedCattleId!,
-      date: _selectedDate!,
+      date: isEdit ? _editMilkModel.date : _selectedDate!,
       shift: _selectedShift,
-
       notes: _notesController.text.trim(),
       createdAt: DateTime.now(),
       quantityInLiter: double.parse(_quantityController.text.trim()),
     );
-
-    unawaited(context.read<MilkCubit>().addMilkLog(newMilkEntry));
+    isEdit
+        ? unawaited(context.read<MilkCubit>().editMilk(newMilkEntry))
+        : unawaited(context.read<MilkCubit>().addMilkLog(newMilkEntry));
   }
 }

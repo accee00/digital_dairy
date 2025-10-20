@@ -64,7 +64,29 @@ class MilkCubit extends Cubit<MilkState> {
 
   Future<void> addMilkLog(MilkModel milk) async {
     final List<MilkModel> currentData = state.milkLogList;
+
     final Either<Failure, bool> response = await _milkLogService.addMilkEntry(
+      milk,
+    );
+
+    response.fold(
+      (Failure failure) {
+        emit(MilkFailure(failure.message, milkLogList: currentData));
+      },
+      (bool success) {
+        if (success) {
+          refreshMilkLog();
+        } else {
+          emit(MilkFailure('Failed to create entry', milkLogList: currentData));
+        }
+      },
+    );
+  }
+
+  Future<void> editMilk(MilkModel milk) async {
+    final List<MilkModel> currentData = state.milkLogList;
+
+    final Either<Failure, bool> response = await _milkLogService.editMilkEntry(
       milk,
     );
 

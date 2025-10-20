@@ -7,6 +7,7 @@ import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
 import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
+import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
@@ -434,34 +435,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
 
   Widget _buildActionButtons(BuildContext context) => Column(
     children: <Widget>[
-      SizedBox(
-        width: double.infinity,
-        height: 56,
-        child: ElevatedButton(
-          onPressed: _saveCattle,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.colorScheme.primary,
-            foregroundColor: context.colorScheme.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Icon(Icons.save),
-              const SizedBox(width: 8),
-              Text(
-                'Save Cattle',
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: context.colorScheme.onPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      SaveElevatedButton(label: 'Save Cattle', onTap: _saveCattle),
       const SizedBox(height: 12),
     ],
   );

@@ -23,4 +23,7 @@ class AppRoutes {
 
   ///
   static const String addMilk = '/add-milk';
+
+  ///
+  static const String editMilk = '/edit-milk';
 }

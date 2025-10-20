@@ -28,6 +28,24 @@ class MilkLogService {
     }
   }
 
+  ///
+  Future<Either<Failure, bool>> editMilkEntry(MilkModel model) async {
+    try {
+      final PostgrestList response = await _client
+          .from('milk_entries')
+          .update(model.toMap())
+          .eq('id', model.id!)
+          .select();
+      if (response.isNotEmpty) {
+        return right(true);
+      }
+      return right(false);
+    } on PostgrestException catch (e) {
+      logInfo(e.toString());
+      return left(Failure(e.message));
+    }
+  }
+
   Future<Either<Failure, List<MilkModel>>> getMilkLog({
     int page = 0,
     int limit = 10,

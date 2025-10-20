@@ -5,6 +5,7 @@ import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_scree
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
 import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
+import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -28,36 +29,43 @@ class AppRouteConfig {
     initialLocation: AppRoutes.splash,
     routes: <RouteBase>[
       GoRoute(
+        name: AppRoutes.splash,
         path: AppRoutes.splash,
         builder: (BuildContext context, GoRouterState state) =>
             const SplashScreen(),
       ),
       GoRoute(
+        name: AppRoutes.signUp,
         path: AppRoutes.signUp,
         builder: (BuildContext context, GoRouterState state) =>
             const SignUpPage(),
       ),
       GoRoute(
+        name: AppRoutes.signIn,
         path: AppRoutes.signIn,
         builder: (BuildContext context, GoRouterState state) =>
             const SignInPage(),
       ),
       GoRoute(
+        name: AppRoutes.forgotPassword,
         path: AppRoutes.forgotPassword,
         builder: (BuildContext context, GoRouterState state) =>
             const ForgotPasswordPage(),
       ),
       GoRoute(
+        name: AppRoutes.home,
         path: AppRoutes.home,
         builder: (BuildContext context, GoRouterState state) =>
             const MainScreen(),
       ),
       GoRoute(
+        name: AppRoutes.addCattle,
         path: AppRoutes.addCattle,
         builder: (BuildContext context, GoRouterState state) =>
             const AddCattleScreen(),
       ),
       GoRoute(
+        name: AppRoutes.cattleDetail,
         path: AppRoutes.cattleDetail,
         builder: (BuildContext context, GoRouterState state) {
           final Cattle cattle = state.extra! as Cattle;
@@ -65,9 +73,18 @@ class AppRouteConfig {
         },
       ),
       GoRoute(
+        name: AppRoutes.addMilk,
         path: AppRoutes.addMilk,
         builder: (BuildContext context, GoRouterState state) =>
             const AddMilkScreen(),
+      ),
+      GoRoute(
+        name: AppRoutes.editMilk,
+        path: AppRoutes.editMilk,
+        builder: (BuildContext context, GoRouterState state) {
+          final MilkModel milkModel = state.extra! as MilkModel;
+          return AddMilkScreen(milkModel: milkModel);
+        },
       ),
     ],
   );

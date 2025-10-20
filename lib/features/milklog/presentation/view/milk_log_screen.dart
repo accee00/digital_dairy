@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_int_literals
+
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
@@ -190,16 +192,16 @@ class _MilkScreenState extends State<MilkScreen> {
       );
 
   Widget _buildSummaryRow(BuildContext context) {
-    final totalMilk = _filteredMilkEntries.fold(
+    final double totalMilk = _filteredMilkEntries.fold(
       0.0,
-      (sum, e) => sum + e.quantityInLiter,
+      (double sum, MilkModel e) => sum + e.quantityInLiter,
     );
-    final morningMilk = _filteredMilkEntries
-        .where((e) => e.shift == 'Morning')
-        .fold(0.0, (sum, e) => sum + e.quantityInLiter);
-    final eveningMilk = _filteredMilkEntries
-        .where((e) => e.shift == 'Evening')
-        .fold(0.0, (sum, e) => sum + e.quantityInLiter);
+    final double morningMilk = _filteredMilkEntries
+        .where((MilkModel e) => e.shift == ShiftType.morning)
+        .fold(0.0, (double sum, MilkModel e) => sum + e.quantityInLiter);
+    final double eveningMilk = _filteredMilkEntries
+        .where((MilkModel e) => e.shift == ShiftType.evening)
+        .fold(0.0, (double sum, MilkModel e) => sum + e.quantityInLiter);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -303,15 +305,18 @@ class _MilkScreenState extends State<MilkScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(
-                      milkEntry.shift.value == 'Morning'
+                      milkEntry.shift == ShiftType.morning
                           ? Icons.wb_sunny
                           : Icons.nights_stay,
                       size: 14,
-                      color: _getShiftColor(milkEntry.shift.value, context),
+                      color: _getShiftColor(
+                        milkEntry.shift.displayVal,
+                        context,
+                      ),
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      milkEntry.shift.name,
+                      milkEntry.shift.displayVal,
                       style: context.textTheme.labelSmall?.copyWith(
                         color: _getShiftColor(milkEntry.shift.value, context),
                         fontWeight: FontWeight.w500,
@@ -352,7 +357,7 @@ class _MilkScreenState extends State<MilkScreen> {
               ),
             ],
           ),
-          if (milkEntry.notes.isNotEmpty) ...[
+          if (milkEntry.notes.isNotEmpty) ...<Widget>[
             const SizedBox(height: 8),
             Text(
               milkEntry.notes,
@@ -403,7 +408,7 @@ class _MilkScreenState extends State<MilkScreen> {
             ),
             const SizedBox(height: 16),
             ..._sortOptions.map(
-              (option) => ListTile(
+              (String option) => ListTile(
                 leading: Icon(
                   _getOptionIcon(option),
                   color: _sortBy == option
@@ -457,15 +462,19 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final entryDate = DateTime(date.year, date.month, date.day);
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime yesterday = today.subtract(const Duration(days: 1));
+    final DateTime entryDate = DateTime(date.year, date.month, date.day);
 
-    if (entryDate.isAtSameMomentAs(today)) return 'Today';
-    if (entryDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+    if (entryDate.isAtSameMomentAs(today)) {
+      return 'Today';
+    }
+    if (entryDate.isAtSameMomentAs(yesterday)) {
+      return 'Yesterday';
+    }
 
-    const months = [
+    const List<String> months = <String>[
       'Jan',
       'Feb',
       'Mar',
@@ -485,32 +494,83 @@ class _MilkScreenState extends State<MilkScreen> {
   void _showMilkEntryDetail(BuildContext context, MilkModel milkEntry) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: context.colorScheme.surface,
-        title: const Text('Milk Entry Details'),
+        title: Row(
+          children: <Widget>[
+            const Icon(Icons.local_drink_rounded),
+            const SizedBox(width: 8),
+            Text(
+              'Milk Entry Details',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Cattle: ${milkEntry.cattleId}'),
-            Text('Date: ${_formatFullDate(milkEntry.date)}'),
-            Text('Shift: ${milkEntry.shift}'),
-            Text('Quantity: ${milkEntry.quantityInLiter.toStringAsFixed(2)}L'),
-            if (milkEntry.notes.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text('Notes: ${milkEntry.notes}'),
+          children: <Widget>[
+            _buildDetailRow('🐄 Cattle', milkEntry.cattle?.name ?? '-'),
+            _buildDetailRow('📅 Date', _formatFullDate(milkEntry.date)),
+            _buildDetailRow('⏰ Shift', milkEntry.shift.displayVal),
+            _buildDetailRow(
+              '🥛 Quantity',
+              '${milkEntry.quantityInLiter.toStringAsFixed(2)} L',
+            ),
+            if (milkEntry.notes.isNotEmpty) ...<Widget>[
+              const Divider(height: 20),
+              _buildDetailRow('📝 Notes', milkEntry.notes),
             ],
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        alignment: Alignment.center,
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: <Widget>[
+          FilledButton.icon(
+            onPressed: () => context.pop(),
+            label: const Text('Close'),
+            icon: const Icon(Icons.close),
+          ),
+
+          FilledButton.icon(
+            onPressed: () {
+              context
+                ..pop()
+                ..pushNamed(AppRoutes.editMilk, extra: milkEntry);
+            },
+            icon: const Icon(Icons.edit),
+            label: const Text('Edit'),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildDetailRow(String label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(
+          width: 100,
+          child: Text(
+            label,
+            style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
+          ),
+        ),
+      ],
+    ),
+  );
 
   String _formatFullDate(DateTime date) {
     const List<String> months = <String>[
