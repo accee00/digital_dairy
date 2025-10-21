@@ -50,7 +50,6 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     super.initState();
     if (isEdit) {
       _editMilkModel = widget.milkModel!;
-
       _selectedCattleId = _editMilkModel.cattleId;
       _selectedDate = _editMilkModel.date;
       _selectedShift = _editMilkModel.shift;
@@ -105,7 +104,10 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                 centerTitle: true,
                 leading: IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 title: Text(
                   isEdit ? 'Edit Milk Entry' : 'Add Milk Entry',
@@ -166,7 +168,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
         child: Text(
           title.substring(0, 1),
           style: TextStyle(
-            color: context.colorScheme.onPrimaryContainer,
+            color: context.colorScheme.secondary,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -249,6 +251,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             const SizedBox(width: 16),
             Expanded(
               child: CustomTextField(
+                height: 52,
                 labelText: 'Quantity (Litres) *',
                 controller: _quantityController,
                 hintText: 'Enter quantity',
@@ -318,6 +321,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
         ),
         const SizedBox(height: 12),
         Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: context.colorScheme.surfaceContainerHighest.withAlpha(100),
@@ -529,8 +533,8 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     showLoading(context);
 
     final MilkModel newMilkEntry = MilkModel(
-      id: _editMilkModel.id,
-      userId: _editMilkModel.userId,
+      id: isEdit ? _editMilkModel.id : null,
+      userId: isEdit ? _editMilkModel.userId : null,
       cattleId: _selectedCattleId!,
       date: isEdit ? _editMilkModel.date : _selectedDate!,
       shift: _selectedShift,

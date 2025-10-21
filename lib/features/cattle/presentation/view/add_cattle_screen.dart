@@ -113,7 +113,10 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                 centerTitle: true,
                 leading: IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 title: Text(
                   'Add Cattle',
@@ -196,11 +199,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
           color: context.colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
-          icon,
-          color: context.colorScheme.onPrimaryContainer,
-          size: 20,
-        ),
+        child: Icon(icon, color: context.colorScheme.secondary, size: 20),
       ),
       const SizedBox(width: 12),
       Text(

@@ -13,6 +13,7 @@ class HeaderForAdd extends StatelessWidget {
     required this.title,
     required this.subTitle,
     required this.onTap,
+    this.padding,
     super.key,
   });
 
@@ -25,13 +26,15 @@ class HeaderForAdd extends StatelessWidget {
   /// The callback function that is called when the floating action button is pressed.
   final VoidCallback onTap;
 
+  ///
+  final EdgeInsetsGeometry? padding;
   @override
   Widget build(BuildContext context) {
     final TextTheme theme = context.textTheme;
     final ColorScheme color = context.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
