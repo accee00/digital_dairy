@@ -7,6 +7,7 @@ import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
+import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/l10n/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
       BlocProvider<AuthCubit>(create: (_) => serviceLocator<AuthCubit>()),
       BlocProvider<CattleCubit>(create: (_) => serviceLocator<CattleCubit>()),
       BlocProvider<MilkCubit>(create: (_) => serviceLocator<MilkCubit>()),
+      BlocProvider<SalesCubit>(create: (_) => serviceLocator<SalesCubit>()),
     ],
     child: BlocBuilder<LocaleBloc, LocaleState>(
       builder: (BuildContext context, LocaleState state) => MaterialApp.router(

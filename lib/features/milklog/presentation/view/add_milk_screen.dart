@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
@@ -107,11 +105,12 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                   icon: Icon(
                     Icons.arrow_back_ios,
                     color: colorScheme.onSurface,
+                    size: 25,
                   ),
                 ),
                 title: Text(
                   isEdit ? 'Edit Milk Entry' : 'Add Milk Entry',
-                  style: context.textTheme.headlineSmall?.copyWith(
+                  style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
@@ -487,6 +486,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
   Widget _buildActionButtons(BuildContext context) => Column(
     children: <Widget>[
       SaveElevatedButton(
+        key: UniqueKey(),
         label: isEdit ? 'Update Milk Entry' : 'Save Milk Entry',
         onTap: _saveMilkEntry,
       ),
@@ -516,7 +516,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     return '';
   }
 
-  Future<void> _saveMilkEntry() async {
+  void _saveMilkEntry() {
     // if (!_formKey.currentState!.validate()) {
     //   return;
     // }
@@ -543,7 +543,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       quantityInLiter: double.parse(_quantityController.text.trim()),
     );
     isEdit
-        ? unawaited(context.read<MilkCubit>().editMilk(newMilkEntry))
-        : unawaited(context.read<MilkCubit>().addMilkLog(newMilkEntry));
+        ? context.read<MilkCubit>().editMilk(newMilkEntry)
+        : context.read<MilkCubit>().addMilkLog(newMilkEntry);
   }
 }

@@ -8,12 +8,13 @@ import 'package:fpdart/fpdart.dart';
 part 'milk_state.dart';
 
 class MilkCubit extends Cubit<MilkState> {
+  ///
+  MilkCubit(this._milkLogService) : super(const MilkInitial());
+
   final MilkLogService _milkLogService;
   int _page = 0;
   final int _limit = 10;
   bool _hasMore = true;
-
-  MilkCubit(this._milkLogService) : super(MilkInitial());
 
   Future<void> getMilkLog({bool refresh = false}) async {
     if (state is MilkLoading) {

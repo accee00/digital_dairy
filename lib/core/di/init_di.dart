@@ -3,9 +3,11 @@ import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
+import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:digital_dairy/services/cattle_service.dart';
 import 'package:digital_dairy/services/milk_log_service.dart';
+import 'package:digital_dairy/services/sales_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -42,9 +44,16 @@ Future<void> initDi() async {
 ///
 void initService() {
   serviceLocator
-    ..registerFactory(() => AuthService(serviceLocator<SupabaseClient>()))
-    ..registerFactory(() => CattleService(serviceLocator<SupabaseClient>()))
-    ..registerFactory(() => MilkLogService(serviceLocator<SupabaseClient>()));
+    ..registerLazySingleton(() => AuthService(serviceLocator<SupabaseClient>()))
+    ..registerLazySingleton(
+      () => CattleService(serviceLocator<SupabaseClient>()),
+    )
+    ..registerLazySingleton(
+      () => MilkLogService(serviceLocator<SupabaseClient>()),
+    )
+    ..registerLazySingleton(
+      () => SalesService(serviceLocator<SupabaseClient>()),
+    );
 }
 
 ///
@@ -52,6 +61,13 @@ void initCubits() {
   serviceLocator
     ..registerLazySingleton<LocaleBloc>(LocaleBloc.new)
     ..registerFactory<AuthCubit>(() => AuthCubit(serviceLocator<AuthService>()))
-    ..registerFactory(() => CattleCubit(serviceLocator<CattleService>()))
-    ..registerFactory(() => MilkCubit(serviceLocator<MilkLogService>()));
+    ..registerFactory<CattleCubit>(
+      () => CattleCubit(serviceLocator<CattleService>()),
+    )
+    ..registerFactory<MilkCubit>(
+      () => MilkCubit(serviceLocator<MilkLogService>()),
+    )
+    ..registerFactory<SalesCubit>(
+      () => SalesCubit(serviceLocator<SalesService>()),
+    );
 }

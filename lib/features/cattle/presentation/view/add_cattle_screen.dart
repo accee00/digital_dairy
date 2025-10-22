@@ -114,13 +114,14 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                 leading: IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(
+                    size: 25,
                     Icons.arrow_back_ios,
                     color: colorScheme.onSurface,
                   ),
                 ),
                 title: Text(
                   'Add Cattle',
-                  style: context.textTheme.headlineSmall?.copyWith(
+                  style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
@@ -434,7 +435,11 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
 
   Widget _buildActionButtons(BuildContext context) => Column(
     children: <Widget>[
-      SaveElevatedButton(label: 'Save Cattle', onTap: _saveCattle),
+      SaveElevatedButton(
+        key: UniqueKey(),
+        label: 'Save Cattle',
+        onTap: _saveCattle,
+      ),
       const SizedBox(height: 12),
     ],
   );

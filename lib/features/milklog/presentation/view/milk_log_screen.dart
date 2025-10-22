@@ -40,7 +40,7 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   void _onScroll() {
-    final isNowHidden = _scrollController.offset > 60;
+    final bool isNowHidden = _scrollController.offset > 60;
     if (isNowHidden != !_isHeaderVisible) {
       setState(() => _isHeaderVisible = !isNowHidden);
     }
@@ -108,6 +108,7 @@ class _MilkScreenState extends State<MilkScreen> {
         ),
       ),
       SliverAppBar(
+        shadowColor: context.colorScheme.secondary,
         pinned: true,
         floating: true,
         toolbarHeight: _isHeaderVisible
@@ -115,6 +116,7 @@ class _MilkScreenState extends State<MilkScreen> {
             : kToolbarHeight * 2,
         backgroundColor: Colors.transparent,
         flexibleSpace: SafeArea(
+          minimum: const EdgeInsets.symmetric(horizontal: 16),
           top: !_isHeaderVisible,
           bottom: false,
           child: _buildSearchAndFilters(context),
