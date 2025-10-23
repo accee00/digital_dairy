@@ -285,7 +285,7 @@ class _CattleScreenState extends State<CattleScreen> {
                   child: _buildInfoItem(
                     context,
                     'This Month',
-                    '10L',
+                    '${cattle.thisMonthL}L',
                     Icons.water_drop,
                   ),
                 ),

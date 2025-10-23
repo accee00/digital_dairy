@@ -51,6 +51,7 @@ class Cattle extends Equatable {
     updatedAt: map['updated_at'] != null
         ? DateTime.parse(map['updated_at'] as String)
         : null,
+    thisMonthL: map['this_month_l']?.toString() ?? '00',
   );
 
   /// The unique identifier for the cattle (optional).
@@ -95,7 +96,22 @@ class Cattle extends Equatable {
   ///
   final String? thisMonthL;
   @override
-  List<Object?> get props => <Object?>[tagId, id];
+  List<Object?> get props => <Object?>[
+    userId,
+    name,
+    tagId,
+    breed,
+    gender,
+    status,
+    notes,
+    imageUrl,
+    dob,
+    calvingDate,
+    id,
+    createdAt,
+    thisMonthL,
+    updatedAt,
+  ];
 
   /// Creates a copy of the current [Cattle] instance with the option to
   /// override specific fields.
@@ -167,25 +183,4 @@ class Cattle extends Equatable {
     'notes': notes,
     'updated_at': createdAt?.toIso8601String(),
   };
-
-  @override
-  String toString() =>
-      'Cattle('
-      'id: $id, '
-      'userId: $userId, '
-      'name: $name, '
-      'tagId: $tagId, '
-      'imageUrl: $imageUrl, '
-      'breed: $breed, '
-      'gender: $gender, '
-      'dob: $dob, '
-      'calvingDate: $calvingDate, '
-      'status: $status, '
-      'notes: $notes, '
-      'createdAt: $createdAt, '
-      'updatedAt: $updatedAt'
-      ')';
-
-  @override
-  bool get stringify => true;
 }
