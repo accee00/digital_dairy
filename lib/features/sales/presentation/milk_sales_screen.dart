@@ -1,6 +1,7 @@
 import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/sales/presentation/add_buyer_screen.dart';
+import 'package:digital_dairy/features/sales/presentation/add_sales_screen.dart';
 import 'package:flutter/material.dart';
 
 class MilkSalesScreen extends StatefulWidget {
@@ -71,8 +72,9 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
             MaterialPageRoute(builder: (_) => const AddBuyerScreen()),
           );
         } else if (value == 'sales') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Navigate to Add Sales Screen')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddMilkSaleScreen()),
           );
         }
       },

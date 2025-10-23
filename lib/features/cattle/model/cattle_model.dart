@@ -24,6 +24,7 @@ class Cattle extends Equatable {
     this.calvingDate,
     this.id,
     this.createdAt,
+    this.thisMonthL,
     this.updatedAt,
   });
 
@@ -91,6 +92,8 @@ class Cattle extends Equatable {
   /// The timestamp when the cattle record was last updated (optional).
   final DateTime? updatedAt;
 
+  ///
+  final String? thisMonthL;
   @override
   List<Object?> get props => <Object?>[tagId, id];
 
@@ -110,6 +113,7 @@ class Cattle extends Equatable {
     DateTime? calvingDate,
     String? status,
     String? notes,
+    String? thisMonthL,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Cattle(
@@ -124,6 +128,7 @@ class Cattle extends Equatable {
     calvingDate: calvingDate ?? this.calvingDate,
     status: status ?? this.status,
     notes: notes ?? this.notes,
+    thisMonthL: thisMonthL ?? this.thisMonthL,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );

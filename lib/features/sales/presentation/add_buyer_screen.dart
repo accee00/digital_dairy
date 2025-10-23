@@ -21,10 +21,17 @@ class AddBuyerScreen extends StatefulWidget {
 
 class _AddBuyerScreenState extends State<AddBuyerScreen> {
   bool isEdit = false;
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _contactController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => BlocListener<SalesCubit, SalesState>(

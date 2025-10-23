@@ -4,13 +4,13 @@ import 'package:equatable/equatable.dart';
 class MilkSale extends Equatable {
   /// Constructs a constant MilkSale instance.
   const MilkSale({
-    required this.id,
-    required this.userId,
     required this.buyerId,
     required this.date,
     required this.quantityLitres,
     required this.pricePerLitre,
     required this.createdAt,
+    this.id,
+    this.userId,
     this.totalAmount,
     this.notes,
   });
@@ -31,10 +31,10 @@ class MilkSale extends Equatable {
   );
 
   /// Unique identifier for the milk sale.
-  final String id;
+  final String? id;
 
   /// User ID of the seller.
-  final String userId;
+  final String? userId;
 
   /// Buyer ID of the purchaser.
   final String buyerId;
@@ -68,7 +68,7 @@ class MilkSale extends Equatable {
     'total_amount': totalAmount,
     'notes': notes,
     'created_at': createdAt.toIso8601String(),
-  };
+  }..removeWhere((String key, dynamic value) => value == null);
 
   /// Returns a new MilkSale instance replacing any provided optional values.
   MilkSale copyWith({

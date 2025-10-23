@@ -29,7 +29,7 @@ class MilkLogService {
   }
 
   ///
-  Future<Either<Failure, bool>> editMilkEntry(MilkModel model) async {
+  Future<Either<Failure, bool>> updateMilkEntry(MilkModel model) async {
     try {
       final PostgrestList response = await _client
           .from('milk_entries')
