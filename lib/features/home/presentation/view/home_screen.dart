@@ -545,10 +545,10 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: <Widget>[
               Text(
                 'Recent Activity',
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -557,6 +557,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               TextButton(
+                key: UniqueKey(),
                 onPressed: () {},
                 child: Text(
                   'View All',

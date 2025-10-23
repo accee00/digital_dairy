@@ -3,7 +3,6 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 /// A StatefulWidget for displaying detailed information about a cattle.
@@ -83,9 +82,6 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
   );
 
   Widget _buildAppBar(BuildContext context) => SliverAppBar(
-    systemOverlayStyle: const SystemUiOverlayStyle(
-      statusBarBrightness: Brightness.light,
-    ),
     backgroundColor: Colors.transparent,
     elevation: 0,
     title: const Text('Cattle Deatils'),

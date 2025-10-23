@@ -25,9 +25,10 @@ class MilkSuccess extends MilkState {
 }
 
 class MilkFailure extends MilkState {
-  const MilkFailure(this.message, {required super.milkLogList});
+  MilkFailure(this.message, {required super.milkLogList})
+    : dateTime = DateTime.now().microsecondsSinceEpoch;
   final String message;
-
+  final int dateTime;
   @override
-  List<Object> get props => <Object>[message, milkLogList];
+  List<Object> get props => <Object>[message, milkLogList, dateTime];
 }

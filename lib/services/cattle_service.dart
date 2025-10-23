@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:digital_dairy/core/exceptions/failure.dart';
+import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -57,14 +58,17 @@ class CattleService {
   ///
   Future<Either<Failure, List<Cattle>>> getAllCattle() async {
     try {
-      final PostgrestList response = await _client
-          .from('cattle')
-          .select()
-          .eq('user_id', _userId);
+      final List<Map<String, dynamic>> response = await _client
+          .rpc<List<Map<String, dynamic>>>(
+            'get_cattle_with_monthly_milk',
+            params: <String, dynamic>{'p_user_id': _userId},
+          );
 
       final List<Cattle> data = response.map(Cattle.fromMap).toList();
+      logInfo(data);
       return right(data);
     } on PostgrestException catch (e) {
+      logInfo('Get cattle failure:$e');
       return left(Failure(e.message));
     }
   }

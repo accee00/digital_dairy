@@ -4,40 +4,40 @@ import 'package:equatable/equatable.dart';
 class Buyer extends Equatable {
   /// Constructs a constant `Buyer` object.
   const Buyer({
-    required this.id,
-    required this.userId,
     required this.name,
     required this.createdAt,
-    this.contact,
-    this.address,
+    required this.contact,
+    required this.address,
+    this.id,
+    this.userId,
   });
 
   /// Constructs a `Buyer` object from a JSON map.
   ///
   /// Requires a [json] map with keys corresponding to the properties of the `Buyer`.
   factory Buyer.fromJson(Map<String, dynamic> json) => Buyer(
-    id: json['id'] as String,
-    userId: json['user_id'] as String,
-    name: json['name'] as String,
-    contact: json['contact'] as String?,
-    address: json['address'] as String?,
+    id: json['id'].toString(),
+    userId: json['user_id']?.toString() ?? '',
+    name: json['name'].toString(),
+    contact: json['contact']?.toString() ?? '',
+    address: json['address']?.toString() ?? '',
     createdAt: DateTime.parse(json['created_at'] as String),
   );
 
   /// Unique identifier for the buyer.
-  final String id;
+  final String? id;
 
   /// User identifier associated with the buyer.
-  final String userId;
+  final String? userId;
 
   /// Name of the buyer.
   final String name;
 
   /// Contact information of the buyer, nullable.
-  final String? contact;
+  final String contact;
 
   /// Address of the buyer, nullable.
-  final String? address;
+  final String address;
 
   /// Creation date and time of the buyer record.
   final DateTime createdAt;
@@ -52,7 +52,7 @@ class Buyer extends Equatable {
     'contact': contact,
     'address': address,
     'created_at': createdAt.toIso8601String(),
-  };
+  }..removeWhere((String key, dynamic value) => value == null);
 
   /// Creates a copy of this `Buyer` object but with overridden properties from optional parameters.
   ///

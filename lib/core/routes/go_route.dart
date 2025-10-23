@@ -7,6 +7,8 @@ import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
 import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
+import 'package:digital_dairy/features/sales/presentation/add_buyer_screen.dart';
+import 'package:digital_dairy/features/sales/presentation/add_sales_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -85,6 +87,18 @@ class AppRouteConfig {
           final MilkModel milkModel = state.extra! as MilkModel;
           return AddMilkScreen(milkModel: milkModel);
         },
+      ),
+      GoRoute(
+        name: AppRoutes.addBuyer,
+        path: AppRoutes.addBuyer,
+        builder: (BuildContext context, GoRouterState state) =>
+            const AddBuyerScreen(),
+      ),
+      GoRoute(
+        name: AppRoutes.addSales,
+        path: AppRoutes.addSales,
+        builder: (BuildContext context, GoRouterState state) =>
+            const AddMilkSaleScreen(),
       ),
     ],
   );

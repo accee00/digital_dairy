@@ -8,13 +8,15 @@ import 'package:fpdart/fpdart.dart';
 part 'milk_state.dart';
 
 class MilkCubit extends Cubit<MilkState> {
+  ///
+  MilkCubit(this._milkLogService) : super(const MilkInitial());
+
   final MilkLogService _milkLogService;
   int _page = 0;
   final int _limit = 10;
   bool _hasMore = true;
 
-  MilkCubit(this._milkLogService) : super(MilkInitial());
-
+  ///
   Future<void> getMilkLog({bool refresh = false}) async {
     if (state is MilkLoading) {
       return;
@@ -86,9 +88,8 @@ class MilkCubit extends Cubit<MilkState> {
   Future<void> editMilk(MilkModel milk) async {
     final List<MilkModel> currentData = state.milkLogList;
 
-    final Either<Failure, bool> response = await _milkLogService.editMilkEntry(
-      milk,
-    );
+    final Either<Failure, bool> response = await _milkLogService
+        .updateMilkEntry(milk);
 
     response.fold(
       (Failure failure) {

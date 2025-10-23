@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
@@ -50,14 +48,14 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     super.initState();
     if (isEdit) {
       _editMilkModel = widget.milkModel!;
-
       _selectedCattleId = _editMilkModel.cattleId;
       _selectedDate = _editMilkModel.date;
       _selectedShift = _editMilkModel.shift;
       _quantityController.text = _editMilkModel.quantityInLiter.toString();
       _notesController.text = _editMilkModel.notes;
+    } else {
+      _selectedDate = DateTime.now();
     }
-    _selectedDate = DateTime.now();
   }
 
   @override
@@ -105,11 +103,15 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                 centerTitle: true,
                 leading: IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: colorScheme.onSurface,
+                    size: 25,
+                  ),
                 ),
                 title: Text(
                   isEdit ? 'Edit Milk Entry' : 'Add Milk Entry',
-                  style: context.textTheme.headlineSmall?.copyWith(
+                  style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
@@ -166,7 +168,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
         child: Text(
           title.substring(0, 1),
           style: TextStyle(
-            color: context.colorScheme.onPrimaryContainer,
+            color: context.colorScheme.secondary,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -249,6 +251,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             const SizedBox(width: 16),
             Expanded(
               child: CustomTextField(
+                height: 52,
                 labelText: 'Quantity (Litres) *',
                 controller: _quantityController,
                 hintText: 'Enter quantity',
@@ -318,6 +321,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
         ),
         const SizedBox(height: 12),
         Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: context.colorScheme.surfaceContainerHighest.withAlpha(100),
@@ -483,6 +487,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
   Widget _buildActionButtons(BuildContext context) => Column(
     children: <Widget>[
       SaveElevatedButton(
+        key: UniqueKey(),
         label: isEdit ? 'Update Milk Entry' : 'Save Milk Entry',
         onTap: _saveMilkEntry,
       ),
@@ -512,7 +517,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     return '';
   }
 
-  Future<void> _saveMilkEntry() async {
+  void _saveMilkEntry() {
     // if (!_formKey.currentState!.validate()) {
     //   return;
     // }
@@ -525,12 +530,19 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       );
       return;
     }
-
+    if (_quantityController.text.trim().isEmpty) {
+      showAppSnackbar(
+        context,
+        message: 'Please enter quantity of milk.',
+        type: SnackbarType.error,
+      );
+      return;
+    }
     showLoading(context);
 
     final MilkModel newMilkEntry = MilkModel(
-      id: _editMilkModel.id,
-      userId: _editMilkModel.userId,
+      id: isEdit ? _editMilkModel.id : null,
+      userId: isEdit ? _editMilkModel.userId : null,
       cattleId: _selectedCattleId!,
       date: isEdit ? _editMilkModel.date : _selectedDate!,
       shift: _selectedShift,
@@ -539,7 +551,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       quantityInLiter: double.parse(_quantityController.text.trim()),
     );
     isEdit
-        ? unawaited(context.read<MilkCubit>().editMilk(newMilkEntry))
-        : unawaited(context.read<MilkCubit>().addMilkLog(newMilkEntry));
+        ? context.read<MilkCubit>().editMilk(newMilkEntry)
+        : context.read<MilkCubit>().addMilkLog(newMilkEntry);
   }
 }

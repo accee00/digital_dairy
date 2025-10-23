@@ -26,4 +26,10 @@ class AppRoutes {
 
   ///
   static const String editMilk = '/edit-milk';
+
+  ///
+  static const String addBuyer = '/add-buyer';
+
+  ///
+  static const String addSales = '/add-sales';
 }

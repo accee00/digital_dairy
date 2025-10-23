@@ -29,7 +29,7 @@ class MilkLogService {
   }
 
   ///
-  Future<Either<Failure, bool>> editMilkEntry(MilkModel model) async {
+  Future<Either<Failure, bool>> updateMilkEntry(MilkModel model) async {
     try {
       final PostgrestList response = await _client
           .from('milk_entries')
@@ -63,6 +63,7 @@ class MilkLogService {
       final List<MilkModel> milkLogList = response
           .map(MilkModel.fromMap)
           .toList();
+      logInfo(milkLogList.length);
       return right(milkLogList);
     } on PostgrestException catch (e) {
       return left(Failure(e.message));
