@@ -1,8 +1,9 @@
-import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/core/routes/app_routes.dart';
+
 import 'package:digital_dairy/core/widget/header_for_add.dart';
-import 'package:digital_dairy/features/sales/presentation/add_buyer_screen.dart';
-import 'package:digital_dairy/features/sales/presentation/add_sales_screen.dart';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MilkSalesScreen extends StatefulWidget {
   const MilkSalesScreen({super.key});
@@ -67,15 +68,15 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
         );
 
         if (value == 'buyer') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddBuyerScreen()),
-          );
+          if (!context.mounted) {
+            return;
+          }
+          await context.pushNamed(AppRoutes.addBuyer);
         } else if (value == 'sales') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddMilkSaleScreen()),
-          );
+          if (!context.mounted) {
+            return;
+          }
+          await context.pushNamed(AppRoutes.addSales);
         }
       },
     ),
