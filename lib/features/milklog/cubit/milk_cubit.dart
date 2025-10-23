@@ -16,6 +16,7 @@ class MilkCubit extends Cubit<MilkState> {
   final int _limit = 10;
   bool _hasMore = true;
 
+  ///
   Future<void> getMilkLog({bool refresh = false}) async {
     if (state is MilkLoading) {
       return;

@@ -44,6 +44,16 @@ class _MilkScreenState extends State<MilkScreen> {
     if (isNowHidden != !_isHeaderVisible) {
       setState(() => _isHeaderVisible = !isNowHidden);
     }
+
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final MilkCubit milkCubit = context.read<MilkCubit>();
+      final MilkState currentState = milkCubit.state;
+
+      if (currentState is MilkSuccess && currentState.hasMore) {
+        milkCubit.getMilkLog();
+      }
+    }
   }
 
   List<MilkModel> get _filteredMilkEntries {
@@ -92,40 +102,50 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => CustomScrollView(
-    controller: _scrollController,
-    slivers: <Widget>[
-      SliverAppBar(
-        toolbarHeight: 80,
-        backgroundColor: Colors.transparent,
-        title: HeaderForAdd(
-          padding: EdgeInsets.zero,
-          title: 'Milk Log',
-          subTitle: '',
-          onTap: () {
-            context.push(AppRoutes.addMilk);
-          },
-        ),
-      ),
-      SliverAppBar(
-        shadowColor: context.colorScheme.secondary,
-        pinned: true,
-        floating: true,
-        toolbarHeight: _isHeaderVisible
-            ? MediaQuery.sizeOf(context).height / 23
-            : kToolbarHeight * 2,
-        backgroundColor: Colors.transparent,
-        flexibleSpace: SafeArea(
-          minimum: const EdgeInsets.symmetric(horizontal: 16),
-          top: !_isHeaderVisible,
-          bottom: false,
-          child: _buildSearchAndFilters(context),
-        ),
-      ),
+  Widget build(BuildContext context) => BlocBuilder<MilkCubit, MilkState>(
+    buildWhen: (MilkState previous, MilkState current) =>
+        previous.runtimeType != current.runtimeType,
+    builder: (BuildContext context, MilkState state) {
+      if (state is MilkLoading && state.milkLogList.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (state is MilkFailure && state.milkLogList.isEmpty) {
+        return Center(child: Text(state.message));
+      }
 
-      // SliverToBoxAdapter(child: _buildSearchAndFilters(context)),
-      _buildMilkEntriesList(context),
-    ],
+      return CustomScrollView(
+        controller: _scrollController,
+        slivers: <Widget>[
+          SliverAppBar(
+            toolbarHeight: 80,
+            backgroundColor: Colors.transparent,
+            title: HeaderForAdd(
+              padding: EdgeInsets.zero,
+              title: 'Milk Log',
+              subTitle: '',
+              onTap: () {
+                context.push(AppRoutes.addMilk);
+              },
+            ),
+          ),
+          SliverAppBar(
+            shadowColor: context.colorScheme.secondary,
+            pinned: true,
+            floating: true,
+            toolbarHeight: _isHeaderVisible
+                ? MediaQuery.sizeOf(context).height / 23
+                : kToolbarHeight * 2,
+            backgroundColor: Colors.transparent,
+            flexibleSpace: SafeArea(
+              minimum: const EdgeInsets.symmetric(horizontal: 16),
+              top: !_isHeaderVisible,
+              bottom: false,
+              child: _buildSearchAndFilters(context),
+            ),
+          ),
+          _buildMilkEntriesList(context),
+        ],
+      );
+    },
   );
   Widget _buildSearchAndFilters(BuildContext context) => Column(
     children: <Widget>[
@@ -159,69 +179,67 @@ class _MilkScreenState extends State<MilkScreen> {
     ],
   );
 
-  Widget _buildMilkEntriesList(BuildContext context) =>
-      BlocBuilder<MilkCubit, MilkState>(
-        builder: (BuildContext context, MilkState state) {
-          if (state is MilkLoading) {
-            return const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
-            );
-          } else if (state is MilkFailure && state.milkLogList.isEmpty) {
-            return SliverFillRemaining(
-              child: Center(child: Text(state.message)),
-            );
-          } else if (_filteredMilkEntries.isEmpty) {
-            return SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.water_drop_outlined,
-                      size: 64,
-                      color: context.colorScheme.onSurface.withAlpha(100),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No milk entries found',
-                      style: context.textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Try adjusting your filters',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: context.colorScheme.onSurface.withAlpha(150),
-                      ),
-                    ),
-                  ],
+  Widget _buildMilkEntriesList(BuildContext context) {
+    if (_filteredMilkEntries.isEmpty) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.water_drop_outlined,
+                size: 64,
+                color: context.colorScheme.onSurface.withAlpha(100),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No milk entries found',
+                style: context.textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Try adjusting your filters',
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: context.colorScheme.onSurface.withAlpha(150),
                 ),
               ),
-            );
-          }
-
-          final List<MilkModel> entries = _filteredMilkEntries;
-
-          return SliverPadding(
-            padding: EdgeInsets.only(
-              top: 16,
-              left: 16,
-              right: 16,
-              bottom: MediaQuery.of(context).size.height * 0.2,
-            ),
-            sliver: SliverList.builder(
-              itemCount: entries.length + 1,
-              itemBuilder: (BuildContext context, int index) {
-                {
-                  if (index == 0) {
-                    return _buildSummaryRow(context);
-                  }
-                  return _buildMilkEntryCard(context, entries[index - 1]);
-                }
-              },
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       );
+    }
+
+    final List<MilkModel> entries = _filteredMilkEntries;
+    return SliverPadding(
+      padding: EdgeInsets.only(
+        top: 16,
+        left: 16,
+        right: 16,
+        bottom: MediaQuery.of(context).size.height * 0.2,
+      ),
+      sliver: SliverList.builder(
+        itemCount: entries.length + 2,
+        itemBuilder: (BuildContext context, int index) {
+          if (index == 0) {
+            return _buildSummaryRow(context);
+          }
+          if (index == entries.length + 1) {
+            final MilkState currentState = context.read<MilkCubit>().state;
+            if (currentState is MilkSuccess && currentState.hasMore) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          }
+          return _buildMilkEntryCard(context, entries[index - 1]);
+        },
+      ),
+    );
+  }
+
   Widget _buildSummaryRow(BuildContext context) {
     final double totalMilk = _filteredMilkEntries.fold(
       0.0,

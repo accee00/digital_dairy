@@ -31,4 +31,21 @@ class SalesService {
       return left(Failure(e.message));
     }
   }
+
+  ///
+  Future<Either<Failure, List<Buyer>>> getBuyers() async {
+    try {
+      final PostgrestList response = await _client
+          .from('buyers')
+          .select()
+          .eq('user_id', _userId);
+
+      final List<Buyer> buyers = response.map(Buyer.fromJson).toList();
+      logInfo('List of buyers$buyers');
+      return right(buyers);
+    } on PostgrestException catch (e) {
+      logInfo(e.toJson());
+      return left(Failure(e.message));
+    }
+  }
 }

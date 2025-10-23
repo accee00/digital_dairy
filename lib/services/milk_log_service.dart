@@ -63,6 +63,7 @@ class MilkLogService {
       final List<MilkModel> milkLogList = response
           .map(MilkModel.fromMap)
           .toList();
+      logInfo(milkLogList.length);
       return right(milkLogList);
     } on PostgrestException catch (e) {
       return left(Failure(e.message));

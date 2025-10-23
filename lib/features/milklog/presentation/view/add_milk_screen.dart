@@ -53,8 +53,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       _selectedShift = _editMilkModel.shift;
       _quantityController.text = _editMilkModel.quantityInLiter.toString();
       _notesController.text = _editMilkModel.notes;
+    } else {
+      _selectedDate = DateTime.now();
     }
-    _selectedDate = DateTime.now();
   }
 
   @override
@@ -529,7 +530,14 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       );
       return;
     }
-
+    if (_quantityController.text.trim().isEmpty) {
+      showAppSnackbar(
+        context,
+        message: 'Please enter quantity of milk.',
+        type: SnackbarType.error,
+      );
+      return;
+    }
     showLoading(context);
 
     final MilkModel newMilkEntry = MilkModel(

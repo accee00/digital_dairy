@@ -19,25 +19,51 @@ class SalesCubit extends Cubit<SalesState> {
   ///
   Future<void> addBuyer(Buyer buyer) async {
     final List<MilkSale> milkSales = state.milkSales;
+    final List<Buyer> buyers = state.buyers;
 
     final Either<Failure, bool> response = await _salesService.addBuyer(buyer);
 
     response.fold(
       (Failure failure) => emit(
-        BuyerAddedFailure(errorMsg: failure.message, milkSales: milkSales),
+        BuyerAddedFailure(
+          errorMsg: failure.message,
+          milkSales: milkSales,
+          buyers: buyers,
+        ),
       ),
       (bool success) {
-        if (success == true) {
-          emit(BuyerAddedSuccess(milkSales: milkSales));
+        if (success) {
+          emit(BuyerAddedSuccess(milkSales: milkSales, buyers: buyers));
         } else {
           emit(
             BuyerAddedFailure(
-              errorMsg: 'Unexpected error occur.',
+              errorMsg: 'Unexpected error occurred.',
               milkSales: milkSales,
+              buyers: buyers,
             ),
           );
         }
       },
+    );
+  }
+
+  ///
+  Future<void> getBuyers() async {
+    final List<MilkSale> milkSales = state.milkSales;
+
+    final Either<Failure, List<Buyer>> response = await _salesService
+        .getBuyers();
+
+    response.fold(
+      (Failure failure) => emit(
+        GetBuyerFailure(
+          errorMsg: failure.message,
+          milkSales: milkSales,
+          buyers: state.buyers,
+        ),
+      ),
+      (List<Buyer> buyers) =>
+          emit(GetBuyerSuccess(buyers: buyers, milkSales: milkSales)),
     );
   }
 }
