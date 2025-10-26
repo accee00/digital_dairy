@@ -53,7 +53,7 @@ class SalesCubit extends Cubit<SalesState> {
 
     final Either<Failure, List<Buyer>> response = await _salesService
         .getBuyers();
-
+    print(response);
     response.fold(
       (Failure failure) => emit(
         GetBuyerFailure(
