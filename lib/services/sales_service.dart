@@ -66,7 +66,8 @@ class SalesService {
       final PostgrestList response = await _client
           .from('buyers')
           .select()
-          .eq('user_id', _userId);
+          .eq('user_id', _userId)
+          .order('created_at');
 
       final List<Buyer> buyers = response.map(Buyer.fromJson).toList();
       logInfo('Get buyers success: $buyers');
@@ -126,16 +127,27 @@ class SalesService {
   ///
   Future<Either<Failure, List<MilkSale>>> getSales(
     String buyerId,
-    DateTime startDate,
-    DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
   ) async {
     try {
+      if (startDate != null && endDate != null) {
+        final PostgrestList response = await _client
+            .from('milk_sales')
+            .select()
+            .eq('buyer_id', buyerId)
+            .gte('created_at', startDate.toIso8601String())
+            .lte('created_at', endDate.toIso8601String())
+            .order('created_at', ascending: false);
+
+        final List<MilkSale> sales = response.map(MilkSale.fromJson).toList();
+
+        return right(sales);
+      }
       final PostgrestList response = await _client
           .from('milk_sales')
           .select()
           .eq('buyer_id', buyerId)
-          .gte('created_at', startDate.toIso8601String())
-          .lte('created_at', endDate.toIso8601String())
           .order('created_at', ascending: false);
 
       final List<MilkSale> sales = response.map(MilkSale.fromJson).toList();

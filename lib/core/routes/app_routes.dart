@@ -32,4 +32,10 @@ class AppRoutes {
 
   ///
   static const String addSales = '/add-sales';
+
+  ///
+  static const String editSales = '/edit-sales';
+
+  ///
+  static const String buyerSales = '/buyer-sales';
 }

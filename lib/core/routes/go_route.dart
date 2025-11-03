@@ -1,19 +1,19 @@
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/features/auth/presentation/view/forgot_password.dart';
+import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
+import 'package:digital_dairy/features/auth/presentation/view/sign_up.dart';
+import 'package:digital_dairy/features/auth/presentation/view/splash_screen.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_screen.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
-import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
 import 'package:digital_dairy/features/sales/presentation/add_buyer_screen.dart';
 import 'package:digital_dairy/features/sales/presentation/add_sales_screen.dart';
+import 'package:digital_dairy/features/sales/presentation/buyer_sales_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:digital_dairy/features/auth/presentation/view/splash_screen.dart';
-import 'package:digital_dairy/features/auth/presentation/view/sign_up.dart';
 
 ///
 class AppRouteConfig {
@@ -97,8 +97,23 @@ class AppRouteConfig {
       GoRoute(
         name: AppRoutes.addSales,
         path: AppRoutes.addSales,
-        builder: (BuildContext context, GoRouterState state) =>
-            const AddMilkSaleScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic>? buyerData =
+              state.extra as Map<String, dynamic>?;
+          return AddMilkSaleScreen(buyer: buyerData);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.buyerSales,
+        name: AppRoutes.buyerSales,
+        builder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic> extra =
+              state.extra! as Map<String, dynamic>;
+          final String buyerId = extra['buyerId'] as String;
+          final String buyerName = extra['buyerName'] as String;
+
+          return BuyerSalesScreen(buyerId: buyerId, buyerName: buyerName);
+        },
       ),
     ],
   );

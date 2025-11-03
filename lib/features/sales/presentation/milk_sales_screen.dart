@@ -32,10 +32,12 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
   }
 
   List<Buyer> _filterBuyers(List<Buyer> buyers) {
-    if (_searchQuery.isEmpty) return buyers;
+    if (_searchQuery.isEmpty) {
+      return buyers;
+    }
 
-    return buyers.where((buyer) {
-      final query = _searchQuery.toLowerCase();
+    return buyers.where((Buyer buyer) {
+      final String query = _searchQuery.toLowerCase();
       return buyer.name.toLowerCase().contains(query) ||
           buyer.contact.toLowerCase().contains(query) ||
           buyer.address.toLowerCase().contains(query);
@@ -44,8 +46,8 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return CustomScrollView(
       controller: _scrollController,
@@ -59,7 +61,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
               hintText: 'Search buyers...',
               leading: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
               trailing: _searchQuery.isNotEmpty
-                  ? [
+                  ? <Widget>[
                       IconButton(
                         icon: const Icon(Icons.clear),
                         onPressed: () {
@@ -71,25 +73,25 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
                       ),
                     ]
                   : null,
-              onChanged: (value) {
+              onChanged: (String value) {
                 setState(() {
                   _searchQuery = value;
                 });
               },
-              elevation: const WidgetStatePropertyAll(0),
-              backgroundColor: WidgetStatePropertyAll(
+              elevation: const WidgetStatePropertyAll<double>(0),
+              backgroundColor: WidgetStatePropertyAll<Color>(
                 colorScheme.surfaceContainerHighest,
               ),
-              shape: WidgetStatePropertyAll(
+              shape: WidgetStatePropertyAll<OutlinedBorder>(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
         ),
         BlocBuilder<SalesCubit, SalesState>(
-          builder: (context, state) {
-            final buyerData = state.buyers;
-            final filteredBuyers = _filterBuyers(buyerData);
+          builder: (BuildContext context, SalesState state) {
+            final List<Buyer> buyerData = state.buyers;
+            final List<Buyer> filteredBuyers = _filterBuyers(buyerData);
 
             if (buyerData.isEmpty) {
               return SliverFillRemaining(child: _buildEmptyState(context));
@@ -103,10 +105,10 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverList.separated(
                 itemCount: filteredBuyers.length,
-                separatorBuilder: (context, index) =>
+                separatorBuilder: (BuildContext context, int index) =>
                     const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final buyer = filteredBuyers[index];
+                itemBuilder: (BuildContext context, int index) {
+                  final Buyer buyer = filteredBuyers[index];
                   return _BuyerCard(
                     key: ValueKey<String>(buyer.id!),
                     buyer: buyer,
@@ -126,8 +128,8 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Center(
       child: Padding(
@@ -182,8 +184,8 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
   }
 
   Widget _buildNoSearchResults(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Center(
       child: Padding(
@@ -265,10 +267,14 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
         );
 
         if (value == 'buyer') {
-          if (!context.mounted) return;
+          if (!context.mounted) {
+            return;
+          }
           await context.pushNamed(AppRoutes.addBuyer);
         } else if (value == 'sales') {
-          if (!context.mounted) return;
+          if (!context.mounted) {
+            return;
+          }
           await context.pushNamed(AppRoutes.addSales);
         }
       },
@@ -283,8 +289,8 @@ class _BuyerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -296,7 +302,13 @@ class _BuyerCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // Handle buyer tap - navigate to details or edit
+          context.push(
+            AppRoutes.buyerSales,
+            extra: <String, String?>{
+              'buyerId': buyer.id,
+              'buyerName': buyer.name,
+            },
+          );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,29 +361,30 @@ class _BuyerCard extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            itemBuilder: (context) => [
-                              const PopupMenuItem<String>(
-                                value: 'edit',
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(Icons.edit_outlined, size: 18),
-                                    SizedBox(width: 12),
-                                    Text('Edit'),
-                                  ],
-                                ),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: 'delete',
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(Icons.delete_outline, size: 18),
-                                    SizedBox(width: 12),
-                                    Text('Delete'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            onSelected: (value) {
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
+                                  const PopupMenuItem<String>(
+                                    value: 'edit',
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(Icons.edit_outlined, size: 18),
+                                        SizedBox(width: 12),
+                                        Text('Edit'),
+                                      ],
+                                    ),
+                                  ),
+                                  const PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(Icons.delete_outline, size: 18),
+                                        SizedBox(width: 12),
+                                        Text('Delete'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                            onSelected: (String value) {
                               // Handle menu actions
                             },
                           ),
@@ -389,7 +402,7 @@ class _BuyerCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (buyer.address.isNotEmpty) ...[
+            if (buyer.address.isNotEmpty) ...<Widget>[
               const SizedBox(height: 12),
               _buildInfoItem(
                 context,
@@ -412,7 +425,13 @@ class _BuyerCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 FilledButton.tonalIcon(
                   onPressed: () {
-                    // Navigate to add sales for this buyer
+                    context.push(
+                      AppRoutes.addSales,
+                      extra: <String, String?>{
+                        'id': buyer.id,
+                        'name': buyer.name,
+                      },
+                    );
                   },
                   icon: const Icon(Icons.add_shopping_cart, size: 18),
                   label: const Text('Add Sale'),
