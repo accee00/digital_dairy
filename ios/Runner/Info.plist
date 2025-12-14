@@ -29,6 +29,8 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to save PDF files</string>
+	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need photo library access to select images</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
