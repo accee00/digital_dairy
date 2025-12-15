@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/sales/model/milk_sales_model.dart';
@@ -10,9 +9,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 
-///
 class SalesPdfService {
-  /// Generate PDF from sales data and save locally
   Future<File?> generateAndSaveSalesPdf({
     required List<MilkSale> sales,
     required String buyerName,
@@ -20,12 +17,10 @@ class SalesPdfService {
     required DateTime selectedMonth,
   }) async {
     try {
-      // Request storage permission
       if (!await _requestStoragePermission()) {
         throw Exception('Storage permission denied');
       }
 
-      // Generate PDF
       final pw.Document pdf = await _generateSalesPdf(
         sales: sales,
         buyerName: buyerName,
@@ -33,9 +28,7 @@ class SalesPdfService {
         selectedMonth: selectedMonth,
       );
 
-      // Save PDF locally
       final File file = await _savePdfToDevice(pdf, buyerName, selectedMonth);
-
       return file;
     } catch (e) {
       logInfo('Error generating PDF: $e');
@@ -43,7 +36,6 @@ class SalesPdfService {
     }
   }
 
-  /// Generate PDF document
   Future<pw.Document> _generateSalesPdf({
     required List<MilkSale> sales,
     required String buyerName,
@@ -52,7 +44,6 @@ class SalesPdfService {
   }) async {
     final pw.Document pdf = pw.Document();
 
-    // Calculate totals
     final double totalQuantity = sales.fold(
       0,
       (double sum, MilkSale sale) => sum + sale.quantityLitres,
@@ -66,21 +57,13 @@ class SalesPdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
-        build: (pw.Context context) => <pw.Widget>[
-          // Header
+        build: (pw.Context context) => [
           _buildHeader(buyerName, buyerId, selectedMonth),
           pw.SizedBox(height: 20),
-
-          // Summary Section
           _buildSummary(totalQuantity, totalAmount),
           pw.SizedBox(height: 24),
-
-          // Sales Table
           _buildSalesTable(sales),
-
           pw.SizedBox(height: 30),
-
-          // Footer
           _buildFooter(),
         ],
       ),
@@ -89,17 +72,16 @@ class SalesPdfService {
     return pdf;
   }
 
-  /// Build PDF header
   pw.Widget _buildHeader(String buyerName, String buyerId, DateTime month) =>
       pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: <pw.Widget>[
+        children: [
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            children: <pw.Widget>[
+            children: [
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: <pw.Widget>[
+                children: [
                   pw.Text(
                     'SALES REPORT',
                     style: pw.TextStyle(
@@ -120,7 +102,7 @@ class SalesPdfService {
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
-                children: <pw.Widget>[
+                children: [
                   pw.Text(
                     'Generated on',
                     style: const pw.TextStyle(
@@ -142,8 +124,6 @@ class SalesPdfService {
           pw.SizedBox(height: 16),
           pw.Divider(thickness: 2),
           pw.SizedBox(height: 16),
-
-          // Buyer Info
           pw.Container(
             padding: const pw.EdgeInsets.all(16),
             decoration: pw.BoxDecoration(
@@ -152,7 +132,7 @@ class SalesPdfService {
               border: pw.Border.all(color: PdfColors.blue200),
             ),
             child: pw.Row(
-              children: <pw.Widget>[
+              children: [
                 pw.Expanded(
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -190,9 +170,8 @@ class SalesPdfService {
         ],
       );
 
-  /// Build summary section
   pw.Widget _buildSummary(double totalQuantity, double totalAmount) => pw.Row(
-    children: <pw.Widget>[
+    children: [
       pw.Expanded(
         child: pw.Container(
           padding: const pw.EdgeInsets.all(16),
@@ -203,7 +182,7 @@ class SalesPdfService {
           ),
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: <pw.Widget>[
+            children: [
               pw.Text(
                 'Total Quantity',
                 style: const pw.TextStyle(
@@ -259,10 +238,9 @@ class SalesPdfService {
     ],
   );
 
-  /// Build sales table
   pw.Widget _buildSalesTable(List<MilkSale> sales) => pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
-    children: <pw.Widget>[
+    children: [
       pw.Text(
         'Transaction Details',
         style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
@@ -270,21 +248,19 @@ class SalesPdfService {
       pw.SizedBox(height: 12),
       pw.Table(
         border: pw.TableBorder.all(color: PdfColors.grey300),
-        children: <pw.TableRow>[
-          // Header
+        children: [
           pw.TableRow(
             decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-            children: <pw.Widget>[
+            children: [
               _buildTableCell('Date', isHeader: true),
               _buildTableCell('Quantity (L)', isHeader: true),
               _buildTableCell('Price/L', isHeader: true),
               _buildTableCell('Total Amount', isHeader: true),
             ],
           ),
-          // Data rows
           ...sales.map(
             (MilkSale sale) => pw.TableRow(
-              children: <pw.Widget>[
+              children: [
                 _buildTableCell(DateFormat('dd MMM yyyy').format(sale.date)),
                 _buildTableCell(sale.quantityLitres.toStringAsFixed(1)),
                 _buildTableCell('Rs. ${sale.pricePerLitre.toStringAsFixed(2)}'),
@@ -299,7 +275,6 @@ class SalesPdfService {
     ],
   );
 
-  /// Build table cell
   pw.Widget _buildTableCell(String text, {bool isHeader = false}) => pw.Padding(
     padding: const pw.EdgeInsets.all(8),
     child: pw.Text(
@@ -312,9 +287,8 @@ class SalesPdfService {
     ),
   );
 
-  /// Build footer
   pw.Widget _buildFooter() => pw.Column(
-    children: <pw.Widget>[
+    children: [
       pw.Divider(),
       pw.SizedBox(height: 8),
       pw.Text(
@@ -325,60 +299,47 @@ class SalesPdfService {
     ],
   );
 
-  /// Save PDF to device storage
   Future<File> _savePdfToDevice(
     pw.Document pdf,
     String buyerName,
     DateTime month,
   ) async {
-    // Get the appropriate directory based on platform
     Directory? directory;
-
     if (Platform.isAndroid) {
-      // For Android, save to Downloads folder
       directory = Directory('/storage/emulated/0/Download');
       if (!await directory.exists()) {
         directory = await getExternalStorageDirectory();
       }
     } else if (Platform.isIOS) {
-      // For iOS, save to app documents directory
       directory = await getApplicationDocumentsDirectory();
     } else {
-      // For other platforms
       directory = await getApplicationDocumentsDirectory();
     }
 
-    // Create filename
     final String fileName =
         'Sales_${buyerName.replaceAll(' ', '_')}_${DateFormat('MMM_yyyy').format(month)}.pdf';
     final String filePath = '${directory!.path}/$fileName';
 
-    // Save the PDF file
     final File file = File(filePath);
     await file.writeAsBytes(await pdf.save());
 
     return file;
   }
 
-  /// Request storage permission
   Future<bool> _requestStoragePermission() async {
     if (Platform.isAndroid) {
       final AndroidDeviceInfo androidInfo =
           await DeviceInfoPlugin().androidInfo;
-
       if (androidInfo.version.sdkInt >= 33) {
-        // Android 13+ doesn't need storage permission for Downloads
         return true;
       } else {
-        // Android 12 and below
         final PermissionStatus status = await Permission.storage.request();
         return status.isGranted;
       }
     }
-    return true; // iOS doesn't need permission for app documents
+    return true;
   }
 
-  /// Preview PDF before saving (optional)
   Future<void> previewPdf({
     required List<MilkSale> sales,
     required String buyerName,
@@ -397,7 +358,6 @@ class SalesPdfService {
     );
   }
 
-  /// Share PDF
   Future<void> sharePdf({
     required List<MilkSale> sales,
     required String buyerName,

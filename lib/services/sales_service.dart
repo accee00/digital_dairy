@@ -61,6 +61,30 @@ class SalesService {
   }
 
   ///
+  Future<Either<Failure, bool>> deleteBuyer(String buyerId) async {
+    try {
+      final PostgrestList response = await _client
+          .from('buyers')
+          .delete()
+          .eq('id', buyerId)
+          .eq('user_id', _userId)
+          .select();
+
+      logInfo('Delete buyer success: $response');
+      if (response.isNotEmpty) {
+        return right(true);
+      }
+      return right(false);
+    } on PostgrestException catch (e) {
+      logInfo('Delete buyer failure: ${e.toJson()}');
+      return left(Failure(e.message));
+    } catch (e) {
+      logInfo('Unexpected error: $e');
+      return left(Failure('An unexpected error occurred'));
+    }
+  }
+
+  ///
   Future<Either<Failure, List<Buyer>>> getBuyers() async {
     try {
       final PostgrestList response = await _client

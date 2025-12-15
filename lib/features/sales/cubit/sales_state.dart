@@ -23,6 +23,7 @@ class SalesLoading extends SalesState {
   List<Object> get props => <Object>[buyers];
 }
 
+// Buyer Add States
 class BuyerAddedSuccess extends SalesState {
   const BuyerAddedSuccess({super.buyers});
 
@@ -39,6 +40,41 @@ class BuyerAddedFailure extends SalesState {
   List<Object> get props => <Object>[buyers, errorMsg];
 }
 
+// Buyer Update States
+class BuyerUpdateSuccess extends SalesState {
+  const BuyerUpdateSuccess({super.buyers});
+
+  @override
+  List<Object> get props => <Object>[buyers];
+}
+
+class BuyerUpdateFailure extends SalesState {
+  const BuyerUpdateFailure({required this.errorMsg, super.buyers});
+
+  final String errorMsg;
+
+  @override
+  List<Object> get props => <Object>[buyers, errorMsg];
+}
+
+// Buyer Delete States
+class BuyerDeleteSuccess extends SalesState {
+  const BuyerDeleteSuccess({super.buyers});
+
+  @override
+  List<Object> get props => <Object>[buyers];
+}
+
+class BuyerDeleteFailure extends SalesState {
+  const BuyerDeleteFailure({required this.errorMsg, super.buyers});
+
+  final String errorMsg;
+
+  @override
+  List<Object> get props => <Object>[buyers, errorMsg];
+}
+
+// Get Buyer States
 class GetBuyerSuccess extends SalesState {
   const GetBuyerSuccess({super.buyers});
 
@@ -55,6 +91,7 @@ class GetBuyerFailure extends SalesState {
   List<Object> get props => <Object>[buyers, errorMsg];
 }
 
+// Sales Add States
 class SaleAddSuccess extends SalesState {
   const SaleAddSuccess({super.buyers});
 
@@ -71,6 +108,24 @@ class SalesAddFailure extends SalesState {
   List<Object> get props => <Object>[buyers, errorMsg];
 }
 
+// Sales Update States
+class SalesUpdateSuccess extends SalesState {
+  const SalesUpdateSuccess({super.buyers});
+
+  @override
+  List<Object> get props => <Object>[buyers];
+}
+
+class SalesUpdateFailure extends SalesState {
+  const SalesUpdateFailure({required this.errorMsg, super.buyers});
+
+  final String errorMsg;
+
+  @override
+  List<Object> get props => <Object>[buyers, errorMsg];
+}
+
+// Get Sales States
 class GetSalesSuccessState extends SalesState {
   GetSalesSuccessState(this.sales, {super.buyers});
   final List<MilkSale> sales;

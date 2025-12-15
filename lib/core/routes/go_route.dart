@@ -9,6 +9,7 @@ import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_sc
 import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
+import 'package:digital_dairy/features/sales/model/buyer_model.dart';
 import 'package:digital_dairy/features/sales/presentation/add_buyer_screen.dart';
 import 'package:digital_dairy/features/sales/presentation/add_sales_screen.dart';
 import 'package:digital_dairy/features/sales/presentation/buyer_sales_screen.dart';
@@ -91,8 +92,10 @@ class AppRouteConfig {
       GoRoute(
         name: AppRoutes.addBuyer,
         path: AppRoutes.addBuyer,
-        builder: (BuildContext context, GoRouterState state) =>
-            const AddBuyerScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          final Buyer? buyer = state.extra as Buyer?;
+          return AddBuyerScreen(buyer: buyer);
+        },
       ),
       GoRoute(
         name: AppRoutes.addSales,

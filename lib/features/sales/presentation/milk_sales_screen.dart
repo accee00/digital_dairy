@@ -44,86 +44,170 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
     }).toList();
   }
 
+  void _showDeleteConfirmation(BuildContext context, Buyer buyer) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        icon: Icon(Icons.delete_outline, color: colorScheme.error, size: 32),
+        title: const Text('Delete Buyer'),
+        content: Text(
+          'Are you sure you want to delete "${buyer.name}"? This action cannot be undone.',
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              context.read<SalesCubit>().deleteBuyer(buyer.id!);
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
-    return CustomScrollView(
-      controller: _scrollController,
-      slivers: <Widget>[
-        _appbar(context),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: SearchBar(
-              controller: _searchController,
-              hintText: 'Search buyers...',
-              leading: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
-              trailing: _searchQuery.isNotEmpty
-                  ? <Widget>[
-                      IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            _searchController.clear();
-                            _searchQuery = '';
-                          });
-                        },
-                      ),
-                    ]
-                  : null,
-              onChanged: (String value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              elevation: const WidgetStatePropertyAll<double>(0),
-              backgroundColor: WidgetStatePropertyAll<Color>(
-                colorScheme.surfaceContainerHighest,
-              ),
-              shape: WidgetStatePropertyAll<OutlinedBorder>(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return BlocListener<SalesCubit, SalesState>(
+      listener: (BuildContext context, SalesState state) {
+        if (state is BuyerDeleteSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Buyer deleted successfully'),
+              backgroundColor: colorScheme.primary,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (state is BuyerDeleteFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMsg),
+              backgroundColor: colorScheme.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (state is BuyerUpdateSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Buyer updated successfully'),
+              backgroundColor: colorScheme.primary,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (state is BuyerUpdateFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMsg),
+              backgroundColor: colorScheme.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      },
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: <Widget>[
+          _appbar(context),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: SearchBar(
+                controller: _searchController,
+                hintText: 'Search buyers...',
+                leading: Icon(
+                  Icons.search,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                trailing: _searchQuery.isNotEmpty
+                    ? <Widget>[
+                        IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              _searchController.clear();
+                              _searchQuery = '';
+                            });
+                          },
+                        ),
+                      ]
+                    : null,
+                onChanged: (String value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+                elevation: const WidgetStatePropertyAll<double>(0),
+                backgroundColor: WidgetStatePropertyAll<Color>(
+                  colorScheme.surfaceContainerHighest,
+                ),
+                shape: WidgetStatePropertyAll<OutlinedBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-        BlocBuilder<SalesCubit, SalesState>(
-          builder: (BuildContext context, SalesState state) {
-            final List<Buyer> buyerData = state.buyers;
-            final List<Buyer> filteredBuyers = _filterBuyers(buyerData);
+          BlocBuilder<SalesCubit, SalesState>(
+            builder: (BuildContext context, SalesState state) {
+              final List<Buyer> buyerData = state.buyers;
+              final List<Buyer> filteredBuyers = _filterBuyers(buyerData);
 
-            if (buyerData.isEmpty) {
-              return SliverFillRemaining(child: _buildEmptyState(context));
-            }
+              if (buyerData.isEmpty) {
+                return SliverFillRemaining(child: _buildEmptyState(context));
+              }
 
-            if (filteredBuyers.isEmpty) {
-              return SliverFillRemaining(child: _buildNoSearchResults(context));
-            }
+              if (filteredBuyers.isEmpty) {
+                return SliverFillRemaining(
+                  child: _buildNoSearchResults(context),
+                );
+              }
 
-            return SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              sliver: SliverList.separated(
-                itemCount: filteredBuyers.length,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (BuildContext context, int index) {
-                  final Buyer buyer = filteredBuyers[index];
-                  return _BuyerCard(
-                    key: ValueKey<String>(buyer.id!),
-                    buyer: buyer,
-                  );
-                },
-              ),
-            );
-          },
-        ),
-        SliverPadding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height * 0.2,
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverList.separated(
+                  itemCount: filteredBuyers.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (BuildContext context, int index) {
+                    final Buyer buyer = filteredBuyers[index];
+                    return _BuyerCard(
+                      key: ValueKey<String>(buyer.id!),
+                      buyer: buyer,
+                      onEdit: () async {
+                        await context.pushNamed(
+                          AppRoutes.addBuyer,
+                          extra: buyer,
+                        );
+                      },
+                      onDelete: () => _showDeleteConfirmation(context, buyer),
+                    );
+                  },
+                ),
+              );
+            },
           ),
-        ),
-      ],
+          SliverPadding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height * 0.2,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -283,9 +367,16 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
 }
 
 class _BuyerCard extends StatelessWidget {
-  const _BuyerCard({required this.buyer, super.key});
+  const _BuyerCard({
+    required this.buyer,
+    required this.onEdit,
+    required this.onDelete,
+    super.key,
+  });
 
   final Buyer buyer;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -385,7 +476,11 @@ class _BuyerCard extends StatelessWidget {
                                   ),
                                 ],
                             onSelected: (String value) {
-                              // Handle menu actions
+                              if (value == 'edit') {
+                                onEdit();
+                              } else if (value == 'delete') {
+                                onDelete();
+                              }
                             },
                           ),
                         ],
@@ -457,8 +552,8 @@ class _BuyerCard extends StatelessWidget {
     String value,
     IconData icon,
   ) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -500,8 +595,8 @@ class _BuyerCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
+    final DateTime now = DateTime.now();
+    final Duration difference = now.difference(date);
 
     if (difference.inDays == 0) {
       return 'today';
@@ -510,10 +605,10 @@ class _BuyerCard extends StatelessWidget {
     } else if (difference.inDays < 7) {
       return '${difference.inDays} days ago';
     } else if (difference.inDays < 30) {
-      final weeks = (difference.inDays / 7).floor();
+      final int weeks = (difference.inDays / 7).floor();
       return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
     } else if (difference.inDays < 365) {
-      final months = (difference.inDays / 30).floor();
+      final int months = (difference.inDays / 30).floor();
       return '$months ${months == 1 ? 'month' : 'months'} ago';
     } else {
       return '${date.day}/${date.month}/${date.year}';

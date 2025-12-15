@@ -1,6 +1,8 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,12 +21,12 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 24),
               _buildQuickActions(context),
               const SizedBox(height: 24),
-              _buildCattleHealthAlerts(context),
-              const SizedBox(height: 16),
-              _buildReminders(context),
-              const SizedBox(height: 16),
-              _buildRecentActivity(context),
-              const SizedBox(height: 20),
+              // _buildCattleHealthAlerts(context),
+              // const SizedBox(height: 16),
+              // _buildReminders(context),
+              // const SizedBox(height: 16),
+              // _buildRecentActivity(context),
+              // const SizedBox(height: 20),
             ],
           ),
         ),
@@ -270,8 +272,8 @@ class HomeScreen extends StatelessWidget {
   );
 
   Widget _buildQuickActions(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -282,7 +284,7 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Text(
             'Quick Actions',
             style: theme.textTheme.titleLarge?.copyWith(
@@ -299,14 +301,14 @@ class HomeScreen extends StatelessWidget {
                 Icons.add_circle_outline,
                 'Milk Entry',
                 AppTheme.primary,
-                () {},
+                () => context.push(AppRoutes.addMilk),
               ),
               _actionButton(
                 context,
                 Icons.pets_outlined,
                 'New Cattle',
                 AppTheme.secondary,
-                () {},
+                () => context.push(AppRoutes.addCattle),
               ),
               _actionButton(
                 context,
@@ -372,282 +374,282 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCattleHealthAlerts(BuildContext context) {
-    final theme = Theme.of(context);
+  // Widget _buildCattleHealthAlerts(BuildContext context) {
+  //   final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppTheme.warning.withAlpha(25),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.warning.withAlpha(76), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.warning.withAlpha(51),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.warning,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.health_and_safety_outlined,
-                  color: AppTheme.textOnPrimary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Cattle Health Alerts',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: AppTheme.warning,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildAlertItem(
-            context,
-            '⚠️',
-            'Cow #12 missed milking today',
-            AppTheme.error,
-          ),
-          const SizedBox(height: 8),
-          _buildAlertItem(
-            context,
-            '💉',
-            'Vaccination due for Cow #7',
-            AppTheme.warning,
-          ),
-          const SizedBox(height: 8),
-          _buildAlertItem(
-            context,
-            '🩺',
-            'Pregnancy check reminder',
-            AppTheme.info,
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: BoxDecoration(
+  //       color: AppTheme.warning.withAlpha(25),
+  //       borderRadius: BorderRadius.circular(20),
+  //       border: Border.all(color: AppTheme.warning.withAlpha(76), width: 1),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: AppTheme.warning.withAlpha(51),
+  //           blurRadius: 12,
+  //           offset: const Offset(0, 6),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             Container(
+  //               padding: const EdgeInsets.all(8),
+  //               decoration: BoxDecoration(
+  //                 color: AppTheme.warning,
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: const Icon(
+  //                 Icons.health_and_safety_outlined,
+  //                 color: AppTheme.textOnPrimary,
+  //                 size: 24,
+  //               ),
+  //             ),
+  //             const SizedBox(width: 12),
+  //             Text(
+  //               'Cattle Health Alerts',
+  //               style: theme.textTheme.titleMedium?.copyWith(
+  //                 color: AppTheme.warning,
+  //                 fontWeight: FontWeight.w700,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 16),
+  //         _buildAlertItem(
+  //           context,
+  //           '⚠️',
+  //           'Cow #12 missed milking today',
+  //           AppTheme.error,
+  //         ),
+  //         const SizedBox(height: 8),
+  //         _buildAlertItem(
+  //           context,
+  //           '💉',
+  //           'Vaccination due for Cow #7',
+  //           AppTheme.warning,
+  //         ),
+  //         const SizedBox(height: 8),
+  //         _buildAlertItem(
+  //           context,
+  //           '🩺',
+  //           'Pregnancy check reminder',
+  //           AppTheme.info,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildReminders(BuildContext context) {
-    final theme = Theme.of(context);
+  // Widget _buildReminders(BuildContext context) {
+  //   final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppTheme.info.withAlpha(25),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.info.withAlpha(76), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.info.withAlpha(51),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.info,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.notifications_active_outlined,
-                  color: AppTheme.textOnPrimary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Reminders',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: AppTheme.info,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildAlertItem(context, '🕗', 'Feed time for Cow #3', AppTheme.info),
-          const SizedBox(height: 8),
-          _buildAlertItem(
-            context,
-            '💊',
-            'Medicine for Cow #5 at 4 PM',
-            AppTheme.secondary,
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: BoxDecoration(
+  //       color: AppTheme.info.withAlpha(25),
+  //       borderRadius: BorderRadius.circular(20),
+  //       border: Border.all(color: AppTheme.info.withAlpha(76), width: 1),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: AppTheme.info.withAlpha(51),
+  //           blurRadius: 12,
+  //           offset: const Offset(0, 6),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             Container(
+  //               padding: const EdgeInsets.all(8),
+  //               decoration: BoxDecoration(
+  //                 color: AppTheme.info,
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: const Icon(
+  //                 Icons.notifications_active_outlined,
+  //                 color: AppTheme.textOnPrimary,
+  //                 size: 24,
+  //               ),
+  //             ),
+  //             const SizedBox(width: 12),
+  //             Text(
+  //               'Reminders',
+  //               style: theme.textTheme.titleMedium?.copyWith(
+  //                 color: AppTheme.info,
+  //                 fontWeight: FontWeight.w700,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 16),
+  //         _buildAlertItem(context, '🕗', 'Feed time for Cow #3', AppTheme.info),
+  //         const SizedBox(height: 8),
+  //         _buildAlertItem(
+  //           context,
+  //           '💊',
+  //           'Medicine for Cow #5 at 4 PM',
+  //           AppTheme.secondary,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildAlertItem(
-    BuildContext context,
-    String emoji,
-    String text,
-    Color color,
-  ) {
-    final theme = Theme.of(context);
+  // Widget _buildAlertItem(
+  //   BuildContext context,
+  //   String emoji,
+  //   String text,
+  //   Color color,
+  // ) {
+  //   final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withAlpha(51),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: const EdgeInsets.all(12),
+  //     decoration: BoxDecoration(
+  //       color: color.withAlpha(51),
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Text(emoji, style: const TextStyle(fontSize: 16)),
+  //         const SizedBox(width: 12),
+  //         Expanded(
+  //           child: Text(
+  //             text,
+  //             style: theme.textTheme.bodyMedium?.copyWith(
+  //               color: color,
+  //               fontWeight: FontWeight.w500,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildRecentActivity(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+  // Widget _buildRecentActivity(BuildContext context) {
+  //   final theme = Theme.of(context);
+  //   final colorScheme = theme.colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: AppTheme.cardShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                'Recent Activity',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              TextButton(
-                key: UniqueKey(),
-                onPressed: () {},
-                child: Text(
-                  'View All',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildActivityItem(
-            context,
-            Icons.mail_lock,
-            'Morning milk collection completed',
-            '2 hours ago',
-            AppTheme.success,
-          ),
-          const SizedBox(height: 12),
-          _buildActivityItem(
-            context,
-            Icons.pets_outlined,
-            'New cattle added to inventory',
-            '5 hours ago',
-            AppTheme.info,
-          ),
-          const SizedBox(height: 12),
-          _buildActivityItem(
-            context,
-            Icons.medical_services_outlined,
-            'Health checkup scheduled',
-            '1 day ago',
-            AppTheme.warning,
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: const EdgeInsets.all(20),
+  //     decoration: BoxDecoration(
+  //       color: colorScheme.surface,
+  //       borderRadius: BorderRadius.circular(20),
+  //       boxShadow: AppTheme.cardShadow,
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: <Widget>[
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: <Widget>[
+  //             Text(
+  //               'Recent Activity',
+  //               style: theme.textTheme.titleLarge?.copyWith(
+  //                 color: colorScheme.primary,
+  //                 fontWeight: FontWeight.w700,
+  //               ),
+  //             ),
+  //             TextButton(
+  //               key: UniqueKey(),
+  //               onPressed: () {},
+  //               child: Text(
+  //                 'View All',
+  //                 style: theme.textTheme.bodySmall?.copyWith(
+  //                   color: colorScheme.primary,
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 16),
+  //         _buildActivityItem(
+  //           context,
+  //           Icons.mail_lock,
+  //           'Morning milk collection completed',
+  //           '2 hours ago',
+  //           AppTheme.success,
+  //         ),
+  //         const SizedBox(height: 12),
+  //         _buildActivityItem(
+  //           context,
+  //           Icons.pets_outlined,
+  //           'New cattle added to inventory',
+  //           '5 hours ago',
+  //           AppTheme.info,
+  //         ),
+  //         const SizedBox(height: 12),
+  //         _buildActivityItem(
+  //           context,
+  //           Icons.medical_services_outlined,
+  //           'Health checkup scheduled',
+  //           '1 day ago',
+  //           AppTheme.warning,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildActivityItem(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String time,
-    Color color,
-  ) {
-    final theme = Theme.of(context);
+  // Widget _buildActivityItem(
+  //   BuildContext context,
+  //   IconData icon,
+  //   String title,
+  //   String time,
+  //   Color color,
+  // ) {
+  //   final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withAlpha(25),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withAlpha(51), width: 1),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: AppTheme.textOnPrimary, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  time,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: color.withAlpha(153),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: const EdgeInsets.all(12),
+  //     decoration: BoxDecoration(
+  //       color: color.withAlpha(25),
+  //       borderRadius: BorderRadius.circular(12),
+  //       border: Border.all(color: color.withAlpha(51), width: 1),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Container(
+  //           padding: const EdgeInsets.all(8),
+  //           decoration: BoxDecoration(
+  //             color: color,
+  //             borderRadius: BorderRadius.circular(8),
+  //           ),
+  //           child: Icon(icon, color: AppTheme.textOnPrimary, size: 20),
+  //         ),
+  //         const SizedBox(width: 12),
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 title,
+  //                 style: theme.textTheme.bodyMedium?.copyWith(
+  //                   color: color,
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 2),
+  //               Text(
+  //                 time,
+  //                 style: theme.textTheme.bodySmall?.copyWith(
+  //                   color: color.withAlpha(153),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

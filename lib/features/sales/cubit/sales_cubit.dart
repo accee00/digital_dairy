@@ -32,7 +32,6 @@ class SalesCubit extends Cubit<SalesState> {
           emit(
             BuyerAddedFailure(
               errorMsg: 'Unexpected error occurred.',
-
               buyers: state.buyers,
             ),
           );
@@ -46,6 +45,76 @@ class SalesCubit extends Cubit<SalesState> {
             BuyerAddedFailure(errorMsg: failure.message, buyers: state.buyers),
           ),
           (List<Buyer> buyers) => emit(BuyerAddedSuccess(buyers: buyers)),
+        );
+      },
+    );
+  }
+
+  ///
+  Future<void> updateBuyer(Buyer buyer) async {
+    emit(SalesLoading(buyers: state.buyers));
+
+    final Either<Failure, bool> response = await _salesService.updateBuyer(
+      buyer,
+    );
+
+    response.match(
+      (Failure failure) => emit(
+        BuyerUpdateFailure(errorMsg: failure.message, buyers: state.buyers),
+      ),
+      (bool success) async {
+        if (!success) {
+          emit(
+            BuyerUpdateFailure(
+              errorMsg: 'Unexpected error occurred.',
+              buyers: state.buyers,
+            ),
+          );
+          return;
+        }
+        final Either<Failure, List<Buyer>> updatedBuyers = await _salesService
+            .getBuyers();
+
+        updatedBuyers.match(
+          (Failure failure) => emit(
+            BuyerUpdateFailure(errorMsg: failure.message, buyers: state.buyers),
+          ),
+          (List<Buyer> buyers) => emit(BuyerUpdateSuccess(buyers: buyers)),
+        );
+      },
+    );
+  }
+
+  ///
+  Future<void> deleteBuyer(String buyerId) async {
+    emit(SalesLoading(buyers: state.buyers));
+
+    final Either<Failure, bool> response = await _salesService.deleteBuyer(
+      buyerId,
+    );
+
+    response.match(
+      (Failure failure) => emit(
+        BuyerDeleteFailure(errorMsg: failure.message, buyers: state.buyers),
+      ),
+      (bool success) async {
+        if (!success) {
+          emit(
+            BuyerDeleteFailure(
+              errorMsg: 'Unexpected error occurred.',
+              buyers: state.buyers,
+            ),
+          );
+          return;
+        }
+        final Either<Failure, List<Buyer>> updatedBuyers = await _salesService
+            .getBuyers();
+
+        updatedBuyers.match(
+          (Failure failure) => emit(
+            BuyerDeleteFailure(errorMsg: failure.message, buyers: state.buyers),
+          ),
+          (List<Buyer> buyers) => emit(BuyerDeleteSuccess(buyers: buyers)),
         );
       },
     );
@@ -75,6 +144,22 @@ class SalesCubit extends Cubit<SalesState> {
         SalesAddFailure(errorMsg: failure.message, buyers: state.buyers),
       ),
       (_) => emit(SaleAddSuccess(buyers: state.buyers)),
+    );
+  }
+
+  ///
+  Future<void> updateSales(MilkSale sale) async {
+    emit(SalesLoading(buyers: state.buyers));
+
+    final Either<Failure, bool> response = await _salesService.updateSales(
+      sale,
+    );
+
+    response.fold(
+      (Failure failure) => emit(
+        SalesUpdateFailure(errorMsg: failure.message, buyers: state.buyers),
+      ),
+      (_) => emit(SalesUpdateSuccess(buyers: state.buyers)),
     );
   }
 

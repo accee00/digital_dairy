@@ -13,14 +13,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+///
 class BuyerSalesScreen extends StatefulWidget {
+  ///
   const BuyerSalesScreen({
-    super.key,
     required this.buyerId,
     required this.buyerName,
+    super.key,
   });
 
+  ///
   final String buyerId;
+
+  ///
   final String buyerName;
 
   @override
@@ -196,7 +201,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
         _showSnackBar('Failed to generate PDF', isError: true);
       }
     } catch (e) {
-      _showSnackBar('Error: ${e.toString()}', isError: true);
+      _showSnackBar('Error: $e', isError: true);
     } finally {
       setState(() => _isGeneratingPdf = false);
     }
@@ -218,7 +223,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
         selectedMonth: _selectedMonth,
       );
     } catch (e) {
-      _showSnackBar('Error: ${e.toString()}', isError: true);
+      _showSnackBar('Error: $e', isError: true);
     } finally {
       setState(() => _isGeneratingPdf = false);
     }
@@ -240,7 +245,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
         selectedMonth: _selectedMonth,
       );
     } catch (e) {
-      _showSnackBar('Error: ${e.toString()}', isError: true);
+      _showSnackBar('Error: $e', isError: true);
     } finally {
       setState(() => _isGeneratingPdf = false);
     }
@@ -257,11 +262,12 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
   }
 
   double _calculateTotalQuantity(List<MilkSale> sales) =>
-      sales.fold(0, (sum, sale) => sum + sale.quantityLitres);
+      sales.fold(0, (double sum, MilkSale sale) => sum + sale.quantityLitres);
 
-  double _calculateTotalAmount(List<MilkSale> sales) {
-    return sales.fold(0.0, (sum, sale) => sum + (sale.totalAmount ?? 0.0));
-  }
+  double _calculateTotalAmount(List<MilkSale> sales) => sales.fold(
+    0,
+    (double sum, MilkSale sale) => sum + (sale.totalAmount ?? 0.0),
+  );
 
   @override
   Widget build(BuildContext context) => Scaffold(
