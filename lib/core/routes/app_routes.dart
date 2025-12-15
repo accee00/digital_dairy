@@ -38,4 +38,7 @@ class AppRoutes {
 
   ///
   static const String buyerSales = '/buyer-sales';
+
+  ///
+  static const String cattleMilk = '/cattle-milk';
 }

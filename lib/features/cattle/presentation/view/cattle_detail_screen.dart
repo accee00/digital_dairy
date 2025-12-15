@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 /// A StatefulWidget for displaying detailed information about a cattle.
@@ -19,39 +22,55 @@ class CattleDetailScreen extends StatefulWidget {
 
 class _CattleDetailScreenState extends State<CattleDetailScreen> {
   @override
-  Widget build(BuildContext context) => Scaffold(
-    extendBodyBehindAppBar: true,
-    body: CustomScaffoldContainer(
-      child: CustomScrollView(
-        slivers: <Widget>[
-          _buildAppBar(context),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _cattleImage(context),
-                  const SizedBox(height: 20),
-                  _buildHeaderCard(context),
-                  const SizedBox(height: 20),
-                  _buildBasicInfoCard(context),
-                  const SizedBox(height: 16),
-                  _buildPhysicalDetailsCard(context),
-                  const SizedBox(height: 16),
-                  _buildDatesCard(context),
-                  if (widget.cattle.notes.isNotEmpty) ...<Widget>[
+  Widget build(BuildContext context) => BlocListener<CattleCubit, CattleState>(
+    listener: (BuildContext context, CattleState state) {
+      if (state is CattleDeletedSuccess) {
+        context.pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cattle deleted successfully')),
+        );
+      }
+
+      if (state is CattleDeleteFailure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.msg), backgroundColor: Colors.red),
+        );
+      }
+    },
+    child: Scaffold(
+      extendBodyBehindAppBar: true,
+      body: CustomScaffoldContainer(
+        child: CustomScrollView(
+          slivers: <Widget>[
+            _buildAppBar(context),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _cattleImage(context),
+                    const SizedBox(height: 20),
+                    _buildHeaderCard(context),
+                    const SizedBox(height: 20),
+                    _buildBasicInfoCard(context),
                     const SizedBox(height: 16),
-                    _buildNotesCard(context),
+                    _buildPhysicalDetailsCard(context),
+                    const SizedBox(height: 16),
+                    _buildDatesCard(context),
+                    if (widget.cattle.notes.isNotEmpty) ...<Widget>[
+                      const SizedBox(height: 16),
+                      _buildNotesCard(context),
+                    ],
+                    const SizedBox(height: 16),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 20),
                   ],
-                  const SizedBox(height: 16),
-                  _buildActionButtons(context),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -104,10 +123,8 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: IconButton(
-          onPressed: () {
-            // TODO: Implement edit functionality
-          },
-          icon: Icon(Icons.edit, color: context.colorScheme.primary),
+          onPressed: () => _confirmDelete(context),
+          icon: Icon(Icons.delete, color: context.colorScheme.error),
         ),
       ),
     ],
@@ -388,7 +405,13 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () {
-              // TODO: Add milk production functionality
+              context.push(
+                AppRoutes.cattleMilk,
+                extra: <String, String?>{
+                  'cattleId': widget.cattle.id,
+                  'cattleName': widget.cattle.name,
+                },
+              );
             },
             icon: const Icon(Icons.water_drop),
             label: const Text('View Milk Production'),
@@ -465,6 +488,35 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         return Colors.red;
       default:
         return context.colorScheme.onSurface;
+    }
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Delete Cattle'),
+        content: const Text(
+          'Are you sure you want to delete this cattle? This action cannot be undone.',
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: context.colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      context.read<CattleCubit>().deleteCattle(widget.cattle.id!);
     }
   }
 }

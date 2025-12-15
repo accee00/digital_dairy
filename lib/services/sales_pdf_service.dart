@@ -9,7 +9,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 
+///
 class SalesPdfService {
+  ///
   Future<File?> generateAndSaveSalesPdf({
     required List<MilkSale> sales,
     required String buyerName,
@@ -57,7 +59,7 @@ class SalesPdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
-        build: (pw.Context context) => [
+        build: (pw.Context context) => <pw.Widget>[
           _buildHeader(buyerName, buyerId, selectedMonth),
           pw.SizedBox(height: 20),
           _buildSummary(totalQuantity, totalAmount),

@@ -364,7 +364,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
             Icons.keyboard_arrow_down,
             color: context.colorScheme.primary.withAlpha(100),
           ),
-          value: value,
+          initialValue: value,
 
           items: options
               .map(

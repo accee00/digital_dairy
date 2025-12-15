@@ -6,6 +6,7 @@ import 'package:digital_dairy/features/auth/presentation/view/splash_screen.dart
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_screen.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_screen.dart';
+import 'package:digital_dairy/features/cattle/presentation/view/cattle_milk_detail_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
@@ -116,6 +117,19 @@ class AppRouteConfig {
           final String buyerName = extra['buyerName'] as String;
 
           return BuyerSalesScreen(buyerId: buyerId, buyerName: buyerName);
+        },
+      ),
+
+      GoRoute(
+        name: AppRoutes.cattleMilk,
+        path: AppRoutes.cattleMilk,
+        builder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic> extra =
+              state.extra! as Map<String, dynamic>;
+          return CattleMilkDetailScreen(
+            cattleId: extra['cattleId'] as String,
+            cattleName: extra['cattleName'] as String,
+          );
         },
       ),
     ],
