@@ -252,7 +252,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.colorScheme.surfaceVariant.withAlpha(100),
+            color: context.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: context.colorScheme.outline.withAlpha(50),
@@ -299,11 +299,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                 color: context.colorScheme.primaryContainer.withAlpha(150),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                icon,
-                color: context.colorScheme.onPrimaryContainer,
-                size: 20,
-              ),
+              child: Icon(icon, color: context.colorScheme.onSurface, size: 20),
             ),
             const SizedBox(width: 12),
             Text(
@@ -364,9 +360,8 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         children: <Widget>[
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Navigate to edit screen
-              },
+              onPressed: () =>
+                  context.push(AppRoutes.addCattle, extra: widget.cattle),
               icon: const Icon(Icons.edit),
               label: const Text('Edit Details'),
               style: ElevatedButton.styleFrom(
@@ -416,7 +411,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
             icon: const Icon(Icons.water_drop),
             label: const Text('View Milk Production'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colorScheme.secondaryContainer,
+              backgroundColor: context.colorScheme.secondary,
               foregroundColor: context.colorScheme.onSecondaryContainer,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(

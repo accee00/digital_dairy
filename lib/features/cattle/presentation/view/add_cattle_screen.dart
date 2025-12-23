@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
 import 'package:digital_dairy/core/widget/custom_container.dart';
@@ -22,13 +23,17 @@ import 'package:image_picker/image_picker.dart';
 /// A StatefulWidget for adding cattle details in the application.
 class AddCattleScreen extends StatefulWidget {
   /// Initializes a new instance of the [AddCattleScreen] widget.
-  const AddCattleScreen({super.key});
+  const AddCattleScreen({super.key, this.cattle});
 
+  ///
+  final Cattle? cattle;
   @override
   State<AddCattleScreen> createState() => _AddCattleScreenState();
 }
 
 class _AddCattleScreenState extends State<AddCattleScreen> {
+  bool get isEdit => widget.cattle != null;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers
@@ -68,6 +73,25 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     'Dry',
     'Sold',
   ];
+  @override
+  void initState() {
+    _initializeCattle();
+    super.initState();
+  }
+
+  void _initializeCattle() {
+    if (isEdit) {
+      logInfo('Is edit is true');
+      _nameController.text = widget.cattle!.name;
+      _tagController.text = widget.cattle!.tagId;
+      _notesController.text = widget.cattle!.notes;
+      _selectedBreed = widget.cattle!.breed;
+      _selectedGender = widget.cattle!.gender;
+      _selectedStatus = widget.cattle!.status;
+      _selectedDob = widget.cattle!.dob;
+      _selectedCalvingDate = widget.cattle!.calvingDate;
+    }
+  }
 
   @override
   void dispose() {
@@ -90,10 +114,20 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
           );
           context.pop();
         }
-        if (state is CattleCreatedSuccess) {
+        if (state is CattleUpdateFailure) {
           showAppSnackbar(
             context,
-            message: 'Cattle registered successfully!',
+            message: state.msg,
+            type: SnackbarType.error,
+          );
+          context.pop();
+        }
+        if (state is CattleCreatedSuccess || state is CattleUpdatedSuccess) {
+          showAppSnackbar(
+            context,
+            message: isEdit
+                ? 'Cattle updated successfully!'
+                : 'Cattle registered successfully!',
             type: SnackbarType.success,
           );
           context
@@ -192,25 +226,13 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     BuildContext context,
     String title,
     IconData icon,
-  ) => Row(
-    children: <Widget>[
-      Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: context.colorScheme.secondary, size: 20),
-      ),
-      const SizedBox(width: 12),
-      Text(
-        title,
-        style: context.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-    ],
+  ) => Text(
+    title,
+    style: context.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+      color: context.colorScheme.onSurface,
+    ),
   );
 
   Widget _buildBasicInfoSection(BuildContext context) => CustomContainer(
@@ -469,36 +491,50 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     showLoading(context);
-    String? img;
+
+    String imageUrl = widget.cattle?.imageUrl ?? '';
+
     if (_selectedImage != null) {
-      final Either<Failure, String> resposne =
+      final Either<Failure, String> response =
           await serviceLocator<CattleService>().uploadImage(_selectedImage!);
-      resposne.fold((Failure l) {
-        showAppSnackbar(context, message: 'Fail to Upload Image');
-      }, (String imageUrl) => img = imageUrl);
+
+      response.fold(
+        (_) => showAppSnackbar(context, message: 'Fail to upload image'),
+        (String url) => imageUrl = url,
+      );
     }
 
     final Cattle newCattle = Cattle(
-      userId: '', // passing from service file.
+      id: isEdit ? widget.cattle!.id : null,
+      userId: widget.cattle?.userId ?? '',
       name: _nameController.text.trim(),
       tagId: _tagController.text.trim(),
-      imageUrl: img ?? '',
+      imageUrl: imageUrl,
       breed: _selectedBreed,
       gender: _selectedGender,
       dob: _selectedDob,
       calvingDate: _selectedCalvingDate,
       status: _selectedStatus,
       notes: _notesController.text.trim(),
-      createdAt: DateTime.now(),
+      createdAt: widget.cattle?.createdAt ?? DateTime.now(),
     );
+
     if (!mounted) {
       return;
     }
-    await context.read<CattleCubit>().createCattle(newCattle);
+
+    if (isEdit) {
+      await context.read<CattleCubit>().updateCattle(newCattle);
+    } else {
+      await context.read<CattleCubit>().createCattle(newCattle);
+    }
+
     if (!mounted) {
       return;
     }
+
     await context.read<CattleCubit>().getAllCattle();
   }
 
@@ -513,6 +549,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
         ),
       ),
       const SizedBox(height: 8),
+
       GestureDetector(
         onTap: () => _pickImage(ImageSource.gallery),
         child: Container(
@@ -560,6 +597,16 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                       ),
                     ),
                   ],
+                )
+              : isEdit && widget.cattle!.imageUrl != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    widget.cattle!.imageUrl!,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 )
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,

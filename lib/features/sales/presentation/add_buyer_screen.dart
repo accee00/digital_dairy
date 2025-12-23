@@ -12,9 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class AddBuyerScreen extends StatefulWidget {
+  ///
   const AddBuyerScreen({this.buyer, super.key});
 
+  ///
   final Buyer? buyer;
 
   @override
@@ -100,6 +103,7 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
                 child: Form(
                   key: _formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       _buildSectionHeader(context, 'Name'),
                       const SizedBox(height: 10),
@@ -234,31 +238,12 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
     ),
   );
 
-  Widget _buildSectionHeader(BuildContext context, String title) => Row(
-    children: <Widget>[
-      Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          title.substring(0, 1),
-          style: TextStyle(
-            color: context.colorScheme.secondary,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ),
-      const SizedBox(width: 12),
-      Text(
-        title,
-        style: context.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-    ],
+  Widget _buildSectionHeader(BuildContext context, String title) => Text(
+    title,
+    style: context.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+      color: context.colorScheme.onSurface,
+    ),
   );
 }

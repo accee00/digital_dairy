@@ -56,8 +56,10 @@ class CattleService {
     }
   }
 
+  ///
   Future<Either<Failure, List<Cattle>>> updateCattle(Cattle cattle) async {
     try {
+      logInfo('Cattle id [updatedCattle]=> ${cattle.id}');
       final PostgrestList response = await _client
           .from('cattle')
           .update(cattle.tojsonForUpdate())
