@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 /// A StatefulWidget for displaying detailed information about a cattle.
@@ -18,40 +21,68 @@ class CattleDetailScreen extends StatefulWidget {
 }
 
 class _CattleDetailScreenState extends State<CattleDetailScreen> {
+  late Cattle cattle;
   @override
-  Widget build(BuildContext context) => Scaffold(
-    extendBodyBehindAppBar: true,
-    body: CustomScaffoldContainer(
-      child: CustomScrollView(
-        slivers: <Widget>[
-          _buildAppBar(context),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _cattleImage(context),
-                  const SizedBox(height: 20),
-                  _buildHeaderCard(context),
-                  const SizedBox(height: 20),
-                  _buildBasicInfoCard(context),
-                  const SizedBox(height: 16),
-                  _buildPhysicalDetailsCard(context),
-                  const SizedBox(height: 16),
-                  _buildDatesCard(context),
-                  if (widget.cattle.notes.isNotEmpty) ...<Widget>[
+  void initState() {
+    cattle = widget.cattle;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocListener<CattleCubit, CattleState>(
+    listener: (BuildContext context, CattleState state) {
+      if (state is CattleUpdatedSuccess) {
+        setState(() {
+          cattle = state.updatedCattle;
+        });
+      }
+      if (state is CattleDeletedSuccess) {
+        context.pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cattle deleted successfully')),
+        );
+      }
+
+      if (state is CattleDeleteFailure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.msg), backgroundColor: Colors.red),
+        );
+      }
+    },
+    child: Scaffold(
+      extendBodyBehindAppBar: true,
+      body: CustomScaffoldContainer(
+        child: CustomScrollView(
+          slivers: <Widget>[
+            _buildAppBar(context),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _cattleImage(context),
+                    const SizedBox(height: 20),
+                    _buildHeaderCard(context),
+                    const SizedBox(height: 20),
+                    _buildBasicInfoCard(context),
                     const SizedBox(height: 16),
-                    _buildNotesCard(context),
+                    _buildPhysicalDetailsCard(context),
+                    const SizedBox(height: 16),
+                    _buildDatesCard(context),
+                    if (widget.cattle.notes.isNotEmpty) ...<Widget>[
+                      const SizedBox(height: 16),
+                      _buildNotesCard(context),
+                    ],
+                    const SizedBox(height: 16),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 20),
                   ],
-                  const SizedBox(height: 16),
-                  _buildActionButtons(context),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -73,7 +104,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         borderRadius: BorderRadius.circular(50),
         child: CachedNetworkImage(
           imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
-              ? widget.cattle.imageUrl!
+              ? cattle.imageUrl!
               : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
           fit: BoxFit.fill,
         ),
@@ -104,10 +135,8 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: IconButton(
-          onPressed: () {
-            // TODO: Implement edit functionality
-          },
-          icon: Icon(Icons.edit, color: context.colorScheme.primary),
+          onPressed: () => _confirmDelete(context),
+          icon: Icon(Icons.delete, color: context.colorScheme.error),
         ),
       ),
     ],
@@ -131,7 +160,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     child: Column(
       children: <Widget>[
         Text(
-          widget.cattle.name,
+          cattle.name,
           style: context.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: context.colorScheme.onSurface,
@@ -142,16 +171,14 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            color: _getStatusColor(context, widget.cattle.status).withAlpha(50),
+            color: _getStatusColor(context, cattle.status).withAlpha(50),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: _getStatusColor(context, widget.cattle.status),
-            ),
+            border: Border.all(color: _getStatusColor(context, cattle.status)),
           ),
           child: Text(
-            widget.cattle.status,
+            cattle.status,
             style: context.textTheme.labelLarge?.copyWith(
-              color: _getStatusColor(context, widget.cattle.status),
+              color: _getStatusColor(context, cattle.status),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -170,12 +197,12 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
 
   Widget _buildBasicInfoCard(BuildContext context) =>
       _buildInfoCard(context, 'Basic Information', Icons.info_outline, <Widget>[
-        _buildInfoRow(context, 'Breed', widget.cattle.breed, Icons.category),
+        _buildInfoRow(context, 'Breed', cattle.breed, Icons.category),
         _buildInfoRow(
           context,
           'Gender',
-          widget.cattle.gender,
-          widget.cattle.gender == 'Female' ? Icons.female : Icons.male,
+          cattle.gender,
+          cattle.gender == 'Female' ? Icons.female : Icons.male,
         ),
         _buildInfoRow(
           context,
@@ -190,9 +217,9 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         _buildInfoRow(
           context,
           'Current Status',
-          widget.cattle.status,
+          cattle.status,
           Icons.health_and_safety,
-          valueColor: _getStatusColor(context, widget.cattle.status),
+          valueColor: _getStatusColor(context, cattle.status),
         ),
         if (widget.cattle.gender == 'Female') ...<Widget>[
           _buildInfoRow(
@@ -235,14 +262,14 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.colorScheme.surfaceVariant.withAlpha(100),
+            color: context.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: context.colorScheme.outline.withAlpha(50),
             ),
           ),
           child: Text(
-            widget.cattle.notes,
+            cattle.notes,
             style: context.textTheme.bodyMedium?.copyWith(
               color: context.colorScheme.onSurfaceVariant,
               height: 1.5,
@@ -282,11 +309,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                 color: context.colorScheme.primaryContainer.withAlpha(150),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                icon,
-                color: context.colorScheme.onPrimaryContainer,
-                size: 20,
-              ),
+              child: Icon(icon, color: context.colorScheme.onSurface, size: 20),
             ),
             const SizedBox(width: 12),
             Text(
@@ -347,9 +370,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         children: <Widget>[
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Navigate to edit screen
-              },
+              onPressed: () => context.push(AppRoutes.addCattle, extra: cattle),
               icon: const Icon(Icons.edit),
               label: const Text('Edit Details'),
               style: ElevatedButton.styleFrom(
@@ -363,21 +384,19 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
             ),
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: () {
-                // TODO: Add health record functionality
-              },
-              icon: const Icon(Icons.medical_information),
-              label: const Text('Health Records'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: context.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                side: BorderSide(color: context.colorScheme.primary),
+          OutlinedButton.icon(
+            onPressed: () {
+              // TODO: Add health record functionality
+            },
+            icon: const Icon(Icons.medical_information),
+            label: const Text('Health Records'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: context.colorScheme.primary,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
+              side: BorderSide(color: context.colorScheme.primary),
             ),
           ),
         ],
@@ -388,12 +407,18 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () {
-              // TODO: Add milk production functionality
+              context.push(
+                AppRoutes.cattleMilk,
+                extra: <String, String?>{
+                  'cattleId': cattle.id,
+                  'cattleName': cattle.name,
+                },
+              );
             },
             icon: const Icon(Icons.water_drop),
             label: const Text('View Milk Production'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colorScheme.secondaryContainer,
+              backgroundColor: context.colorScheme.secondary,
               foregroundColor: context.colorScheme.onSecondaryContainer,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -465,6 +490,35 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         return Colors.red;
       default:
         return context.colorScheme.onSurface;
+    }
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Delete Cattle'),
+        content: const Text(
+          'Are you sure you want to delete this cattle? This action cannot be undone.',
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: context.colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      context.read<CattleCubit>().deleteCattle(widget.cattle.id!);
     }
   }
 }

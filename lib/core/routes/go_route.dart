@@ -1,19 +1,21 @@
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/features/auth/presentation/view/forgot_password.dart';
+import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
+import 'package:digital_dairy/features/auth/presentation/view/sign_up.dart';
+import 'package:digital_dairy/features/auth/presentation/view/splash_screen.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_screen.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_screen.dart';
+import 'package:digital_dairy/features/cattle/presentation/view/cattle_milk_detail_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
-import 'package:digital_dairy/features/auth/presentation/view/sign_in.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
+import 'package:digital_dairy/features/sales/model/buyer_model.dart';
 import 'package:digital_dairy/features/sales/presentation/add_buyer_screen.dart';
 import 'package:digital_dairy/features/sales/presentation/add_sales_screen.dart';
+import 'package:digital_dairy/features/sales/presentation/buyer_sales_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:digital_dairy/features/auth/presentation/view/splash_screen.dart';
-import 'package:digital_dairy/features/auth/presentation/view/sign_up.dart';
 
 ///
 class AppRouteConfig {
@@ -63,8 +65,10 @@ class AppRouteConfig {
       GoRoute(
         name: AppRoutes.addCattle,
         path: AppRoutes.addCattle,
-        builder: (BuildContext context, GoRouterState state) =>
-            const AddCattleScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          final Cattle? cattle = state.extra as Cattle?;
+          return AddCattleScreen(cattle: cattle);
+        },
       ),
       GoRoute(
         name: AppRoutes.cattleDetail,
@@ -91,14 +95,44 @@ class AppRouteConfig {
       GoRoute(
         name: AppRoutes.addBuyer,
         path: AppRoutes.addBuyer,
-        builder: (BuildContext context, GoRouterState state) =>
-            const AddBuyerScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          final Buyer? buyer = state.extra as Buyer?;
+          return AddBuyerScreen(buyer: buyer);
+        },
       ),
       GoRoute(
         name: AppRoutes.addSales,
         path: AppRoutes.addSales,
-        builder: (BuildContext context, GoRouterState state) =>
-            const AddMilkSaleScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic>? buyerData =
+              state.extra as Map<String, dynamic>?;
+          return AddMilkSaleScreen(buyer: buyerData);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.buyerSales,
+        name: AppRoutes.buyerSales,
+        builder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic> extra =
+              state.extra! as Map<String, dynamic>;
+          final String buyerId = extra['buyerId'] as String;
+          final String buyerName = extra['buyerName'] as String;
+
+          return BuyerSalesScreen(buyerId: buyerId, buyerName: buyerName);
+        },
+      ),
+
+      GoRoute(
+        name: AppRoutes.cattleMilk,
+        path: AppRoutes.cattleMilk,
+        builder: (BuildContext context, GoRouterState state) {
+          final Map<String, dynamic> extra =
+              state.extra! as Map<String, dynamic>;
+          return CattleMilkDetailScreen(
+            cattleId: extra['cattleId'] as String,
+            cattleName: extra['cattleName'] as String,
+          );
+        },
       ),
     ],
   );

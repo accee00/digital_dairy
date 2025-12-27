@@ -1,41 +1,70 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Primary Color Palette
+  /// Primary Color Palette
   static const Color primary = Color(0xFF1e3c72); // Navy Blue
+  ///
+  //////
   static const Color primaryVariant = Color(0xFF2a5298); // Royal Blue
+  ///
   static const Color secondary = Color(0xFF667eea); // Light Blue
+  ///
   static const Color secondaryVariant = Color(0xFF764ba2); // Purple
 
-  // Additional Colors
+  /// Additional Colors
   static const Color surface = Color(0xFFF8F9FA);
+
+  ///
   static const Color background = Color(0xFFFFFFFF);
-  static const Color error = Color(0xFFE57373);
+
+  ///
+  static const Color error = Colors.red;
+
+  ///
   static const Color success = Color(0xFF66BB6A);
+
+  ///
   static const Color warning = Color(0xFFFFB74D);
+
+  ///
   static const Color info = Color(0xFF42A5F5);
 
-  // Text Colors (Light)
+  /// Text Colors (Light)
   static const Color textPrimary = Color(0xFF1A1A1A);
+
+  ///
   static const Color textSecondary = Color(0xFF6B7280);
+
+  ///
   static const Color textHint = Color(0xFF9CA3AF);
+
+  ///
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
-  // Dark Mode Colors
+  /// Dark Mode Colors
   static const Color darkSurface = Color(0xFF1E1E1E);
+
+  ///
   static const Color darkBackground = Color(0xFF121212);
+
+  ///
   static const Color darkTextPrimary = Color(0xFFE5E5E5);
+
+  ///
   static const Color darkTextSecondary = Color(0xFFB0B0B0);
+
+  ///
   static const Color darkTextHint = Color(0xFF707070);
 
   /// Gradient Colors
-  static const List<Color> primaryGradient = [
+  static const List<Color> primaryGradient = <Color>[
     Color(0xFF1e3c72),
     Color(0xFF2a5298),
     Color(0xFF667eea),
     Color(0xFF764ba2),
   ];
 
+  ///
   static const List<Color> lightGradient = <Color>[
     Color(0xFFf8faff),
     Color(0xFFe8f0ff),
@@ -43,6 +72,7 @@ class AppTheme {
     Color(0xFFc4d8ff),
   ];
 
+  ///
   static const List<Color> darkGradient = <Color>[
     Color(0xFF0f1f3f),
     Color(0xFF1a2f5f),
@@ -143,11 +173,11 @@ class AppTheme {
       fillColor: surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: textHint.withAlpha(76), width: 1),
+        borderSide: BorderSide(color: textHint.withAlpha(76)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: textHint.withAlpha(76), width: 1),
+        borderSide: BorderSide(color: textHint.withAlpha(76)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -347,7 +377,6 @@ class AppTheme {
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: darkTextPrimary,
-      onError: Colors.black,
     ),
 
     // App Bar Theme
@@ -426,11 +455,11 @@ class AppTheme {
       fillColor: darkSurface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: darkTextHint.withAlpha(76), width: 1),
+        borderSide: BorderSide(color: darkTextHint.withAlpha(76)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: darkTextHint.withAlpha(76), width: 1),
+        borderSide: BorderSide(color: darkTextHint.withAlpha(76)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -614,24 +643,27 @@ class AppTheme {
     ),
   );
 
+  ///
   static BoxDecoration get primaryGradientDecoration => const BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: primaryGradient,
-      stops: [0.0, 0.3, 0.7, 1.0],
+      stops: <double>[0, 0.3, 0.7, 1],
     ),
   );
 
+  ///
   static BoxDecoration get lightGradientDecoration => const BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: lightGradient,
-      stops: [0.0, 0.3, 0.7, 1.0],
+      stops: <double>[0, 0.3, 0.7, 1],
     ),
   );
 
+  ///
   static BoxDecoration get darkGradientDecoration => const BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topLeft,
@@ -665,8 +697,8 @@ class AppTheme {
     );
   }
 
-  // Custom Shadows
-  static List<BoxShadow> get cardShadow => [
+  /// Custom Shadows
+  static List<BoxShadow> get cardShadow => <BoxShadow>[
     BoxShadow(
       color: primary.withAlpha(25),
       blurRadius: 20,
@@ -679,7 +711,8 @@ class AppTheme {
     ),
   ];
 
-  static List<BoxShadow> get darkCardShadow => [
+  ///
+  static List<BoxShadow> get darkCardShadow => <BoxShadow>[
     BoxShadow(
       color: secondary.withAlpha(25),
       blurRadius: 20,
@@ -692,6 +725,7 @@ class AppTheme {
     ),
   ];
 
+  ///
   static List<BoxShadow> get buttonShadow => <BoxShadow>[
     BoxShadow(
       color: primary.withAlpha(76),
@@ -700,6 +734,7 @@ class AppTheme {
     ),
   ];
 
+  ///
   static List<BoxShadow> get darkButtonShadow => <BoxShadow>[
     BoxShadow(
       color: secondary.withAlpha(76),

@@ -7,6 +7,7 @@ import 'package:fpdart/fpdart.dart';
 
 part 'milk_state.dart';
 
+///
 class MilkCubit extends Cubit<MilkState> {
   ///
   MilkCubit(this._milkLogService) : super(const MilkInitial());

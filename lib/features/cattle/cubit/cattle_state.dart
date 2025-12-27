@@ -1,60 +1,108 @@
 part of 'cattle_cubit.dart';
 
-/// Base state for cattle management
+/// Base state for all cattle-related states
 abstract class CattleState extends Equatable {
-  /// Creates a [CattleState] with a list of cattle
   const CattleState({required this.cattle});
 
-  /// List of cattle
+  /// Current list of cattle
   final List<Cattle> cattle;
 
   @override
   List<Object> get props => <Object>[cattle];
 }
 
-/// Initial state for cattle
+/// Initial state when cubit is first created
 class CattleInitial extends CattleState {
-  /// Creates initial cattle state with empty list
   const CattleInitial() : super(cattle: const <Cattle>[]);
 }
 
-/// Loading state for cattle operations
+/// Loading state for any cattle operation
 class CattleLoadingState extends CattleState {
-  /// Creates a loading state with current cattle
   const CattleLoadingState({required super.cattle});
 }
 
-/// Success state when a cattle is created
+/// State when cattle creation succeeds
 class CattleCreatedSuccess extends CattleState {
-  /// Creates success state with cattle list and newly created cattle
   const CattleCreatedSuccess({
     required super.cattle,
     required this.newlyCreatedCattle,
   });
 
-  /// Newly created cattle
+  /// The newly added cattle
   final Cattle newlyCreatedCattle;
 }
 
-/// Failure state when cattle creation fails
+/// State when cattle creation fails
 class CattleCreatedFailure extends CattleState {
-  /// Creates failure state with cattle list and error message
   const CattleCreatedFailure({required super.cattle, required this.msg});
 
   /// Error message
   final String msg;
 }
 
-/// Loaded state with all cattle
+/// State when cattle update succeeds
+class CattleUpdatedSuccess extends CattleState {
+  final Cattle updatedCattle;
+
+  const CattleUpdatedSuccess({
+    required super.cattle,
+    required this.updatedCattle,
+  });
+}
+
+/// State when cattle update fails
+class CattleUpdateFailure extends CattleState {
+  const CattleUpdateFailure({required super.cattle, required this.msg});
+
+  /// Error message
+  final String msg;
+}
+
+/// State when cattle deletion succeeds
+class CattleDeletedSuccess extends CattleState {
+  const CattleDeletedSuccess({required super.cattle});
+}
+
+/// State when cattle deletion fails
+class CattleDeleteFailure extends CattleState {
+  const CattleDeleteFailure({required super.cattle, required this.msg});
+
+  /// Error message
+  final String msg;
+}
+
+/// State when cattle list is successfully loaded
 class CattleLoadedState extends CattleState {
-  /// Creates loaded state with cattle list
   const CattleLoadedState({required super.cattle});
 }
 
-/// Failure state when cattle loading fails
+/// State when cattle loading fails
 class CattleLoadedFailure extends CattleState {
-  /// Creates failure state with cattle list and error message
   const CattleLoadedFailure({required super.cattle, required this.msg});
+
+  /// Error message
+  final String msg;
+}
+
+/// Loading state while fetching milk logs
+class CattleMilkLogLoading extends CattleState {
+  const CattleMilkLogLoading({required super.cattle});
+}
+
+/// State when milk logs are successfully fetched
+class CattleMilkLogLoaded extends CattleState {
+  const CattleMilkLogLoaded({required super.cattle, required this.milkLogs});
+
+  /// List of milk logs for selected cattle
+  final List<MilkModel> milkLogs;
+
+  @override
+  List<Object> get props => <Object>[cattle, milkLogs];
+}
+
+/// State when fetching milk logs fails
+class CattleMilkLogFailure extends CattleState {
+  const CattleMilkLogFailure({required super.cattle, required this.msg});
 
   /// Error message
   final String msg;

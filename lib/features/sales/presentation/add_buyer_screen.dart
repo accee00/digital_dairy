@@ -12,19 +12,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class AddBuyerScreen extends StatefulWidget {
-  const AddBuyerScreen({super.key});
+  ///
+  const AddBuyerScreen({this.buyer, super.key});
+
+  ///
+  final Buyer? buyer;
 
   @override
   State<AddBuyerScreen> createState() => _AddBuyerScreenState();
 }
 
 class _AddBuyerScreenState extends State<AddBuyerScreen> {
-  bool isEdit = false;
+  late bool isEdit;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    isEdit = widget.buyer != null;
+
+    if (isEdit) {
+      _nameController.text = widget.buyer!.name;
+      _contactController.text = widget.buyer!.contact;
+      _addressController.text = widget.buyer!.address;
+    }
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -54,6 +72,24 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
           ..pop()
           ..pop();
       }
+      if (state is BuyerUpdateFailure) {
+        showAppSnackbar(
+          context,
+          message: state.errorMsg,
+          type: SnackbarType.error,
+        );
+        context.pop();
+      }
+      if (state is BuyerUpdateSuccess) {
+        showAppSnackbar(
+          context,
+          message: 'Buyer updated successfully!',
+          type: SnackbarType.success,
+        );
+        context
+          ..pop()
+          ..pop();
+      }
     },
     child: Scaffold(
       extendBody: true,
@@ -67,6 +103,7 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
                 child: Form(
                   key: _formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       _buildSectionHeader(context, 'Name'),
                       const SizedBox(height: 10),
@@ -117,8 +154,8 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
                       ),
                       const SizedBox(height: 60),
                       SaveElevatedButton(
-                        label: 'Save',
-                        onTap: _addBuyer,
+                        label: isEdit ? 'Update' : 'Save',
+                        onTap: isEdit ? _updateBuyer : _addBuyer,
                         key: UniqueKey(),
                       ),
                       const SizedBox(height: 100),
@@ -146,6 +183,20 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
     );
     logInfo('buyer model presentation $buyer');
     context.read<SalesCubit>().addBuyer(buyer);
+  }
+
+  void _updateBuyer() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    showLoading(context);
+    final Buyer updatedBuyer = widget.buyer!.copyWith(
+      name: _nameController.text.trim(),
+      contact: _contactController.text.trim(),
+      address: _addressController.text.trim(),
+    );
+    logInfo('updated buyer model presentation $updatedBuyer');
+    context.read<SalesCubit>().updateBuyer(updatedBuyer);
   }
 
   CustomContainer _buildInputFeild({
@@ -187,31 +238,12 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
     ),
   );
 
-  Widget _buildSectionHeader(BuildContext context, String title) => Row(
-    children: <Widget>[
-      Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          title.substring(0, 1),
-          style: TextStyle(
-            color: context.colorScheme.secondary,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ),
-      const SizedBox(width: 12),
-      Text(
-        title,
-        style: context.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-    ],
+  Widget _buildSectionHeader(BuildContext context, String title) => Text(
+    title,
+    style: context.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+      color: context.colorScheme.onSurface,
+    ),
   );
 }

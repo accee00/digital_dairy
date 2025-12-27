@@ -157,33 +157,15 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title) => Row(
-    children: <Widget>[
-      Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          title.substring(0, 1),
-          style: TextStyle(
-            color: context.colorScheme.secondary,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ),
-      const SizedBox(width: 12),
-      Text(
-        title,
-        style: context.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-    ],
+  Widget _buildSectionHeader(BuildContext context, String title) => Text(
+    title,
+    style: context.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+      color: context.colorScheme.onSurface,
+    ),
   );
+
   Widget _buildCattleSelectionSection(BuildContext context) =>
       BlocBuilder<CattleCubit, CattleState>(
         builder: (BuildContext context, CattleState state) {
@@ -367,9 +349,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
           }
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: context.colorScheme.primaryContainer.withAlpha(150),
+            color: context.colorScheme.onError.withAlpha(100),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: context.colorScheme.primary.withAlpha(100),
@@ -379,6 +361,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             note,
             style: context.textTheme.bodySmall?.copyWith(
               color: context.colorScheme.primary,
+              fontSize: 14,
             ),
           ),
         ),
@@ -416,7 +399,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
               color: context.colorScheme.onSurface.withAlpha(100),
             ),
           ),
-          value: value != null && options.contains(value) ? value : null,
+          initialValue: value != null && options.contains(value) ? value : null,
           validator: validator,
           items: options
               .map(
