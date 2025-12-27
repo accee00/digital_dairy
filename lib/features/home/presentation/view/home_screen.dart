@@ -45,19 +45,22 @@ class HomeScreen extends StatelessWidget {
     ),
     child: Row(
       children: <Widget>[
-        Container(
-          height: 50,
-          width: 50,
-          decoration: BoxDecoration(
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg',
+        GestureDetector(
+          onTap: () => context.push(AppRoutes.profile),
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              image: const DecorationImage(
+                image: NetworkImage(
+                  'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg',
+                ),
+                fit: BoxFit.cover,
               ),
-              fit: BoxFit.cover,
+              color: AppTheme.textOnPrimary.withAlpha(51),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppTheme.textOnPrimary.withAlpha(76)),
             ),
-            color: AppTheme.textOnPrimary.withAlpha(51),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppTheme.textOnPrimary.withAlpha(76)),
           ),
         ),
         const SizedBox(width: 10),

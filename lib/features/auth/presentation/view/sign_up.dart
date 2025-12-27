@@ -346,6 +346,7 @@ class _SignUpPageState extends State<SignUpPage> {
     TextTheme textTheme,
     ColorScheme colorScheme,
   ) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Text(
         context.strings.authCreateAccount,
@@ -376,7 +377,6 @@ class _SignUpPageState extends State<SignUpPage> {
     ColorScheme colorScheme,
     BuildContext context,
   ) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Checkbox(
         value: _acceptTerms,
@@ -388,34 +388,31 @@ class _SignUpPageState extends State<SignUpPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: RichText(
-            text: TextSpan(
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurface.withAlpha(180),
-              ),
-              children: <InlineSpan>[
-                TextSpan(text: context.strings.authAgreeTerms),
-                TextSpan(
-                  text: context.strings.authTermsConditions,
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-                const TextSpan(text: ' and '),
-                TextSpan(
-                  text: context.strings.authPrivacyPolicy,
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ],
+        child: RichText(
+          text: TextSpan(
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withAlpha(180),
             ),
+            children: <InlineSpan>[
+              TextSpan(text: context.strings.authAgreeTerms),
+              TextSpan(
+                text: context.strings.authTermsConditions,
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              const TextSpan(text: ' and '),
+              TextSpan(
+                text: context.strings.authPrivacyPolicy,
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class SplashScreen extends StatefulWidget {
+  ///
   const SplashScreen({super.key});
 
   @override
@@ -48,11 +50,11 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(
       CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
     );
 
@@ -166,7 +168,7 @@ class _SplashScreenState extends State<SplashScreen>
                               child: Icon(
                                 Icons.menu_book_rounded,
                                 size: 70,
-                                color: colorScheme.onPrimaryContainer,
+                                color: colorScheme.primary,
                               ),
                             ),
                           ),
@@ -330,25 +332,23 @@ class _SplashScreenState extends State<SplashScreen>
     Color textColor,
     ColorScheme colorScheme,
     TextTheme textTheme,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: colorScheme.onPrimary.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: colorScheme.onPrimary.withOpacity(0.2),
-          width: 0.5,
-        ),
+  ) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    decoration: BoxDecoration(
+      color: colorScheme.onPrimary.withAlpha(26),
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(
+        color: colorScheme.onPrimary.withAlpha(51),
+        width: 0.5,
       ),
-      child: Text(
-        text,
-        style: textTheme.labelSmall?.copyWith(
-          color: textColor,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0.3,
-        ),
+    ),
+    child: Text(
+      text,
+      style: textTheme.labelSmall?.copyWith(
+        color: textColor,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.3,
       ),
-    );
-  }
+    ),
+  );
 }

@@ -41,4 +41,10 @@ class AppRoutes {
 
   ///
   static const String cattleMilk = '/cattle-milk';
+
+  ///
+  static const String profile = '/profile';
+
+  ///
+  static const String notification = '/notification';
 }

@@ -8,6 +8,8 @@ import 'package:digital_dairy/features/cattle/presentation/view/add_cattle_scree
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_detail_screen.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_milk_detail_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/main_screen.dart';
+import 'package:digital_dairy/features/home/presentation/view/notification_screen.dart';
+import 'package:digital_dairy/features/home/presentation/view/profile_screen.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/add_milk_screen.dart';
 import 'package:digital_dairy/features/sales/model/buyer_model.dart';
@@ -92,6 +94,8 @@ class AppRouteConfig {
           return AddMilkScreen(milkModel: milkModel);
         },
       ),
+
+      /// Add Buyer
       GoRoute(
         name: AppRoutes.addBuyer,
         path: AppRoutes.addBuyer,
@@ -100,6 +104,8 @@ class AppRouteConfig {
           return AddBuyerScreen(buyer: buyer);
         },
       ),
+
+      /// Add Sales
       GoRoute(
         name: AppRoutes.addSales,
         path: AppRoutes.addSales,
@@ -109,6 +115,8 @@ class AppRouteConfig {
           return AddMilkSaleScreen(buyer: buyerData);
         },
       ),
+
+      /// Add Buyer Sales
       GoRoute(
         path: AppRoutes.buyerSales,
         name: AppRoutes.buyerSales,
@@ -122,6 +130,7 @@ class AppRouteConfig {
         },
       ),
 
+      /// Cattle milk details
       GoRoute(
         name: AppRoutes.cattleMilk,
         path: AppRoutes.cattleMilk,
@@ -133,6 +142,22 @@ class AppRouteConfig {
             cattleName: extra['cattleName'] as String,
           );
         },
+      ),
+
+      /// Profile
+      GoRoute(
+        name: AppRoutes.profile,
+        path: AppRoutes.profile,
+        builder: (BuildContext context, GoRouterState state) =>
+            const ProfileScreen(),
+      ),
+
+      /// Notification
+      GoRoute(
+        name: AppRoutes.notification,
+        path: AppRoutes.notification,
+        builder: (BuildContext context, GoRouterState state) =>
+            const NotificationScreen(),
       ),
     ],
   );
