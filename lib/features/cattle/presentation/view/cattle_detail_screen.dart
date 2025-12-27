@@ -21,9 +21,21 @@ class CattleDetailScreen extends StatefulWidget {
 }
 
 class _CattleDetailScreenState extends State<CattleDetailScreen> {
+  late Cattle cattle;
+  @override
+  void initState() {
+    cattle = widget.cattle;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) => BlocListener<CattleCubit, CattleState>(
     listener: (BuildContext context, CattleState state) {
+      if (state is CattleUpdatedSuccess) {
+        setState(() {
+          cattle = state.updatedCattle;
+        });
+      }
       if (state is CattleDeletedSuccess) {
         context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -92,7 +104,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         borderRadius: BorderRadius.circular(50),
         child: CachedNetworkImage(
           imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
-              ? widget.cattle.imageUrl!
+              ? cattle.imageUrl!
               : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
           fit: BoxFit.fill,
         ),
@@ -148,7 +160,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     child: Column(
       children: <Widget>[
         Text(
-          widget.cattle.name,
+          cattle.name,
           style: context.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: context.colorScheme.onSurface,
@@ -159,16 +171,14 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            color: _getStatusColor(context, widget.cattle.status).withAlpha(50),
+            color: _getStatusColor(context, cattle.status).withAlpha(50),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: _getStatusColor(context, widget.cattle.status),
-            ),
+            border: Border.all(color: _getStatusColor(context, cattle.status)),
           ),
           child: Text(
-            widget.cattle.status,
+            cattle.status,
             style: context.textTheme.labelLarge?.copyWith(
-              color: _getStatusColor(context, widget.cattle.status),
+              color: _getStatusColor(context, cattle.status),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -187,12 +197,12 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
 
   Widget _buildBasicInfoCard(BuildContext context) =>
       _buildInfoCard(context, 'Basic Information', Icons.info_outline, <Widget>[
-        _buildInfoRow(context, 'Breed', widget.cattle.breed, Icons.category),
+        _buildInfoRow(context, 'Breed', cattle.breed, Icons.category),
         _buildInfoRow(
           context,
           'Gender',
-          widget.cattle.gender,
-          widget.cattle.gender == 'Female' ? Icons.female : Icons.male,
+          cattle.gender,
+          cattle.gender == 'Female' ? Icons.female : Icons.male,
         ),
         _buildInfoRow(
           context,
@@ -207,9 +217,9 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         _buildInfoRow(
           context,
           'Current Status',
-          widget.cattle.status,
+          cattle.status,
           Icons.health_and_safety,
-          valueColor: _getStatusColor(context, widget.cattle.status),
+          valueColor: _getStatusColor(context, cattle.status),
         ),
         if (widget.cattle.gender == 'Female') ...<Widget>[
           _buildInfoRow(
@@ -259,7 +269,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
             ),
           ),
           child: Text(
-            widget.cattle.notes,
+            cattle.notes,
             style: context.textTheme.bodyMedium?.copyWith(
               color: context.colorScheme.onSurfaceVariant,
               height: 1.5,
@@ -360,8 +370,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         children: <Widget>[
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: () =>
-                  context.push(AppRoutes.addCattle, extra: widget.cattle),
+              onPressed: () => context.push(AppRoutes.addCattle, extra: cattle),
               icon: const Icon(Icons.edit),
               label: const Text('Edit Details'),
               style: ElevatedButton.styleFrom(
@@ -375,21 +384,19 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
             ),
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: () {
-                // TODO: Add health record functionality
-              },
-              icon: const Icon(Icons.medical_information),
-              label: const Text('Health Records'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: context.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                side: BorderSide(color: context.colorScheme.primary),
+          OutlinedButton.icon(
+            onPressed: () {
+              // TODO: Add health record functionality
+            },
+            icon: const Icon(Icons.medical_information),
+            label: const Text('Health Records'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: context.colorScheme.primary,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
+              side: BorderSide(color: context.colorScheme.primary),
             ),
           ),
         ],
@@ -403,8 +410,8 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
               context.push(
                 AppRoutes.cattleMilk,
                 extra: <String, String?>{
-                  'cattleId': widget.cattle.id,
-                  'cattleName': widget.cattle.name,
+                  'cattleId': cattle.id,
+                  'cattleName': cattle.name,
                 },
               );
             },

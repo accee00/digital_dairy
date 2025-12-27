@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_container.dart';
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
@@ -181,7 +182,11 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
 
   Future<void> _downloadPdf(List<MilkSale> sales) async {
     if (sales.isEmpty) {
-      _showSnackBar('No sales data to export', isError: true);
+      showAppSnackbar(
+        context,
+        message: 'No sales data to export',
+        type: SnackbarType.error,
+      );
       return;
     }
 
@@ -196,12 +201,26 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
       );
 
       if (file != null) {
-        _showSnackBar('PDF saved to: ${file.path}');
+        if (!mounted) {
+          return;
+        }
+        showAppSnackbar(
+          context,
+          message: 'PDF saved to: ${file.path}',
+          type: SnackbarType.success,
+        );
       } else {
-        _showSnackBar('Failed to generate PDF', isError: true);
+        if (!mounted) {
+          return;
+        }
+        showAppSnackbar(
+          context,
+          message: 'Failed to generate PDF',
+          type: SnackbarType.error,
+        );
       }
     } catch (e) {
-      _showSnackBar('Error: $e', isError: true);
+      showAppSnackbar(context, message: 'Error: $e', type: SnackbarType.error);
     } finally {
       setState(() => _isGeneratingPdf = false);
     }
@@ -209,7 +228,11 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
 
   Future<void> _previewPdf(List<MilkSale> sales) async {
     if (sales.isEmpty) {
-      _showSnackBar('No sales data to preview', isError: true);
+      showAppSnackbar(
+        context,
+        message: 'No sales data to preview',
+        type: SnackbarType.error,
+      );
       return;
     }
 
@@ -223,7 +246,10 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
         selectedMonth: _selectedMonth,
       );
     } catch (e) {
-      _showSnackBar('Error: $e', isError: true);
+      if (!mounted) {
+        return;
+      }
+      showAppSnackbar(context, message: 'Error: $e', type: SnackbarType.error);
     } finally {
       setState(() => _isGeneratingPdf = false);
     }
@@ -231,7 +257,11 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
 
   Future<void> _sharePdf(List<MilkSale> sales) async {
     if (sales.isEmpty) {
-      _showSnackBar('No sales data to share', isError: true);
+      showAppSnackbar(
+        context,
+        message: 'No sales data to share',
+        type: SnackbarType.error,
+      );
       return;
     }
 
@@ -245,20 +275,13 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
         selectedMonth: _selectedMonth,
       );
     } catch (e) {
-      _showSnackBar('Error: $e', isError: true);
+      if (!mounted) {
+        return;
+      }
+      showAppSnackbar(context, message: 'Error: $e', type: SnackbarType.error);
     } finally {
       setState(() => _isGeneratingPdf = false);
     }
-  }
-
-  void _showSnackBar(String message, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? Colors.red : Colors.green,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   double _calculateTotalQuantity(List<MilkSale> sales) =>
@@ -276,7 +299,11 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
       child: BlocConsumer<SalesCubit, SalesState>(
         listener: (BuildContext context, SalesState state) {
           if (state is GetSalesFailureState) {
-            _showSnackBar(state.errorMsg, isError: true);
+            showAppSnackbar(
+              context,
+              message: state.errorMsg,
+              type: SnackbarType.error,
+            );
           }
         },
         builder: (BuildContext context, SalesState state) {
@@ -439,80 +466,67 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
   );
 
   Widget _buildMonthSelector() => CustomContainer(
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.colorScheme.outline.withAlpha(26)),
-      ),
-      child: Row(
-        children: <Widget>[
-          _buildMonthNavButton(
-            icon: Icons.chevron_left_rounded,
-            onPressed: () {
-              final DateTime previousMonth = DateTime(
-                _selectedMonth.year,
-                _selectedMonth.month - 1,
-                1,
-              );
-              _onMonthChanged(previousMonth);
-            },
-          ),
-          Expanded(
-            child: InkWell(
-              onTap: _showMonthPicker,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 12,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.calendar_today_rounded,
-                      color: context.colorScheme.primary,
-                      size: 18,
+    child: Row(
+      children: <Widget>[
+        _buildMonthNavButton(
+          icon: Icons.chevron_left_rounded,
+          onPressed: () {
+            final DateTime previousMonth = DateTime(
+              _selectedMonth.year,
+              _selectedMonth.month - 1,
+            );
+            _onMonthChanged(previousMonth);
+          },
+        ),
+        Expanded(
+          child: InkWell(
+            onTap: _showMonthPicker,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    color: context.colorScheme.primary,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    DateFormat('MMMM yyyy').format(_selectedMonth),
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: context.colorScheme.onSurface,
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      DateFormat('MMMM yyyy').format(_selectedMonth),
-                      style: context.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: context.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.arrow_drop_down_rounded,
-                      color: context.colorScheme.primary,
-                      size: 20,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(
+                    Icons.arrow_drop_down_rounded,
+                    color: context.colorScheme.primary,
+                    size: 20,
+                  ),
+                ],
               ),
             ),
           ),
-          _buildMonthNavButton(
-            icon: Icons.chevron_right_rounded,
-            onPressed: () {
-              final DateTime nextMonth = DateTime(
-                _selectedMonth.year,
-                _selectedMonth.month + 1,
-                1,
-              );
-              final DateTime now = DateTime.now();
-              if (nextMonth.year < now.year ||
-                  (nextMonth.year == now.year &&
-                      nextMonth.month <= now.month)) {
-                _onMonthChanged(nextMonth);
-              }
-            },
-          ),
-        ],
-      ),
+        ),
+        _buildMonthNavButton(
+          icon: Icons.chevron_right_rounded,
+          onPressed: () {
+            final DateTime nextMonth = DateTime(
+              _selectedMonth.year,
+              _selectedMonth.month + 1,
+              1,
+            );
+            final DateTime now = DateTime.now();
+            if (nextMonth.year < now.year ||
+                (nextMonth.year == now.year && nextMonth.month <= now.month)) {
+              _onMonthChanged(nextMonth);
+            }
+          },
+        ),
+      ],
     ),
   );
 

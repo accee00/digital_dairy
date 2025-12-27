@@ -42,7 +42,12 @@ class CattleCreatedFailure extends CattleState {
 
 /// State when cattle update succeeds
 class CattleUpdatedSuccess extends CattleState {
-  const CattleUpdatedSuccess({required super.cattle});
+  final Cattle updatedCattle;
+
+  const CattleUpdatedSuccess({
+    required super.cattle,
+    required this.updatedCattle,
+  });
 }
 
 /// State when cattle update fails

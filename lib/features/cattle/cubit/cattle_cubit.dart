@@ -46,8 +46,9 @@ class CattleCubit extends Cubit<CattleState> {
   Future<void> updateCattle(Cattle cattle) async {
     emit(CattleLoadingState(cattle: state.cattle));
 
-    final Either<Failure, List<Cattle>> result = await cattleService
-        .updateCattle(cattle);
+    final Either<Failure, Cattle> result = await cattleService.updateCattle(
+      cattle,
+    );
 
     result.fold(
       /// Emit failure if update fails
@@ -56,8 +57,13 @@ class CattleCubit extends Cubit<CattleState> {
       },
 
       /// Emit success with updated cattle list
-      (List<Cattle> updatedList) {
-        emit(CattleUpdatedSuccess(cattle: updatedList));
+      (Cattle updatedCattle) {
+        emit(
+          CattleUpdatedSuccess(
+            cattle: state.cattle,
+            updatedCattle: updatedCattle,
+          ),
+        );
       },
     );
   }

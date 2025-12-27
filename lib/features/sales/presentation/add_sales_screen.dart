@@ -16,8 +16,12 @@ import 'package:go_router/go_router.dart';
 
 import 'package:intl/intl.dart';
 
+///
 class AddMilkSaleScreen extends StatefulWidget {
+  ///
   const AddMilkSaleScreen({super.key, this.buyer});
+
+  ///
   final Map<String, dynamic>? buyer;
 
   @override
@@ -136,6 +140,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
                 child: Form(
                   key: _formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       if (widget.buyer != null)
                         Column(
@@ -212,6 +217,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
                         )
                       else
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             _buildSectionHeader(context, 'Buyer'),
                             const SizedBox(height: 10),
@@ -331,16 +337,14 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
   Widget _buildBuyerDropdown() => BlocBuilder<SalesCubit, SalesState>(
     builder: (BuildContext context, SalesState state) => CustomContainer(
       child: DropdownButtonFormField<String>(
-        value: _selectedBuyerId,
-        decoration: InputDecoration(
-          labelText: 'Select Buyer',
-          hintText: 'Choose a buyer',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
+        initialValue: _selectedBuyerId,
+        hint: Text(
+          'Choose a buyer',
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.onSurface.withAlpha(100),
           ),
         ),
+        decoration: const InputDecoration(border: InputBorder.none),
         items: state.buyers
             .map(
               (Buyer buyer) => DropdownMenuItem<String>(
@@ -442,31 +446,12 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
     ),
   );
 
-  Widget _buildSectionHeader(BuildContext context, String title) => Row(
-    children: <Widget>[
-      Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          title.substring(0, 1),
-          style: TextStyle(
-            color: context.colorScheme.secondary,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ),
-      const SizedBox(width: 12),
-      Text(
-        title,
-        style: context.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-    ],
+  Widget _buildSectionHeader(BuildContext context, String title) => Text(
+    title,
+    style: context.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+      color: context.colorScheme.onSurface,
+    ),
   );
 }

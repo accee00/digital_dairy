@@ -66,7 +66,7 @@ class AppRouteConfig {
         name: AppRoutes.addCattle,
         path: AppRoutes.addCattle,
         builder: (BuildContext context, GoRouterState state) {
-          final Cattle cattle = state.extra! as Cattle;
+          final Cattle? cattle = state.extra as Cattle?;
           return AddCattleScreen(cattle: cattle);
         },
       ),

@@ -1,4 +1,5 @@
 import 'package:digital_dairy/core/routes/app_routes.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/features/sales/model/buyer_model.dart';
@@ -85,36 +86,28 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
     return BlocListener<SalesCubit, SalesState>(
       listener: (BuildContext context, SalesState state) {
         if (state is BuyerDeleteSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Buyer deleted successfully'),
-              backgroundColor: colorScheme.primary,
-              behavior: SnackBarBehavior.floating,
-            ),
+          showAppSnackbar(
+            context,
+            message: 'Buyer deleted successfully',
+            type: SnackbarType.success,
           );
         } else if (state is BuyerDeleteFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMsg),
-              backgroundColor: colorScheme.error,
-              behavior: SnackBarBehavior.floating,
-            ),
+          showAppSnackbar(
+            context,
+            message: state.errorMsg,
+            type: SnackbarType.error,
           );
         } else if (state is BuyerUpdateSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Buyer updated successfully'),
-              backgroundColor: colorScheme.primary,
-              behavior: SnackBarBehavior.floating,
-            ),
+          showAppSnackbar(
+            context,
+            message: 'Buyer updated successfully',
+            type: SnackbarType.success,
           );
         } else if (state is BuyerUpdateFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMsg),
-              backgroundColor: colorScheme.error,
-              behavior: SnackBarBehavior.floating,
-            ),
+          showAppSnackbar(
+            context,
+            message: state.errorMsg,
+            type: SnackbarType.error,
           );
         }
       },
@@ -406,14 +399,13 @@ class _BuyerCard extends StatelessWidget {
           children: <Widget>[
             // NAME ROW WITH AVATAR
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
                   width: 40,
                   height: 40,
                   margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
+                    color: colorScheme.secondary,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
@@ -531,6 +523,7 @@ class _BuyerCard extends StatelessWidget {
                   icon: const Icon(Icons.add_shopping_cart, size: 18),
                   label: const Text('Add Sale'),
                   style: FilledButton.styleFrom(
+                    backgroundColor: colorScheme.secondary,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,

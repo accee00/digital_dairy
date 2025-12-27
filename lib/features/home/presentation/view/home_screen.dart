@@ -4,7 +4,9 @@ import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class HomeScreen extends StatelessWidget {
+  ///
   const HomeScreen({super.key});
 
   @override
@@ -14,7 +16,7 @@ class HomeScreen extends StatelessWidget {
         minimum: const EdgeInsets.all(20),
         sliver: SliverToBoxAdapter(
           child: Column(
-            children: [
+            children: <Widget>[
               _buildHeader(context),
               const SizedBox(height: 24),
               _buildMilkSummaryCard(context),
@@ -94,15 +96,17 @@ class HomeScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [colorScheme.surface, colorScheme.surface.withAlpha(240)],
+          colors: <Color>[
+            colorScheme.surface,
+            colorScheme.surface.withAlpha(240),
+          ],
         ),
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
+        boxShadow: <BoxShadow>[
           BoxShadow(
             color: colorScheme.primary.withAlpha(30),
             blurRadius: 20,
             offset: const Offset(0, 8),
-            spreadRadius: 0,
           ),
           BoxShadow(
             color: Colors.black.withAlpha(13),
@@ -117,15 +121,15 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(
-                    'Today\'s Summary',
+                    "Today's Summary",
                     style: context.textTheme.headlineSmall?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.w800,
@@ -172,7 +176,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 child: _buildSummaryItem(
                   context,
@@ -217,8 +221,8 @@ class HomeScreen extends StatelessWidget {
         colors: <Color>[color.withAlpha(25), color.withAlpha(15)],
       ),
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: color.withAlpha(100), width: 1),
-      boxShadow: [
+      border: Border.all(color: color.withAlpha(100)),
+      boxShadow: <BoxShadow>[
         BoxShadow(
           color: color.withAlpha(20),
           blurRadius: 8,
@@ -228,9 +232,9 @@ class HomeScreen extends StatelessWidget {
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Row(
-          children: [
+          children: <Widget>[
             Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
@@ -295,7 +299,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+            children: <Widget>[
               _actionButton(
                 context,
                 Icons.add_circle_outline,
@@ -331,7 +335,7 @@ class HomeScreen extends StatelessWidget {
     Color color,
     VoidCallback onPressed,
   ) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return GestureDetector(
       onTap: onPressed,
@@ -340,16 +344,16 @@ class HomeScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withAlpha(25),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withAlpha(76), width: 1),
+          border: Border.all(color: color.withAlpha(76)),
         ),
         child: Column(
-          children: [
+          children: <Widget>[
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
+                boxShadow: <BoxShadow>[
                   BoxShadow(
                     color: color.withAlpha(76),
                     blurRadius: 8,

@@ -57,17 +57,18 @@ class CattleService {
   }
 
   ///
-  Future<Either<Failure, List<Cattle>>> updateCattle(Cattle cattle) async {
+  Future<Either<Failure, Cattle>> updateCattle(Cattle cattle) async {
     try {
       logInfo('Cattle id [updatedCattle]=> ${cattle.id}');
-      final PostgrestList response = await _client
+      final PostgrestMap response = await _client
           .from('cattle')
           .update(cattle.tojsonForUpdate())
           .eq('id', cattle.id!)
           .eq('user_id', _userId)
-          .select();
+          .select()
+          .single();
 
-      final List<Cattle> data = response.map(Cattle.fromMap).toList();
+      final Cattle data = Cattle.fromMap(response);
       return right(data);
     } on PostgrestException catch (e) {
       return left(Failure(e.message));

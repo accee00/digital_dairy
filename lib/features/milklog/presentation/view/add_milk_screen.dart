@@ -399,7 +399,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
               color: context.colorScheme.onSurface.withAlpha(100),
             ),
           ),
-          value: value != null && options.contains(value) ? value : null,
+          initialValue: value != null && options.contains(value) ? value : null,
           validator: validator,
           items: options
               .map(
