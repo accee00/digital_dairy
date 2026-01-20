@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
-import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
@@ -259,9 +259,11 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
+            padding: EdgeInsets.zero,
             icon: Icon(
               Icons.chevron_left_rounded,
               color: context.colorScheme.onSurface,
+              size: 35,
             ),
             onPressed: () => _changeMonth(
               DateTime(_selectedMonth.year, _selectedMonth.month - 1),
@@ -289,7 +291,9 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
             ),
           ),
           IconButton(
+            padding: EdgeInsets.zero,
             icon: Icon(
+              size: 35,
               Icons.chevron_right_rounded,
               color: context.colorScheme.onSurface,
             ),
@@ -337,50 +341,47 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
         children: <Widget>[
           // Total Milk Card (Primary)
           CustomContainer(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: context.colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.water_drop_rounded,
-                          color: context.colorScheme.primary,
-                          size: 28,
-                        ),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Total Production',
-                              style: context.textTheme.bodyLarge?.copyWith(
-                                color: context.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${totalMilk.toStringAsFixed(1)} L',
-                              style: context.textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: Icon(
+                        Icons.water_drop_rounded,
+                        color: context.colorScheme.primary,
+                        size: 28,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Total Production',
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${totalMilk.toStringAsFixed(1)} L',
+                            style: context.textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 
@@ -449,28 +450,25 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
     required String value,
     required Color color,
   }) => CustomContainer(
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-            ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 12),
+        Text(
+          label,
+          style: context.textTheme.bodySmall?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 

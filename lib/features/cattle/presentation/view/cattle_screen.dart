@@ -4,6 +4,7 @@ import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
+import 'package:digital_dairy/features/cattle/presentation/widget/style_filte_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,10 +31,22 @@ class _CattleScreenState extends State<CattleScreen> {
   String _selectedGender = 'All';
   String _sortBy = 'Name';
 
-  final List<String> _statuses = ['All', 'Active', 'Sick', 'Sold', 'Dead'];
-  final List<String> _breeds = ['All', 'Holstein', 'Jersey', 'Gir', 'Sahiwal'];
-  final List<String> _genders = ['All', 'Female', 'Male'];
-  final List<String> _sortOptions = [
+  final List<String> _statuses = <String>[
+    'All',
+    'Active',
+    'Sick',
+    'Sold',
+    'Dead',
+  ];
+  final List<String> _breeds = <String>[
+    'All',
+    'Holstein',
+    'Jersey',
+    'Gir',
+    'Sahiwal',
+  ];
+  final List<String> _genders = <String>['All', 'Female', 'Male'];
+  final List<String> _sortOptions = <String>[
     'Name',
     'Age',
     'Milk Production',
@@ -82,75 +95,47 @@ class _CattleScreenState extends State<CattleScreen> {
           subTitle: '${3} Cattle',
           onTap: () => context.push(AppRoutes.addCattle),
         ),
-        _buildSearchAndFilters(context),
-        Expanded(child: _buildCattleList(context)),
-      ],
-    ),
-  );
 
-  Widget _buildSearchAndFilters(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Column(
-      children: <Widget>[
-        // Search bar
-        TextField(
-          onChanged: (String value) => setState(() => _searchQuery = value),
-          decoration: InputDecoration(
-            hintText: 'Search by name or tag...',
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: context.colorScheme.outline),
-            ),
-            filled: true,
-            fillColor: context.colorScheme.surface,
-          ),
-        ),
-        const SizedBox(height: 12),
-        // Filters
         SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,
           child: Row(
             children: <Widget>[
-              _buildFilterChip('Status', _selectedStatus, _statuses, (value) {
-                setState(() => _selectedStatus = value);
-              }),
+              StyledFilterChip(
+                label: 'Status',
+                selected: _selectedStatus,
+                options: _statuses,
+                onSelected: (String value) =>
+                    setState(() => _selectedStatus = value),
+              ),
               const SizedBox(width: 8),
-              _buildFilterChip('Breed', _selectedBreed, _breeds, (value) {
-                setState(() => _selectedBreed = value);
-              }),
+              StyledFilterChip(
+                label: 'Breed',
+                selected: _selectedBreed,
+                options: _breeds,
+                onSelected: (String value) =>
+                    setState(() => _selectedBreed = value),
+              ),
               const SizedBox(width: 8),
-              _buildFilterChip('Gender', _selectedGender, _genders, (value) {
-                setState(() => _selectedGender = value);
-              }),
+              StyledFilterChip(
+                label: 'Gender',
+                selected: _selectedGender,
+                options: _genders,
+                onSelected: (String value) =>
+                    setState(() => _selectedGender = value),
+              ),
               const SizedBox(width: 8),
-              _buildFilterChip('Sort', _sortBy, _sortOptions, (value) {
-                setState(() => _sortBy = value);
-              }),
+              StyledFilterChip(
+                label: 'Sort',
+                selected: _sortBy,
+                options: _sortOptions,
+                onSelected: (String value) => setState(() => _sortBy = value),
+              ),
             ],
           ),
         ),
+        Expanded(child: _buildCattleList(context)),
       ],
-    ),
-  );
-
-  Widget _buildFilterChip(
-    String label,
-    String selected,
-    List<String> options,
-    void Function(String) onSelected,
-  ) => PopupMenuButton<String>(
-    onSelected: onSelected,
-    itemBuilder: (BuildContext context) => options
-        .map(
-          (String option) =>
-              PopupMenuItem<String>(value: option, child: Text(option)),
-        )
-        .toList(),
-    child: Chip(
-      label: Text('$label: $selected'),
-      backgroundColor: context.colorScheme.secondaryContainer,
-      side: BorderSide(color: context.colorScheme.outline),
     ),
   );
 
@@ -186,7 +171,7 @@ class _CattleScreenState extends State<CattleScreen> {
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
-      color: context.colorScheme.surface.withAlpha(180),
+      color: context.colorScheme.surface,
       borderRadius: BorderRadius.circular(15),
     ),
     child: InkWell(

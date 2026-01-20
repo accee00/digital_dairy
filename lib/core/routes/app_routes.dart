@@ -40,7 +40,7 @@ class AppRoutes {
   static const String buyerSales = '/buyer-sales';
 
   ///
-  static const String cattleMilk = '/cattle-milk';
+  static const String cattleMilkDetail = '/cattle-milk';
 
   ///
   static const String profile = '/profile';

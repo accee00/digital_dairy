@@ -155,7 +155,7 @@ class _MilkScreenState extends State<MilkScreen> {
           hintText: 'Search by cattle ID or notes...',
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
             borderSide: BorderSide(color: context.colorScheme.outline),
           ),
           filled: true,
@@ -256,7 +256,7 @@ class _MilkScreenState extends State<MilkScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: context.colorScheme.surface.withAlpha(150),
+        color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -322,7 +322,7 @@ class _MilkScreenState extends State<MilkScreen> {
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: context.colorScheme.surface.withAlpha(180),
+      color: context.colorScheme.surface,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
     ),

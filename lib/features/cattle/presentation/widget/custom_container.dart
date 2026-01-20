@@ -15,18 +15,26 @@ class CustomContainer extends StatelessWidget {
   /// Creates a [CustomContainer] widget.
   ///
   /// Requires a [child] widget to be provided as content.
-  const CustomContainer({required this.child, super.key});
+  const CustomContainer({
+    required this.child,
+    super.key,
+    this.showBorder = true,
+  });
 
   /// The widget below this widget in the tree.
   final Widget child;
 
+  ///
+  final bool showBorder;
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: context.colorScheme.surface.withAlpha(200),
+      color: context.colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
+      border: showBorder
+          ? Border.all(color: context.colorScheme.outline.withAlpha(50))
+          : null,
     ),
     child: child,
   );

@@ -29,9 +29,9 @@ class CustomScaffoldContainer extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: <Color>[
-            colorScheme.primary.withAlpha(100),
-            colorScheme.surface,
-            colorScheme.secondary.withAlpha(90),
+            colorScheme.secondary.withAlpha(100),
+            colorScheme.primary.withAlpha(160),
+            colorScheme.secondary.withAlpha(80),
           ],
         ),
       ),

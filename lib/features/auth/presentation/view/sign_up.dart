@@ -3,7 +3,7 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_circular_indicator.dart';
-import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/elevated_button.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';

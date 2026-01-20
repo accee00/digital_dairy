@@ -132,8 +132,8 @@ class AppRouteConfig {
 
       /// Cattle milk details
       GoRoute(
-        name: AppRoutes.cattleMilk,
-        path: AppRoutes.cattleMilk,
+        name: AppRoutes.cattleMilkDetail,
+        path: AppRoutes.cattleMilkDetail,
         builder: (BuildContext context, GoRouterState state) {
           final Map<String, dynamic> extra =
               state.extra! as Map<String, dynamic>;

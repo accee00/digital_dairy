@@ -44,7 +44,6 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
       ),
-
       extendBody: true,
       body: Container(
         height: double.infinity,
@@ -53,9 +52,9 @@ class _MainScreenState extends State<MainScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: <Color>[
-              colorScheme.primary.withAlpha(100),
-              colorScheme.surface,
-              colorScheme.secondary.withAlpha(90),
+              colorScheme.secondary.withAlpha(100),
+              colorScheme.primary.withAlpha(160),
+              colorScheme.secondary.withAlpha(80),
             ],
           ),
         ),

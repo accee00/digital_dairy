@@ -6,7 +6,7 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
-import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
