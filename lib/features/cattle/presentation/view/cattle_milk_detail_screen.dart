@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
-import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
@@ -10,14 +13,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+///
 class CattleMilkDetailScreen extends StatefulWidget {
+  ///
   const CattleMilkDetailScreen({
     required this.cattleId,
     required this.cattleName,
     super.key,
   });
 
+  ///
   final String cattleId;
+
+  ///
   final String cattleName;
 
   @override
@@ -86,7 +94,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
               else if (logs.isEmpty)
                 SliverToBoxAdapter(child: _buildEmpty())
               /// Summary cards
-              else ...[
+              else ...<Widget>[
                 SliverToBoxAdapter(child: _buildSummaryCards(logs)),
                 SliverToBoxAdapter(
                   child: Padding(
@@ -109,8 +117,6 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
       ),
     ),
   );
-
-  /// ---------------- APP BAR ----------------
 
   SliverAppBar _buildAppBar(BuildContext context, List<MilkModel> logs) =>
       SliverAppBar(
@@ -139,7 +145,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
+        actions: <Widget>[
           if (logs.isNotEmpty)
             PopupMenuButton<String>(
               icon: Container(
@@ -154,32 +160,32 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                   color: context.colorScheme.onSurface,
                 ),
               ),
-              onSelected: (value) => _handlePdfAction(value, logs),
-              itemBuilder: (context) => [
-                const PopupMenuItem(
+              onSelected: (String value) => _handlePdfAction(value, logs),
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
                   value: 'preview',
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       Icon(Icons.visibility_rounded, size: 20),
                       SizedBox(width: 12),
                       Text('Preview PDF'),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                const PopupMenuItem<String>(
                   value: 'download',
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       Icon(Icons.download_rounded, size: 20),
                       SizedBox(width: 12),
                       Text('Download PDF'),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                const PopupMenuItem<String>(
                   value: 'share',
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       Icon(Icons.share_rounded, size: 20),
                       SizedBox(width: 12),
                       Text('Share PDF'),
@@ -202,9 +208,8 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
             cattleId: widget.cattleId,
             selectedMonth: _selectedMonth,
           );
-          break;
         case 'download':
-          final file = await _pdfService.generateAndSaveMilkPdf(
+          final File? file = await _pdfService.generateAndSaveMilkPdf(
             logs: logs,
             cattleName: widget.cattleName,
             cattleId: widget.cattleId,
@@ -223,7 +228,6 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
               ),
             );
           }
-          break;
         case 'share':
           await _pdfService.sharePdf(
             logs: logs,
@@ -231,21 +235,17 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
             cattleId: widget.cattleId,
             selectedMonth: _selectedMonth,
           );
-          break;
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+        showAppSnackbar(
+          context,
+          message: 'Error: $e',
+          type: SnackbarType.error,
         );
       }
     }
   }
-
-  /// ---------------- MONTH SELECTOR ----------------
 
   Widget _buildMonthSelector() => Padding(
     padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -259,9 +259,11 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
+            padding: EdgeInsets.zero,
             icon: Icon(
               Icons.chevron_left_rounded,
               color: context.colorScheme.onSurface,
+              size: 35,
             ),
             onPressed: () => _changeMonth(
               DateTime(_selectedMonth.year, _selectedMonth.month - 1),
@@ -289,7 +291,9 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
             ),
           ),
           IconButton(
+            padding: EdgeInsets.zero,
             icon: Icon(
+              size: 35,
               Icons.chevron_right_rounded,
               color: context.colorScheme.onSurface,
             ),
@@ -308,8 +312,6 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
       ),
     ),
   );
-
-  /// ---------------- SUMMARY CARDS ----------------
 
   Widget _buildSummaryCards(List<MilkModel> logs) {
     final double totalMilk = logs.fold(
@@ -339,50 +341,47 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
         children: <Widget>[
           // Total Milk Card (Primary)
           CustomContainer(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: context.colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.water_drop_rounded,
-                          color: context.colorScheme.primary,
-                          size: 28,
-                        ),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Total Production',
-                              style: context.textTheme.bodyLarge?.copyWith(
-                                color: context.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${totalMilk.toStringAsFixed(1)} L',
-                              style: context.textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: Icon(
+                        Icons.water_drop_rounded,
+                        color: context.colorScheme.primary,
+                        size: 28,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Total Production',
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${totalMilk.toStringAsFixed(1)} L',
+                            style: context.textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 
@@ -451,32 +450,27 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
     required String value,
     required Color color,
   }) => CustomContainer(
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-            ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 12),
+        Text(
+          label,
+          style: context.textTheme.bodySmall?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
-
-  /// ---------------- MILK LIST ----------------
 
   SliverList _buildMilkList(List<MilkModel> logs) => SliverList(
     delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
@@ -494,7 +488,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: context.colorScheme.primaryContainer,
+                    color: context.colorScheme.onSecondary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -510,7 +504,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                       Text(
                         DateFormat('MMM').format(milk.date),
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: context.colorScheme.onPrimaryContainer,
+                          color: context.colorScheme.primary,
                         ),
                       ),
                     ],
@@ -545,7 +539,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                           ),
                         ],
                       ),
-                      if (milk.notes.isNotEmpty) ...[
+                      if (milk.notes.isNotEmpty) ...<Widget>[
                         const SizedBox(height: 4),
                         Text(
                           milk.notes,
@@ -567,7 +561,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: context.colorScheme.secondaryContainer,
+                    color: context.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -585,8 +579,6 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
       );
     }, childCount: logs.length),
   );
-
-  /// ---------------- EMPTY STATE ----------------
 
   Widget _buildEmpty() => Padding(
     padding: const EdgeInsets.all(40),

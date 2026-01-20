@@ -17,7 +17,7 @@ import 'package:nested/nested.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
- 
+
   await dotenv.load();
   await initDi();
   runApp(const MyApp());

@@ -242,7 +242,7 @@ class SalesPdfService {
 
   pw.Widget _buildSalesTable(List<MilkSale> sales) => pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
-    children: [
+    children: <pw.Widget>[
       pw.Text(
         'Transaction Details',
         style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
@@ -250,10 +250,10 @@ class SalesPdfService {
       pw.SizedBox(height: 12),
       pw.Table(
         border: pw.TableBorder.all(color: PdfColors.grey300),
-        children: [
+        children: <pw.TableRow>[
           pw.TableRow(
             decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-            children: [
+            children: <pw.Widget>[
               _buildTableCell('Date', isHeader: true),
               _buildTableCell('Quantity (L)', isHeader: true),
               _buildTableCell('Price/L', isHeader: true),

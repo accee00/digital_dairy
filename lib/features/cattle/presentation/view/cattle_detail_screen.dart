@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
-import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/core/utils/age_calculator.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:flutter/material.dart';
@@ -56,29 +57,34 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           slivers: <Widget>[
             _buildAppBar(context),
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _cattleImage(context),
-                    const SizedBox(height: 20),
-                    _buildHeaderCard(context),
-                    const SizedBox(height: 20),
-                    _buildBasicInfoCard(context),
-                    const SizedBox(height: 16),
-                    _buildPhysicalDetailsCard(context),
-                    const SizedBox(height: 16),
-                    _buildDatesCard(context),
-                    if (widget.cattle.notes.isNotEmpty) ...<Widget>[
-                      const SizedBox(height: 16),
-                      _buildNotesCard(context),
-                    ],
-                    const SizedBox(height: 16),
-                    _buildActionButtons(context),
-                    const SizedBox(height: 20),
-                  ],
-                ),
+              child: Stack(
+                children: <Widget>[
+                  _cattleImage(context),
+
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(height: context.height * 0.25),
+                        _buildHeaderCard(context),
+                        const SizedBox(height: 20),
+                        _buildBasicInfoCard(context),
+                        const SizedBox(height: 16),
+                        _buildPhysicalDetailsCard(context),
+                        const SizedBox(height: 16),
+                        _buildDatesCard(context),
+                        if (widget.cattle.notes.isNotEmpty) ...<Widget>[
+                          const SizedBox(height: 16),
+                          _buildNotesCard(context),
+                        ],
+                        const SizedBox(height: 16),
+                        _buildActionButtons(context),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -90,8 +96,6 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
   Center _cattleImage(BuildContext context) => Center(
     child: Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: context.colorScheme.surface, width: 4),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: context.colorScheme.shadow.withAlpha(50),
@@ -100,14 +104,11 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(50),
-        child: CachedNetworkImage(
-          imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
-              ? cattle.imageUrl!
-              : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
-          fit: BoxFit.fill,
-        ),
+      child: CachedNetworkImage(
+        imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
+            ? cattle.imageUrl!
+            : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
+        fit: BoxFit.fill,
       ),
     ),
   );
@@ -207,7 +208,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         _buildInfoRow(
           context,
           'Age',
-          _calculateAge(widget.cattle.dob),
+          calculateAge(widget.cattle.dob),
           Icons.calendar_today,
         ),
       ]);
@@ -225,7 +226,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           _buildInfoRow(
             context,
             'Monthly Milk',
-            'Data not available', // You can add this field to your model
+            '${widget.cattle.thisMonthL!} L',
             Icons.water_drop,
           ),
           if (widget.cattle.calvingDate != null)
@@ -408,7 +409,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           child: ElevatedButton.icon(
             onPressed: () {
               context.push(
-                AppRoutes.cattleMilk,
+                AppRoutes.cattleMilkDetail,
                 extra: <String, String?>{
                   'cattleId': cattle.id,
                   'cattleName': cattle.name,
@@ -430,31 +431,10 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     ],
   );
 
-  String _calculateAge(DateTime? dob) {
-    if (dob == null) {
-      return 'Unknown';
-    }
-
-    final DateTime now = DateTime.now();
-    int years = now.year - dob.year;
-    int months = now.month - dob.month;
-
-    if (months < 0) {
-      years -= 1;
-      months += 12;
-    }
-
-    if (years == 0) {
-      return '$months mo';
-    }
-    if (months == 0) {
-      return '$years y';
-    }
-    return '$years y $months mo';
-  }
-
   String _formatDate(DateTime? date) {
-    if (date == null) return 'Not set';
+    if (date == null) {
+      return 'Not set';
+    }
 
     const List<String> months = <String>[
       'Jan',
@@ -517,8 +497,8 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
       ),
     );
 
-    if (confirmed == true) {
-      context.read<CattleCubit>().deleteCattle(widget.cattle.id!);
+    if (confirmed ?? false) {
+      await context.read<CattleCubit>().deleteCattle(widget.cattle.id!);
     }
   }
 }

@@ -9,7 +9,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 
+///
 class MilkPdfService {
+  ///
   Future<File?> generateAndSaveMilkPdf({
     required List<MilkModel> logs,
     required String cattleName,
@@ -70,7 +72,7 @@ class MilkPdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
-        build: (pw.Context context) => [
+        build: (pw.Context context) => <pw.Widget>[
           _buildHeader(cattleName, cattleId, selectedMonth),
           pw.SizedBox(height: 20),
           _buildSummary(
@@ -94,13 +96,13 @@ class MilkPdfService {
   pw.Widget _buildHeader(String cattleName, String cattleId, DateTime month) =>
       pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
+        children: <pw.Widget>[
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            children: [
+            children: <pw.Widget>[
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'MILK PRODUCTION REPORT',
                     style: pw.TextStyle(
@@ -121,7 +123,7 @@ class MilkPdfService {
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'Generated on',
                     style: const pw.TextStyle(
@@ -151,11 +153,11 @@ class MilkPdfService {
               border: pw.Border.all(color: PdfColors.blue200),
             ),
             child: pw.Row(
-              children: [
+              children: <pw.Widget>[
                 pw.Expanded(
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
+                    children: <pw.Widget>[
                       pw.Text(
                         'Cattle Details',
                         style: pw.TextStyle(
@@ -196,10 +198,10 @@ class MilkPdfService {
     double morningMilk,
     double eveningMilk,
   ) => pw.Column(
-    children: [
+    children: <pw.Widget>[
       // First row - Total and Average
       pw.Row(
-        children: [
+        children: <pw.Widget>[
           pw.Expanded(
             child: pw.Container(
               padding: const pw.EdgeInsets.all(16),
@@ -210,7 +212,7 @@ class MilkPdfService {
               ),
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'Total Production',
                     style: const pw.TextStyle(
@@ -242,7 +244,7 @@ class MilkPdfService {
               ),
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'Daily Average',
                     style: const pw.TextStyle(
@@ -274,7 +276,7 @@ class MilkPdfService {
               ),
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'Days Recorded',
                     style: const pw.TextStyle(
@@ -300,7 +302,7 @@ class MilkPdfService {
       pw.SizedBox(height: 12),
       // Second row - Morning and Evening
       pw.Row(
-        children: [
+        children: <pw.Widget>[
           pw.Expanded(
             child: pw.Container(
               padding: const pw.EdgeInsets.all(16),
@@ -311,7 +313,7 @@ class MilkPdfService {
               ),
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'Morning Shift',
                     style: const pw.TextStyle(
@@ -343,7 +345,7 @@ class MilkPdfService {
               ),
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'Evening Shift',
                     style: const pw.TextStyle(
@@ -371,7 +373,7 @@ class MilkPdfService {
 
   pw.Widget _buildMilkTable(List<MilkModel> logs) => pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
-    children: [
+    children: <pw.Widget>[
       pw.Text(
         'Daily Production Records',
         style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
@@ -379,16 +381,16 @@ class MilkPdfService {
       pw.SizedBox(height: 12),
       pw.Table(
         border: pw.TableBorder.all(color: PdfColors.grey300),
-        columnWidths: {
+        columnWidths: <int, pw.TableColumnWidth>{
           0: const pw.FlexColumnWidth(2),
           1: const pw.FlexColumnWidth(1.5),
           2: const pw.FlexColumnWidth(1.5),
           3: const pw.FlexColumnWidth(3),
         },
-        children: [
+        children: <pw.TableRow>[
           pw.TableRow(
             decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-            children: [
+            children: <pw.Widget>[
               _buildTableCell('Date', isHeader: true),
               _buildTableCell('Shift', isHeader: true),
               _buildTableCell('Quantity (L)', isHeader: true),
@@ -397,7 +399,7 @@ class MilkPdfService {
           ),
           ...logs.map(
             (MilkModel milk) => pw.TableRow(
-              children: [
+              children: <pw.Widget>[
                 _buildTableCell(DateFormat('dd MMM yyyy').format(milk.date)),
                 _buildTableCell(
                   milk.shift.value.toLowerCase() == 'morning'
@@ -427,7 +429,7 @@ class MilkPdfService {
   );
 
   pw.Widget _buildFooter() => pw.Column(
-    children: [
+    children: <pw.Widget>[
       pw.Divider(),
       pw.SizedBox(height: 8),
       pw.Text(
@@ -479,6 +481,7 @@ class MilkPdfService {
     return true;
   }
 
+  ///
   Future<void> previewPdf({
     required List<MilkModel> logs,
     required String cattleName,
@@ -497,6 +500,7 @@ class MilkPdfService {
     );
   }
 
+  ///
   Future<void> sharePdf({
     required List<MilkModel> logs,
     required String cattleName,

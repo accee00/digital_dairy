@@ -51,7 +51,7 @@ void showAppSnackbar(
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
           ),
         ],

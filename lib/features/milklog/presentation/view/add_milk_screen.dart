@@ -3,7 +3,7 @@ import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
 
-import 'package:digital_dairy/core/widget/custom_container.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
@@ -388,7 +388,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       Container(
         decoration: BoxDecoration(
           border: Border.all(color: context.colorScheme.outline.withAlpha(100)),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(13),
         ),
         child: DropdownButtonFormField<String>(
           padding: const EdgeInsets.only(left: 10, right: 4),
