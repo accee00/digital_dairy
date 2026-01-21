@@ -3,6 +3,7 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
@@ -10,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class MilkScreen extends StatefulWidget {
+  ///
   const MilkScreen({super.key});
 
   @override
@@ -19,7 +22,6 @@ class MilkScreen extends StatefulWidget {
 
 class _MilkScreenState extends State<MilkScreen> {
   final ScrollController _scrollController = ScrollController();
-  bool _isHeaderVisible = true;
   String _searchQuery = '';
   String _sortBy = 'Date';
 
@@ -40,11 +42,6 @@ class _MilkScreenState extends State<MilkScreen> {
   }
 
   void _onScroll() {
-    final bool isNowHidden = _scrollController.offset > 60;
-    if (isNowHidden != !_isHeaderVisible) {
-      setState(() => _isHeaderVisible = !isNowHidden);
-    }
-
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       final MilkCubit milkCubit = context.read<MilkCubit>();
@@ -112,47 +109,46 @@ class _MilkScreenState extends State<MilkScreen> {
         return Center(child: Text(state.message));
       }
 
-      return CustomScrollView(
-        controller: _scrollController,
-        slivers: <Widget>[
-          SliverAppBar(
-            toolbarHeight: 80,
-            backgroundColor: Colors.transparent,
-            title: HeaderForAdd(
-              padding: EdgeInsets.zero,
-              title: 'Milk Log',
-              subTitle: '',
-              onTap: () {
-                context.push(AppRoutes.addMilk);
-              },
-            ),
+      return Scaffold(
+        body: CustomScaffoldContainer(
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: <Widget>[
+              SliverAppBar(
+                toolbarHeight: 80,
+                backgroundColor: Colors.transparent,
+                title: HeaderForAdd(
+                  padding: EdgeInsets.zero,
+                  title: context.strings.navbarMilKLog,
+                  subTitle: '',
+                  onTap: () {
+                    context.push(AppRoutes.addMilk);
+                  },
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: _buildSearchAndFilters(context),
+                ),
+              ),
+              _buildMilkEntriesList(context),
+            ],
           ),
-          SliverAppBar(
-            shadowColor: context.colorScheme.secondary,
-            pinned: true,
-            floating: true,
-            toolbarHeight: _isHeaderVisible
-                ? MediaQuery.sizeOf(context).height / 23
-                : kToolbarHeight * 2,
-            backgroundColor: Colors.transparent,
-            flexibleSpace: SafeArea(
-              minimum: const EdgeInsets.symmetric(horizontal: 16),
-              top: !_isHeaderVisible,
-              bottom: false,
-              child: _buildSearchAndFilters(context),
-            ),
-          ),
-          _buildMilkEntriesList(context),
-        ],
+        ),
       );
     },
   );
+
   Widget _buildSearchAndFilters(BuildContext context) => Column(
     children: <Widget>[
       TextField(
         onChanged: (String value) => setState(() => _searchQuery = value),
         decoration: InputDecoration(
-          hintText: 'Search by cattle ID or notes...',
+          hintText: context.strings.milkScreenSearchHint,
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
@@ -160,21 +156,53 @@ class _MilkScreenState extends State<MilkScreen> {
           ),
           filled: true,
           fillColor: context.colorScheme.surface.withAlpha(200),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
       const SizedBox(height: 12),
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: GestureDetector(
-              onTap: () => _showSortOptions(context),
-              child: Text(
-                _getSortDisplayText(),
-                textScaler: const TextScaler.linear(1.2),
-              ),
+      GestureDetector(
+        onTap: () => _showSortOptions(context),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: context.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: context.colorScheme.outline.withAlpha(100),
             ),
           ),
-        ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                context.strings.milkScreenSortFilterOptions,
+                style: context.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    _getSortDisplayText(context),
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: context.colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.sort,
+                    size: 20,
+                    color: context.colorScheme.primary,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     ],
   );
@@ -193,12 +221,12 @@ class _MilkScreenState extends State<MilkScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'No milk entries found',
+                context.strings.milkScreenNoEntriesFound,
                 style: context.textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                'Try adjusting your filters',
+                context.strings.milkScreenAdjustFilters,
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: context.colorScheme.onSurface.withAlpha(150),
                 ),
@@ -212,23 +240,34 @@ class _MilkScreenState extends State<MilkScreen> {
     final List<MilkModel> entries = _filteredMilkEntries;
     return SliverPadding(
       padding: EdgeInsets.only(
-        top: 16,
+        top: 8,
         left: 16,
         right: 16,
         bottom: MediaQuery.of(context).size.height * 0.2,
       ),
       sliver: SliverList.builder(
-        itemCount: entries.length + 2,
+        itemCount: entries.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             return _buildSummaryRow(context);
           }
-          if (index == entries.length + 1) {
+          if (index == entries.length) {
             final MilkState currentState = context.read<MilkCubit>().state;
             if (currentState is MilkSuccess && currentState.hasMore) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(child: CircularProgressIndicator()),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 8),
+                      Text(
+                        context.strings.milkScreenLoadingMore,
+                        style: context.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
               );
             } else {
               return const SizedBox.shrink();
@@ -253,32 +292,33 @@ class _MilkScreenState extends State<MilkScreen> {
         .fold(0.0, (double sum, MilkModel e) => sum + e.quantityInLiter);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 12, top: 8),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           _buildSummaryItem(
             context,
-            'Total',
+            context.strings.milkScreenSummaryTotal,
             '${totalMilk.toStringAsFixed(1)}L',
             Icons.water_drop,
             context.colorScheme.primary,
           ),
           _buildSummaryItem(
             context,
-            'Morning',
+            context.strings.milkScreenSummaryMorning,
             '${morningMilk.toStringAsFixed(1)}L',
             Icons.wb_sunny,
             Colors.orange,
           ),
           _buildSummaryItem(
             context,
-            'Evening',
+            context.strings.milkScreenSummaryEvening,
             '${eveningMilk.toStringAsFixed(1)}L',
             Icons.nights_stay,
             Colors.indigo,
@@ -399,7 +439,7 @@ class _MilkScreenState extends State<MilkScreen> {
               ),
               const SizedBox(width: 4),
               Text(
-                _formatDate(milkEntry.date),
+                _formatDate(milkEntry.date, context),
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: context.colorScheme.onSurface.withAlpha(150),
                 ),
@@ -423,16 +463,16 @@ class _MilkScreenState extends State<MilkScreen> {
     ),
   );
 
-  String _getSortDisplayText() {
+  String _getSortDisplayText(BuildContext context) {
     switch (_sortBy) {
       case 'Morning Shift':
-        return 'Morning Only';
+        return '${context.strings.morning} Only';
       case 'Evening Shift':
-        return 'Evening Only';
+        return '${context.strings.evening} Only';
       case 'All Shifts':
         return 'All Entries';
       default:
-        return 'Sort: $_sortBy';
+        return _sortBy;
     }
   }
 
@@ -450,7 +490,7 @@ class _MilkScreenState extends State<MilkScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Sort & Filter Options',
+              context.strings.milkScreenSortFilterOptions,
               style: context.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -510,34 +550,35 @@ class _MilkScreenState extends State<MilkScreen> {
     }
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime date, BuildContext context) {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     final DateTime yesterday = today.subtract(const Duration(days: 1));
     final DateTime entryDate = DateTime(date.year, date.month, date.day);
 
     if (entryDate.isAtSameMomentAs(today)) {
-      return 'Today';
+      return context.strings.milkScreenToday;
     }
     if (entryDate.isAtSameMomentAs(yesterday)) {
-      return 'Yesterday';
+      return context.strings.milkScreenYesterday;
     }
 
-    const List<String> months = <String>[
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${date.day} ${months[date.month - 1]}';
+    final String month = switch (date.month) {
+      1 => context.strings.jan,
+      2 => context.strings.feb,
+      3 => context.strings.mar,
+      4 => context.strings.apr,
+      5 => context.strings.may,
+      6 => context.strings.jun,
+      7 => context.strings.jul,
+      8 => context.strings.aug,
+      9 => context.strings.sep,
+      10 => context.strings.oct,
+      11 => context.strings.nov,
+      12 => context.strings.dec,
+      _ => '',
+    };
+    return '${date.day} $month';
   }
 
   void _showMilkEntryDetail(BuildContext context, MilkModel milkEntry) {
@@ -551,7 +592,7 @@ class _MilkScreenState extends State<MilkScreen> {
             const Icon(Icons.local_drink_rounded),
             const SizedBox(width: 8),
             Text(
-              'Milk Entry Details',
+              context.strings.milkScreenEntryDetail,
               style: context.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -562,16 +603,33 @@ class _MilkScreenState extends State<MilkScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildDetailRow('🐄 Cattle', milkEntry.cattle?.name ?? '-'),
-            _buildDetailRow('📅 Date', _formatFullDate(milkEntry.date)),
-            _buildDetailRow('⏰ Shift', milkEntry.shift.displayVal),
             _buildDetailRow(
-              '🥛 Quantity',
+              '🐄 ${context.strings.milkScreenEntryCattle}',
+              milkEntry.cattle?.name ?? '-',
+              context,
+            ),
+            _buildDetailRow(
+              '📅 ${context.strings.milkScreenEntryDate}',
+              _formatFullDate(milkEntry.date, context),
+              context,
+            ),
+            _buildDetailRow(
+              '⏰ ${context.strings.milkScreenEntryShift}',
+              milkEntry.shift.displayVal,
+              context,
+            ),
+            _buildDetailRow(
+              '🥛 ${context.strings.milkScreenEntryQuantity}',
               '${milkEntry.quantityInLiter.toStringAsFixed(2)} L',
+              context,
             ),
             if (milkEntry.notes.isNotEmpty) ...<Widget>[
               const Divider(height: 20),
-              _buildDetailRow('📝 Notes', milkEntry.notes),
+              _buildDetailRow(
+                '📝 ${context.strings.milkScreenEntryNotes}',
+                milkEntry.notes,
+                context,
+              ),
             ],
           ],
         ),
@@ -581,10 +639,9 @@ class _MilkScreenState extends State<MilkScreen> {
         actions: <Widget>[
           FilledButton.icon(
             onPressed: () => context.pop(),
-            label: const Text('Close'),
+            label: Text(context.strings.milkScreenClose),
             icon: const Icon(Icons.close),
           ),
-
           FilledButton.icon(
             onPressed: () {
               context
@@ -592,50 +649,52 @@ class _MilkScreenState extends State<MilkScreen> {
                 ..pushNamed(AppRoutes.editMilk, extra: milkEntry);
             },
             icon: const Icon(Icons.edit),
-            label: const Text('Edit'),
+            label: Text(context.strings.milkScreenEdit),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          width: 100,
-          child: Text(
-            label,
-            style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
-          ),
+  Widget _buildDetailRow(String label, String value, BuildContext context) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              width: 100,
+              child: Text(
+                label,
+                style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                value,
+                style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
+              ),
+            ),
+          ],
         ),
-        Expanded(
-          child: Text(
-            value,
-            style: context.textTheme.bodyMedium?.copyWith(fontSize: 15),
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 
-  String _formatFullDate(DateTime date) {
-    const List<String> months = <String>[
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  String _formatFullDate(DateTime date, BuildContext context) {
+    final String month = switch (date.month) {
+      1 => context.strings.jan,
+      2 => context.strings.feb,
+      3 => context.strings.mar,
+      4 => context.strings.apr,
+      5 => context.strings.may,
+      6 => context.strings.jun,
+      7 => context.strings.jul,
+      8 => context.strings.aug,
+      9 => context.strings.sep,
+      10 => context.strings.oct,
+      11 => context.strings.nov,
+      12 => context.strings.dec,
+      _ => '',
+    };
+    return '${date.day} $month ${date.year}';
   }
 }

@@ -2,26 +2,25 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
-
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
-
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:go_router/go_router.dart';
 
 /// A StatefulWidget for adding milk production entries in the application.
 class AddMilkScreen extends StatefulWidget {
   /// Initializes a new instance of the [AddMilkScreen] widget.
   const AddMilkScreen({super.key, this.milkModel});
+
+  ///
   final MilkModel? milkModel;
   @override
   State<AddMilkScreen> createState() => _AddMilkScreenState();
@@ -40,8 +39,6 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
   String? _selectedCattleId;
   DateTime? _selectedDate;
   ShiftType _selectedShift = ShiftType.morning;
-
-  final List<String> _shifts = <String>['Morning', 'Evening'];
 
   @override
   void initState() {
@@ -82,8 +79,8 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
           showAppSnackbar(
             context,
             message: isEdit
-                ? 'Milk entry updated successfully!'
-                : 'Milk entry recorded successfully!',
+                ? context.strings.milkEntryUpdated
+                : context.strings.milkEntryRecorded,
             type: SnackbarType.success,
           );
           context
@@ -110,7 +107,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                   ),
                 ),
                 title: Text(
-                  isEdit ? 'Edit Milk Entry' : 'Add Milk Entry',
+                  isEdit
+                      ? context.strings.milkEditEntry
+                      : context.strings.milkAddEntry,
                   style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
@@ -128,18 +127,27 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        _buildSectionHeader(context, 'Cattle Selection'),
-                        const SizedBox(height: 16),
+                        _buildSectionHeader(
+                          context,
+                          context.strings.milkCattleSelection,
+                        ),
+                        const SizedBox(height: 5),
                         _buildCattleSelectionSection(context),
 
-                        const SizedBox(height: 32),
-                        _buildSectionHeader(context, 'Milking Details'),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 15),
+                        _buildSectionHeader(
+                          context,
+                          context.strings.milkMilkingDetails,
+                        ),
+                        const SizedBox(height: 5),
                         _buildMilkingDetailsSection(context),
 
-                        const SizedBox(height: 32),
-                        _buildSectionHeader(context, 'Additional Information'),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 15),
+                        _buildSectionHeader(
+                          context,
+                          context.strings.milkAdditionalInfo,
+                        ),
+                        const SizedBox(height: 5),
                         _buildAdditionalInfoSection(context),
 
                         const SizedBox(height: 40),
@@ -180,7 +188,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
           return CustomContainer(
             child: _buildDropdownField(
               context,
-              'Select Cattle *',
+              context.strings.milkSelectCattle,
               selectedCattleDisplay,
               state.cattle
                   .map(
@@ -198,7 +206,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
               },
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please select a cattle';
+                  return context.strings.milkSelectCattleError;
                 }
                 return null;
               },
@@ -206,12 +214,13 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
           );
         },
       );
+
   Widget _buildMilkingDetailsSection(BuildContext context) => CustomContainer(
     child: Column(
       children: <Widget>[
         _buildDateField(
           context,
-          'Milking Date *',
+          context.strings.milkMilkingDate,
           _selectedDate,
           (DateTime date) => setState(() => _selectedDate = date),
           firstDate: DateTime.now().subtract(const Duration(days: 30)),
@@ -223,9 +232,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             Expanded(
               child: _buildDropdownField(
                 context,
-                'Shift *',
+                context.strings.milkShift,
                 _selectedShift.value,
-                _shifts,
+                <String>[context.strings.morning, context.strings.evening],
                 (String? value) =>
                     setState(() => _selectedShift = ShiftType.from(value!)),
               ),
@@ -234,9 +243,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             Expanded(
               child: CustomTextField(
                 height: 52,
-                labelText: 'Quantity (Litres) *',
+                labelText: context.strings.milkQuantity,
                 controller: _quantityController,
-                hintText: 'Enter quantity',
+                hintText: context.strings.milkEnterQuantity,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
@@ -245,11 +254,11 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                 ],
                 validator: (String? value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Quantity is required';
+                    return context.strings.milkQuantityRequired;
                   }
                   final double? quantity = double.tryParse(value);
                   if (quantity == null || quantity <= 0) {
-                    return 'Enter valid quantity';
+                    return context.strings.milkEnterValidQuantity;
                   }
                   return null;
                 },
@@ -267,7 +276,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                'Tip',
+                context.strings.milkTip,
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
@@ -278,7 +287,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Record milk production immediately after milking for accuracy',
+                context.strings.milkTipText,
                 style: context.textTheme.bodySmall?.copyWith(
                   color: context.colorScheme.onSurface.withAlpha(150),
                 ),
@@ -294,10 +303,9 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     child: Column(
       children: <Widget>[
         CustomTextField(
-          labelText: 'Notes (Optional)',
+          labelText: context.strings.milkNotes,
           controller: _notesController,
-          hintText:
-              'Add notes about milk quality, cattle health, or any issues...',
+          hintText: context.strings.milkNotesHint,
           maxLines: 3,
           textInputAction: TextInputAction.done,
         ),
@@ -316,7 +324,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Common Notes:',
+                context.strings.milkCommonNotes,
                 style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -326,10 +334,19 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                 spacing: 8,
                 runSpacing: 4,
                 children: <Widget>[
-                  _buildQuickNoteChip(context, 'Good quality'),
-                  _buildQuickNoteChip(context, 'Slightly low yield'),
-                  _buildQuickNoteChip(context, 'Normal production'),
-                  _buildQuickNoteChip(context, 'Cattle seems healthy'),
+                  _buildQuickNoteChip(context, context.strings.milkGoodQuality),
+                  _buildQuickNoteChip(
+                    context,
+                    context.strings.milkSlightlyLowYield,
+                  ),
+                  _buildQuickNoteChip(
+                    context,
+                    context.strings.milkNormalProduction,
+                  ),
+                  _buildQuickNoteChip(
+                    context,
+                    context.strings.milkCattleSeemsHealthy,
+                  ),
                 ],
               ),
             ],
@@ -394,7 +411,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
           padding: const EdgeInsets.only(left: 10, right: 4),
           decoration: const InputDecoration(border: InputBorder.none),
           hint: Text(
-            'Select ${label.toLowerCase().replaceAll(' *', '')}',
+            label.toLowerCase().replaceAll(' *', ''),
             style: context.textTheme.bodyMedium?.copyWith(
               color: context.colorScheme.onSurface.withAlpha(100),
             ),
@@ -445,7 +462,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                   style: context.textTheme.bodyMedium,
                 )
               : Text(
-                  'Select Date',
+                  context.strings.milkSelectDate,
                   style: context.textTheme.bodyLarge?.copyWith(
                     color: context.colorScheme.onSurface.withAlpha(100),
                   ),
@@ -471,44 +488,42 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     children: <Widget>[
       SaveElevatedButton(
         key: UniqueKey(),
-        label: isEdit ? 'Update Milk Entry' : 'Save Milk Entry',
+        label: isEdit
+            ? context.strings.milkUpdateEntry
+            : context.strings.milkSaveEntry,
         onTap: _saveMilkEntry,
       ),
-
       const SizedBox(height: 12),
     ],
   );
 
   String _formatDate(DateTime? date) {
-    const List<String> months = <String>[
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
     if (date != null) {
-      return '${date.day} ${months[date.month - 1]} ${date.year}';
+      final String month = switch (date.month) {
+        1 => context.strings.jan,
+        2 => context.strings.feb,
+        3 => context.strings.mar,
+        4 => context.strings.apr,
+        5 => context.strings.may,
+        6 => context.strings.jun,
+        7 => context.strings.jul,
+        8 => context.strings.aug,
+        9 => context.strings.sep,
+        10 => context.strings.oct,
+        11 => context.strings.nov,
+        12 => context.strings.dec,
+        _ => '',
+      };
+      return '${date.day} $month ${date.year}';
     }
     return '';
   }
 
   void _saveMilkEntry() {
-    // if (!_formKey.currentState!.validate()) {
-    //   return;
-    // }
-
     if (_selectedCattleId == null) {
       showAppSnackbar(
         context,
-        message: 'Please select a cattle',
+        message: context.strings.milkSelectCattleError,
         type: SnackbarType.error,
       );
       return;
@@ -516,7 +531,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
     if (_quantityController.text.trim().isEmpty) {
       showAppSnackbar(
         context,
-        message: 'Please enter quantity of milk.',
+        message: context.strings.milkQuantityRequired,
         type: SnackbarType.error,
       );
       return;

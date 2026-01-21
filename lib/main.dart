@@ -8,7 +8,7 @@ import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
-import 'package:digital_dairy/l10n/localization/app_localizations.dart';
+import 'package:digital_dairy/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

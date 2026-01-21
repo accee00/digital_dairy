@@ -101,6 +101,24 @@ abstract class AppLocalizations {
   /// **'Digital Dairy'**
   String get appName;
 
+  /// No description provided for @splashTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Smart Companion for Daily Milk Records.'**
+  String get splashTagline;
+
+  /// No description provided for @splashSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track. Analyze. Grow.'**
+  String get splashSubtitle;
+
+  /// No description provided for @splashLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get splashLoading;
+
   /// No description provided for @onboardingNext.
   ///
   /// In en, this message translates to:
@@ -118,24 +136,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip'**
   String get onboardingSkip;
-
-  /// No description provided for @splashTagline.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Smart Companion for \n Daily Milk Records.'**
-  String get splashTagline;
-
-  /// No description provided for @splashSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Track. Analyze. Grow.'**
-  String get splashSubtitle;
-
-  /// No description provided for @splashLoading.
-  ///
-  /// In en, this message translates to:
-  /// **'Loading...'**
-  String get splashLoading;
 
   /// No description provided for @onboardingGetStarted.
   ///
@@ -410,7 +410,7 @@ abstract class AppLocalizations {
   /// No description provided for @authDontHaveAccount.
   ///
   /// In en, this message translates to:
-  /// **'Don’t have an account?'**
+  /// **'Don\'t have an account?'**
   String get authDontHaveAccount;
 
   /// No description provided for @authForgotPasswordDescription.
@@ -472,6 +472,372 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reports'**
   String get navbarReports;
+
+  /// No description provided for @milkAddEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Milk Entry'**
+  String get milkAddEntry;
+
+  /// No description provided for @milkEditEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Milk Entry'**
+  String get milkEditEntry;
+
+  /// No description provided for @milkCattleSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle Selection'**
+  String get milkCattleSelection;
+
+  /// No description provided for @milkSelectCattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Cattle *'**
+  String get milkSelectCattle;
+
+  /// No description provided for @milkMilkingDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Milking Details'**
+  String get milkMilkingDetails;
+
+  /// No description provided for @milkMilkingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Milking Date *'**
+  String get milkMilkingDate;
+
+  /// No description provided for @milkSelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date'**
+  String get milkSelectDate;
+
+  /// No description provided for @milkShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift *'**
+  String get milkShift;
+
+  /// No description provided for @milkSelectShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Select shift'**
+  String get milkSelectShift;
+
+  /// No description provided for @milkQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity (Litres) *'**
+  String get milkQuantity;
+
+  /// No description provided for @milkEnterQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter quantity'**
+  String get milkEnterQuantity;
+
+  /// No description provided for @milkQuantityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity is required'**
+  String get milkQuantityRequired;
+
+  /// No description provided for @milkEnterValidQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid quantity'**
+  String get milkEnterValidQuantity;
+
+  /// No description provided for @milkTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip'**
+  String get milkTip;
+
+  /// No description provided for @milkTipText.
+  ///
+  /// In en, this message translates to:
+  /// **'Record milk production immediately after milking for accuracy'**
+  String get milkTipText;
+
+  /// No description provided for @milkAdditionalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Information'**
+  String get milkAdditionalInfo;
+
+  /// No description provided for @milkNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get milkNotes;
+
+  /// No description provided for @milkNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add notes about milk quality, cattle health, or any issues...'**
+  String get milkNotesHint;
+
+  /// No description provided for @milkCommonNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Common Notes:'**
+  String get milkCommonNotes;
+
+  /// No description provided for @milkGoodQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Good quality'**
+  String get milkGoodQuality;
+
+  /// No description provided for @milkSlightlyLowYield.
+  ///
+  /// In en, this message translates to:
+  /// **'Slightly low yield'**
+  String get milkSlightlyLowYield;
+
+  /// No description provided for @milkNormalProduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal production'**
+  String get milkNormalProduction;
+
+  /// No description provided for @milkCattleSeemsHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle seems healthy'**
+  String get milkCattleSeemsHealthy;
+
+  /// No description provided for @milkSaveEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Milk Entry'**
+  String get milkSaveEntry;
+
+  /// No description provided for @milkUpdateEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Milk Entry'**
+  String get milkUpdateEntry;
+
+  /// No description provided for @milkSelectCattleError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a cattle'**
+  String get milkSelectCattleError;
+
+  /// No description provided for @milkEntryUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk entry updated successfully!'**
+  String get milkEntryUpdated;
+
+  /// No description provided for @milkEntryRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk entry recorded successfully!'**
+  String get milkEntryRecorded;
+
+  /// No description provided for @jan.
+  ///
+  /// In en, this message translates to:
+  /// **'Jan'**
+  String get jan;
+
+  /// No description provided for @feb.
+  ///
+  /// In en, this message translates to:
+  /// **'Feb'**
+  String get feb;
+
+  /// No description provided for @mar.
+  ///
+  /// In en, this message translates to:
+  /// **'Mar'**
+  String get mar;
+
+  /// No description provided for @apr.
+  ///
+  /// In en, this message translates to:
+  /// **'Apr'**
+  String get apr;
+
+  /// No description provided for @may.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get may;
+
+  /// No description provided for @jun.
+  ///
+  /// In en, this message translates to:
+  /// **'Jun'**
+  String get jun;
+
+  /// No description provided for @jul.
+  ///
+  /// In en, this message translates to:
+  /// **'Jul'**
+  String get jul;
+
+  /// No description provided for @aug.
+  ///
+  /// In en, this message translates to:
+  /// **'Aug'**
+  String get aug;
+
+  /// No description provided for @sep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sep'**
+  String get sep;
+
+  /// No description provided for @oct.
+  ///
+  /// In en, this message translates to:
+  /// **'Oct'**
+  String get oct;
+
+  /// No description provided for @nov.
+  ///
+  /// In en, this message translates to:
+  /// **'Nov'**
+  String get nov;
+
+  /// No description provided for @dec.
+  ///
+  /// In en, this message translates to:
+  /// **'Dec'**
+  String get dec;
+
+  /// No description provided for @morning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get morning;
+
+  /// No description provided for @evening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get evening;
+
+  /// No description provided for @milkScreenSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by cattle ID or notes...'**
+  String get milkScreenSearchHint;
+
+  /// No description provided for @milkScreenSortFilterOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort & Filter Options'**
+  String get milkScreenSortFilterOptions;
+
+  /// No description provided for @milkScreenNoEntriesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No milk entries found'**
+  String get milkScreenNoEntriesFound;
+
+  /// No description provided for @milkScreenAdjustFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your filters'**
+  String get milkScreenAdjustFilters;
+
+  /// No description provided for @milkScreenSummaryTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get milkScreenSummaryTotal;
+
+  /// No description provided for @milkScreenSummaryMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get milkScreenSummaryMorning;
+
+  /// No description provided for @milkScreenSummaryEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get milkScreenSummaryEvening;
+
+  /// No description provided for @milkScreenEntryDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk Entry Details'**
+  String get milkScreenEntryDetail;
+
+  /// No description provided for @milkScreenEntryCattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle'**
+  String get milkScreenEntryCattle;
+
+  /// No description provided for @milkScreenEntryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get milkScreenEntryDate;
+
+  /// No description provided for @milkScreenEntryShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift'**
+  String get milkScreenEntryShift;
+
+  /// No description provided for @milkScreenEntryQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get milkScreenEntryQuantity;
+
+  /// No description provided for @milkScreenEntryNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get milkScreenEntryNotes;
+
+  /// No description provided for @milkScreenToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get milkScreenToday;
+
+  /// No description provided for @milkScreenYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get milkScreenYesterday;
+
+  /// No description provided for @milkScreenClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get milkScreenClose;
+
+  /// No description provided for @milkScreenEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get milkScreenEdit;
+
+  /// No description provided for @milkScreenDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get milkScreenDelete;
+
+  /// No description provided for @milkScreenLoadingMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more entries...'**
+  String get milkScreenLoadingMore;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
