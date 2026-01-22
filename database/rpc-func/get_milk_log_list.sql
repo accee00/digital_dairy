@@ -39,18 +39,10 @@ BEGIN
     me.updated_at,
     -- Build cattle JSON object
     json_build_object(
-      'id', c.id,
-      'user_id', c.user_id,
+     'id', c.id,
       'name', c.name,
-      'breed', c.breed,
-      'gender', c.gender,
-      'dob', c.dob,
-      'calving_date', c.calving_date,
-      'status', c.status,
-      'notes', c.notes,
-      'created_at', c.created_at,
-      'updated_at', c.updated_at,
       'tag_id', c.tag_id,
+      'breed', c.breed,
       'image_url', c.image_url
     ) as cattle
   FROM milk_entries me

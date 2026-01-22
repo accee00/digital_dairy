@@ -1,3 +1,4 @@
+import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
@@ -79,130 +80,115 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-
-    return BlocListener<SalesCubit, SalesState>(
-      listener: (BuildContext context, SalesState state) {
-        if (state is BuyerDeleteSuccess) {
-          showAppSnackbar(
-            context,
-            message: 'Buyer deleted successfully',
-            type: SnackbarType.success,
-          );
-        } else if (state is BuyerDeleteFailure) {
-          showAppSnackbar(
-            context,
-            message: state.errorMsg,
-            type: SnackbarType.error,
-          );
-        } else if (state is BuyerUpdateSuccess) {
-          showAppSnackbar(
-            context,
-            message: 'Buyer updated successfully',
-            type: SnackbarType.success,
-          );
-        } else if (state is BuyerUpdateFailure) {
-          showAppSnackbar(
-            context,
-            message: state.errorMsg,
-            type: SnackbarType.error,
-          );
-        }
-      },
-      child: CustomScrollView(
-        controller: _scrollController,
-        slivers: <Widget>[
-          _appbar(context),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: SearchBar(
-                controller: _searchController,
-                hintText: 'Search buyers...',
-                leading: Icon(
-                  Icons.search,
-                  color: colorScheme.onSurfaceVariant,
+  Widget build(BuildContext context) => BlocListener<SalesCubit, SalesState>(
+    listener: (BuildContext context, SalesState state) {
+      if (state is BuyerDeleteSuccess) {
+        showAppSnackbar(
+          context,
+          message: 'Buyer deleted successfully',
+          type: SnackbarType.success,
+        );
+      } else if (state is BuyerDeleteFailure) {
+        showAppSnackbar(
+          context,
+          message: state.errorMsg,
+          type: SnackbarType.error,
+        );
+      } else if (state is BuyerUpdateSuccess) {
+        showAppSnackbar(
+          context,
+          message: 'Buyer updated successfully',
+          type: SnackbarType.success,
+        );
+      } else if (state is BuyerUpdateFailure) {
+        showAppSnackbar(
+          context,
+          message: state.errorMsg,
+          type: SnackbarType.error,
+        );
+      }
+    },
+    child: CustomScrollView(
+      controller: _scrollController,
+      slivers: <Widget>[
+        _appbar(context),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: TextField(
+              onChanged: (String value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: context.strings.milkScreenSearchHint,
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: context.colorScheme.surfaceContainerHighest,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
                 ),
-                trailing: _searchQuery.isNotEmpty
-                    ? <Widget>[
-                        IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            setState(() {
-                              _searchController.clear();
-                              _searchQuery = '';
-                            });
-                          },
-                        ),
-                      ]
-                    : null,
-                onChanged: (String value) {
-                  setState(() {
-                    _searchQuery = value;
-                  });
-                },
-                elevation: const WidgetStatePropertyAll<double>(0),
-                backgroundColor: WidgetStatePropertyAll<Color>(
-                  colorScheme.surfaceContainerHighest,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(
+                    color: context.colorScheme.outline.withAlpha(100),
+                  ),
                 ),
-                shape: WidgetStatePropertyAll<OutlinedBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(
+                    color: context.colorScheme.primary,
+                    width: 1.5,
                   ),
                 ),
               ),
             ),
           ),
-          BlocBuilder<SalesCubit, SalesState>(
-            builder: (BuildContext context, SalesState state) {
-              final List<Buyer> buyerData = state.buyers;
-              final List<Buyer> filteredBuyers = _filterBuyers(buyerData);
+        ),
+        BlocBuilder<SalesCubit, SalesState>(
+          builder: (BuildContext context, SalesState state) {
+            final List<Buyer> buyerData = state.buyers;
+            final List<Buyer> filteredBuyers = _filterBuyers(buyerData);
 
-              if (buyerData.isEmpty) {
-                return SliverFillRemaining(child: _buildEmptyState(context));
-              }
+            if (buyerData.isEmpty) {
+              return SliverFillRemaining(child: _buildEmptyState(context));
+            }
 
-              if (filteredBuyers.isEmpty) {
-                return SliverFillRemaining(
-                  child: _buildNoSearchResults(context),
-                );
-              }
+            if (filteredBuyers.isEmpty) {
+              return SliverFillRemaining(child: _buildNoSearchResults(context));
+            }
 
-              return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverList.separated(
-                  itemCount: filteredBuyers.length,
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const SizedBox(height: 12),
-                  itemBuilder: (BuildContext context, int index) {
-                    final Buyer buyer = filteredBuyers[index];
-                    return _BuyerCard(
-                      key: ValueKey<String>(buyer.id!),
-                      buyer: buyer,
-                      onEdit: () async {
-                        await context.pushNamed(
-                          AppRoutes.addBuyer,
-                          extra: buyer,
-                        );
-                      },
-                      onDelete: () => _showDeleteConfirmation(context, buyer),
-                    );
-                  },
-                ),
-              );
-            },
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverList.separated(
+                itemCount: filteredBuyers.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    const SizedBox(height: 12),
+                itemBuilder: (BuildContext context, int index) {
+                  final Buyer buyer = filteredBuyers[index];
+                  return _BuyerCard(
+                    key: ValueKey<String>(buyer.id!),
+                    buyer: buyer,
+                    onEdit: () async {
+                      await context.pushNamed(AppRoutes.addBuyer, extra: buyer);
+                    },
+                    onDelete: () => _showDeleteConfirmation(context, buyer),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        SliverPadding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height * 0.2,
           ),
-          SliverPadding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).size.height * 0.2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 
   Widget _buildEmptyState(BuildContext context) {
     final ThemeData theme = Theme.of(context);

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_int_literals
+import 'dart:async';
 
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
@@ -22,13 +22,14 @@ class MilkScreen extends StatefulWidget {
 
 class _MilkScreenState extends State<MilkScreen> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
   String _searchQuery = '';
   String _sortBy = 'Date';
 
   final List<String> _sortOptions = <String>[
     'Date',
     'Quantity',
-    'Cattle Name',
     'Morning Shift',
     'Evening Shift',
     'All Shifts',
@@ -47,31 +48,38 @@ class _MilkScreenState extends State<MilkScreen> {
       final MilkCubit milkCubit = context.read<MilkCubit>();
       final MilkState currentState = milkCubit.state;
 
+      if (milkCubit.isLoading) {
+        return;
+      }
+
       if (currentState is MilkSuccess && currentState.hasMore) {
-        milkCubit.getMilkLog();
+        if (_searchQuery.isNotEmpty ||
+            _sortBy == 'Morning Shift' ||
+            _sortBy == 'Evening Shift') {
+          _performSearch(loadMore: true);
+        } else {
+          milkCubit.getMilkLog();
+        }
       }
     }
   }
 
-  List<MilkModel> get _filteredMilkEntries {
-    final List<MilkModel> milkEntries = context
-        .read<MilkCubit>()
-        .state
-        .milkLogList;
+  void _performSearch({bool loadMore = false}) {
+    final String? shift = _sortBy == 'Morning Shift'
+        ? 'Morning'
+        : _sortBy == 'Evening Shift'
+        ? 'Evening'
+        : null;
 
-    final List<MilkModel> filtered = milkEntries.where((MilkModel entry) {
-      final bool matchesSearch =
-          entry.cattleId.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          entry.notes.toLowerCase().contains(_searchQuery.toLowerCase());
+    context.read<MilkCubit>().searchMilk(
+      query: _searchQuery.isNotEmpty ? _searchQuery : null,
+      shift: shift,
+      loadMore: loadMore,
+    );
+  }
 
-      if (_sortBy == 'Morning Shift') {
-        return matchesSearch && entry.shift == ShiftType.morning;
-      }
-      if (_sortBy == 'Evening Shift') {
-        return matchesSearch && entry.shift == ShiftType.evening;
-      }
-      return matchesSearch;
-    }).toList();
+  List<MilkModel> _getSortedEntries(List<MilkModel> milkEntries) {
+    final List<MilkModel> filtered = List<MilkModel>.from(milkEntries);
 
     switch (_sortBy) {
       case 'Quantity':
@@ -79,12 +87,6 @@ class _MilkScreenState extends State<MilkScreen> {
           (MilkModel a, MilkModel b) =>
               b.quantityInLiter.compareTo(a.quantityInLiter),
         );
-
-      case 'Cattle Name':
-        filtered.sort(
-          (MilkModel a, MilkModel b) => a.cattleId.compareTo(b.cattleId),
-        );
-
       default:
         filtered.sort((MilkModel a, MilkModel b) => b.date.compareTo(a.date));
     }
@@ -95,70 +97,186 @@ class _MilkScreenState extends State<MilkScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<MilkCubit, MilkState>(
-    buildWhen: (MilkState previous, MilkState current) =>
-        previous.runtimeType != current.runtimeType,
-    builder: (BuildContext context, MilkState state) {
-      if (state is MilkLoading && state.milkLogList.isEmpty) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (state is MilkFailure && state.milkLogList.isEmpty) {
-        return Center(child: Text(state.message));
-      }
+  Widget build(BuildContext context) => Scaffold(
+    body: CustomScaffoldContainer(
+      child: BlocListener<MilkCubit, MilkState>(
+        listener: (BuildContext context, MilkState state) {
+          if (state is MilkFailure && state.milkLogList.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: context.colorScheme.error,
+              ),
+            );
+          }
+        },
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: <Widget>[
+            SliverAppBar(
+              toolbarHeight: 80,
+              backgroundColor: Colors.transparent,
+              title: HeaderForAdd(
+                padding: EdgeInsets.zero,
+                title: context.strings.navbarMilKLog,
+                subTitle: '',
+                onTap: () {
+                  context.push(AppRoutes.addMilk);
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: _buildSearchAndFilters(context),
+              ),
+            ),
+            // Only this part rebuilds when state changes
+            BlocBuilder<MilkCubit, MilkState>(
+              builder: (BuildContext context, MilkState state) {
+                if (state is MilkLoading && state.milkLogList.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
 
-      return Scaffold(
-        body: CustomScaffoldContainer(
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: <Widget>[
-              SliverAppBar(
-                toolbarHeight: 80,
-                backgroundColor: Colors.transparent,
-                title: HeaderForAdd(
-                  padding: EdgeInsets.zero,
-                  title: context.strings.navbarMilKLog,
-                  subTitle: '',
-                  onTap: () {
-                    context.push(AppRoutes.addMilk);
-                  },
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                final List<MilkModel> sortedEntries = _getSortedEntries(
+                  state.milkLogList,
+                );
+
+                if (sortedEntries.isEmpty) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.water_drop_outlined,
+                            size: 64,
+                            color: context.colorScheme.onSurface.withAlpha(100),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            context.strings.milkScreenNoEntriesFound,
+                            style: context.textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            context.strings.milkScreenAdjustFilters,
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              color: context.colorScheme.onSurface.withAlpha(
+                                150,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: 8,
+                    left: 16,
+                    right: 16,
+                    bottom: MediaQuery.of(context).size.height * 0.2,
                   ),
-                  child: _buildSearchAndFilters(context),
-                ),
-              ),
-              _buildMilkEntriesList(context),
-            ],
-          ),
+                  sliver: SliverList.builder(
+                    itemCount: sortedEntries.length + 2,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == 0) {
+                        return _buildSummaryRow(context, sortedEntries);
+                      }
+                      if (index == sortedEntries.length + 1) {
+                        if (state is MilkSuccess && state.hasMore) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Column(
+                                children: <Widget>[
+                                  const CircularProgressIndicator(),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    context.strings.milkScreenLoadingMore,
+                                    style: context.textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }
+                      return _buildMilkEntryCard(
+                        context,
+                        sortedEntries[index - 1],
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
-      );
-    },
+      ),
+    ),
   );
 
   Widget _buildSearchAndFilters(BuildContext context) => Column(
     children: <Widget>[
       TextField(
-        onChanged: (String value) => setState(() => _searchQuery = value),
+        controller: _searchController,
+        onChanged: (String value) {
+          setState(() => _searchQuery = value);
+
+          if (_debounce?.isActive ?? false) {
+            _debounce!.cancel();
+          }
+
+          _debounce = Timer(const Duration(milliseconds: 500), _performSearch);
+        },
         decoration: InputDecoration(
           hintText: context.strings.milkScreenSearchHint,
           prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide(color: context.colorScheme.outline),
-          ),
+          suffixIcon: _searchQuery.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() => _searchQuery = '');
+                    _debounce?.cancel();
+                    context.read<MilkCubit>().getMilkLog(refresh: true);
+                  },
+                )
+              : null,
           filled: true,
-          fillColor: context.colorScheme.surface.withAlpha(200),
+          fillColor: context.colorScheme.surfaceContainerHighest,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(
+              color: context.colorScheme.outline.withAlpha(100),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(
+              color: context.colorScheme.primary,
+              width: 1.5,
+            ),
           ),
         ),
       ),
@@ -207,87 +325,15 @@ class _MilkScreenState extends State<MilkScreen> {
     ],
   );
 
-  Widget _buildMilkEntriesList(BuildContext context) {
-    if (_filteredMilkEntries.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                Icons.water_drop_outlined,
-                size: 64,
-                color: context.colorScheme.onSurface.withAlpha(100),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                context.strings.milkScreenNoEntriesFound,
-                style: context.textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                context.strings.milkScreenAdjustFilters,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: context.colorScheme.onSurface.withAlpha(150),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    final List<MilkModel> entries = _filteredMilkEntries;
-    return SliverPadding(
-      padding: EdgeInsets.only(
-        top: 8,
-        left: 16,
-        right: 16,
-        bottom: MediaQuery.of(context).size.height * 0.2,
-      ),
-      sliver: SliverList.builder(
-        itemCount: entries.length + 1,
-        itemBuilder: (BuildContext context, int index) {
-          if (index == 0) {
-            return _buildSummaryRow(context);
-          }
-          if (index == entries.length) {
-            final MilkState currentState = context.read<MilkCubit>().state;
-            if (currentState is MilkSuccess && currentState.hasMore) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 8),
-                      Text(
-                        context.strings.milkScreenLoadingMore,
-                        style: context.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          }
-          return _buildMilkEntryCard(context, entries[index - 1]);
-        },
-      ),
-    );
-  }
-
-  Widget _buildSummaryRow(BuildContext context) {
-    final double totalMilk = _filteredMilkEntries.fold(
+  Widget _buildSummaryRow(BuildContext context, List<MilkModel> entries) {
+    final double totalMilk = entries.fold(
       0.0,
       (double sum, MilkModel e) => sum + e.quantityInLiter,
     );
-    final double morningMilk = _filteredMilkEntries
+    final double morningMilk = entries
         .where((MilkModel e) => e.shift == ShiftType.morning)
         .fold(0.0, (double sum, MilkModel e) => sum + e.quantityInLiter);
-    final double eveningMilk = _filteredMilkEntries
+    final double eveningMilk = entries
         .where((MilkModel e) => e.shift == ShiftType.evening)
         .fold(0.0, (double sum, MilkModel e) => sum + e.quantityInLiter);
 
@@ -375,7 +421,7 @@ class _MilkScreenState extends State<MilkScreen> {
           Row(
             children: <Widget>[
               Text(
-                milkEntry.cattle!.name,
+                milkEntry.cattle?.name ?? milkEntry.cattleId,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -511,6 +557,17 @@ class _MilkScreenState extends State<MilkScreen> {
                 onTap: () {
                   setState(() => _sortBy = option);
                   Navigator.pop(context);
+
+                  // Trigger search/filter based on selection
+                  if (option == 'Morning Shift' || option == 'Evening Shift') {
+                    _performSearch();
+                  } else if (option == 'All Shifts') {
+                    if (_searchQuery.isNotEmpty) {
+                      _performSearch();
+                    } else {
+                      context.read<MilkCubit>().getMilkLog(refresh: true);
+                    }
+                  }
                 },
               ),
             ),
@@ -526,8 +583,6 @@ class _MilkScreenState extends State<MilkScreen> {
         return Icons.calendar_today;
       case 'Quantity':
         return Icons.water_drop;
-      case 'Cattle Name':
-        return Icons.pets;
       case 'Morning Shift':
         return Icons.wb_sunny;
       case 'Evening Shift':
@@ -605,7 +660,7 @@ class _MilkScreenState extends State<MilkScreen> {
           children: <Widget>[
             _buildDetailRow(
               '🐄 ${context.strings.milkScreenEntryCattle}',
-              milkEntry.cattle?.name ?? '-',
+              milkEntry.cattle?.name ?? milkEntry.cattleId,
               context,
             ),
             _buildDetailRow(

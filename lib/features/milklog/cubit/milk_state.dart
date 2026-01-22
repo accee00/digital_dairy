@@ -1,34 +1,82 @@
 part of 'milk_cubit.dart';
 
 abstract class MilkState extends Equatable {
-  const MilkState({this.milkLogList = const <MilkModel>[]});
+  const MilkState({
+    this.milkLogList = const <MilkModel>[],
+    this.page = 0,
+    this.hasMore = true,
+    this.query,
+    this.shift,
+    this.date,
+    this.minQuantity,
+  });
+
   final List<MilkModel> milkLogList;
+  final int page;
+  final bool hasMore;
+  final String? query;
+  final String? shift;
+  final DateTime? date;
+  final double? minQuantity;
 
   @override
-  List<Object> get props => <Object>[milkLogList];
+  List<Object?> get props => [
+    milkLogList,
+    page,
+    hasMore,
+    query,
+    shift,
+    date,
+    minQuantity,
+  ];
 }
 
 class MilkInitial extends MilkState {
-  const MilkInitial() : super(milkLogList: const <MilkModel>[]);
+  const MilkInitial() : super();
 }
 
 class MilkLoading extends MilkState {
-  const MilkLoading({required super.milkLogList});
+  const MilkLoading({
+    required super.milkLogList,
+    super.page,
+    super.hasMore,
+    super.query,
+    super.shift,
+    super.date,
+    super.minQuantity,
+  });
 }
 
 class MilkSuccess extends MilkState {
-  final bool hasMore;
-  const MilkSuccess({required this.hasMore, required super.milkLogList});
-
-  @override
-  List<Object> get props => <Object>[milkLogList, hasMore];
+  const MilkSuccess({
+    required super.milkLogList,
+    required super.hasMore,
+    required super.page,
+    super.query,
+    super.shift,
+    super.date,
+    super.minQuantity,
+  });
 }
 
 class MilkFailure extends MilkState {
-  MilkFailure(this.message, {required super.milkLogList})
-    : dateTime = DateTime.now().microsecondsSinceEpoch;
+  MilkFailure(
+    this.message, {
+    required super.milkLogList,
+    super.page,
+    super.hasMore,
+    super.query,
+    super.shift,
+    super.date,
+    super.minQuantity,
+  }) : dateTime = DateTime.now().microsecondsSinceEpoch;
+
+  ///
   final String message;
+
+  ///
   final int dateTime;
+
   @override
-  List<Object> get props => <Object>[message, milkLogList, dateTime];
+  List<Object?> get props => [message, milkLogList, dateTime, page, hasMore];
 }

@@ -1,5 +1,5 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:digital_dairy/core/utils/enums.dart';
-import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
 import 'package:equatable/equatable.dart';
 
 /// A model representing the details of milk production for a specific cattle at a specific time.
@@ -34,7 +34,7 @@ class MilkModel extends Equatable {
         ? DateTime.parse(map['updated_at'] as String)
         : null,
     cattle: map['cattle'] != null
-        ? Cattle.fromMap(map['cattle'] as Map<String, dynamic>)
+        ? CattleData.fromMap(map['cattle'] as Map<String, dynamic>)
         : null,
   );
 
@@ -66,7 +66,7 @@ class MilkModel extends Equatable {
   final DateTime? updatedAt;
 
   /// Cattle information associated with this milk record.
-  final Cattle? cattle;
+  final CattleData? cattle;
 
   @override
   List<Object?> get props => <Object?>[
@@ -106,7 +106,7 @@ class MilkModel extends Equatable {
     String? notes,
     DateTime? createdAt,
     DateTime? updatedAt,
-    Cattle? cattle,
+    CattleData? cattle,
   }) => MilkModel(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -119,4 +119,29 @@ class MilkModel extends Equatable {
     updatedAt: updatedAt ?? this.updatedAt,
     cattle: cattle ?? this.cattle,
   );
+}
+
+class CattleData extends Equatable {
+  final String id;
+  final String name;
+  final String tagId;
+  final String breed;
+  final String imageUrl;
+
+  const CattleData({
+    required this.id,
+    required this.name,
+    required this.tagId,
+    required this.breed,
+    required this.imageUrl,
+  });
+  factory CattleData.fromMap(Map<String, dynamic> map) => CattleData(
+    id: map['id'].toString(),
+    name: map['name'].toString(),
+    tagId: map['tag_id'].toString(),
+    breed: map['breed'].toString(),
+    imageUrl: map['image_url'].toString(),
+  );
+  @override
+  List<Object?> get props => <Object?>[id, name, tagId, breed, imageUrl];
 }
