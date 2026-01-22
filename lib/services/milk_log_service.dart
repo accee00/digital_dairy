@@ -49,61 +49,48 @@ class MilkLogService {
     }
   }
 
-  ///
-  Future<Either<Failure, List<MilkModel>>> getMilkLog({
-    int page = 0,
-    int limit = 10,
-  }) async {
-    try {
-      final PostgrestList response = await _client.rpc(
-        'get_milk_log_with_cattle',
-        params: <String, dynamic>{
-          'p_user_id': _userId,
-          'p_page': page,
-          'p_limit': limit,
-        },
-      );
-
-      final List<MilkModel> milkLogList = response
-          .map(MilkModel.fromMap)
-          .toList();
-      logInfo(milkLogList.length);
-      return right(milkLogList);
-    } on PostgrestException catch (e) {
-      return left(Failure(e.message));
-    }
-  }
-
-  ///
-  Future<Either<Failure, List<MilkModel>>> searchMilk({
-    int page = 0,
-    int limit = 5,
+  /// Searches and get milk logs with cursor-based pagination.
+  Future<Either<Failure, List<MilkModel>>> searchAndGetMilkLog({
+    int limit = 20,
     String? query,
     String? shift,
-    DateTime? date,
-    double? minQuantity,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool sortByQuantity = false,
+    DateTime? lastCreatedAt,
+    String? lastId,
   }) async {
     try {
+      logInfo(
+        'searchAndGetMilkLog | '
+        'limit=$limit | '
+        'query=$query | '
+        'shift=$shift | '
+        'sortByQuantity=$sortByQuantity | '
+        'lastId=$lastId',
+      );
       final PostgrestList response = await _client.rpc(
-        'search_milk_log',
+        'search_milk_log_cursor',
         params: <String, dynamic>{
           'p_user_id': _userId,
-          'p_page': page,
           'p_limit': limit,
-          'p_search': query?.trim().isEmpty ?? true ? null : query,
+          'p_search': (query == null || query.trim().isEmpty)
+              ? null
+              : query.trim(),
           'p_shift': shift,
-          'p_date': date?.toIso8601String().split('T').first,
-          'p_min_quantity': minQuantity,
+          'p_last_created_at': lastCreatedAt?.toIso8601String(),
+          'p_last_id': lastId,
+          'p_sort_by_quantity': sortByQuantity,
         },
       );
 
       return right(response.map(MilkModel.fromMap).toList());
     } on PostgrestException catch (e) {
-      logInfo('Search milk error: ${e.toString()}');
+      logInfo('Search milk error: $e');
       return left(Failure(e.message));
     } catch (e) {
-      logInfo('Search milk error: ${e.toString()}');
-      return left(Failure(e.toString()));
+      logInfo('Search milk general error: $e');
+      return left(Failure('An unexpected error occurred'));
     }
   }
 }

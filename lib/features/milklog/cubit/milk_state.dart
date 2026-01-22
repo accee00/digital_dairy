@@ -3,31 +3,31 @@ part of 'milk_cubit.dart';
 abstract class MilkState extends Equatable {
   const MilkState({
     this.milkLogList = const <MilkModel>[],
-    this.page = 0,
     this.hasMore = true,
     this.query,
     this.shift,
-    this.date,
-    this.minQuantity,
+    this.sortByQuantity = false,
+    this.lastCreatedAt,
+    this.lastId,
   });
 
   final List<MilkModel> milkLogList;
-  final int page;
   final bool hasMore;
   final String? query;
   final String? shift;
-  final DateTime? date;
-  final double? minQuantity;
+  final bool sortByQuantity;
+  final DateTime? lastCreatedAt;
+  final String? lastId;
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
     milkLogList,
-    page,
     hasMore,
     query,
     shift,
-    date,
-    minQuantity,
+    sortByQuantity,
+    lastCreatedAt,
+    lastId,
   ];
 }
 
@@ -38,12 +38,12 @@ class MilkInitial extends MilkState {
 class MilkLoading extends MilkState {
   const MilkLoading({
     required super.milkLogList,
-    super.page,
     super.hasMore,
     super.query,
     super.shift,
-    super.date,
-    super.minQuantity,
+    super.sortByQuantity,
+    super.lastCreatedAt,
+    super.lastId,
   });
 }
 
@@ -51,11 +51,11 @@ class MilkSuccess extends MilkState {
   const MilkSuccess({
     required super.milkLogList,
     required super.hasMore,
-    required super.page,
     super.query,
     super.shift,
-    super.date,
-    super.minQuantity,
+    super.sortByQuantity,
+    super.lastCreatedAt,
+    super.lastId,
   });
 }
 
@@ -63,20 +63,17 @@ class MilkFailure extends MilkState {
   MilkFailure(
     this.message, {
     required super.milkLogList,
-    super.page,
     super.hasMore,
     super.query,
     super.shift,
-    super.date,
-    super.minQuantity,
+    super.sortByQuantity,
+    super.lastCreatedAt,
+    super.lastId,
   }) : dateTime = DateTime.now().microsecondsSinceEpoch;
 
-  ///
   final String message;
-
-  ///
   final int dateTime;
 
   @override
-  List<Object?> get props => [message, milkLogList, dateTime, page, hasMore];
+  List<Object?> get props => [...super.props, message, dateTime];
 }

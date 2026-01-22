@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
+import 'package:digital_dairy/core/utils/debouncer.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
+import 'package:digital_dairy/features/milklog/presentation/widget/search_and_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +29,7 @@ class _MilkScreenState extends State<MilkScreen> {
   Timer? _debounce;
   String _searchQuery = '';
   String _sortBy = 'Date';
-
+  final Debouncer debouncer = Debouncer(const Duration(milliseconds: 500));
   final List<String> _sortOptions = <String>[
     'Date',
     'Quantity',
@@ -45,53 +48,22 @@ class _MilkScreenState extends State<MilkScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      final MilkCubit milkCubit = context.read<MilkCubit>();
-      final MilkState currentState = milkCubit.state;
-
-      if (milkCubit.isLoading) {
-        return;
-      }
-
-      if (currentState is MilkSuccess && currentState.hasMore) {
-        if (_searchQuery.isNotEmpty ||
-            _sortBy == 'Morning Shift' ||
-            _sortBy == 'Evening Shift') {
-          _performSearch(loadMore: true);
-        } else {
-          milkCubit.getMilkLog();
-        }
-      }
+      context.read<MilkCubit>().loadMore();
     }
   }
 
-  void _performSearch({bool loadMore = false}) {
+  void _performSearch() {
     final String? shift = _sortBy == 'Morning Shift'
         ? 'Morning'
         : _sortBy == 'Evening Shift'
         ? 'Evening'
         : null;
 
-    context.read<MilkCubit>().searchMilk(
+    context.read<MilkCubit>().applyFilters(
       query: _searchQuery.isNotEmpty ? _searchQuery : null,
       shift: shift,
-      loadMore: loadMore,
+      sortByQuantity: _sortBy == 'Quantity',
     );
-  }
-
-  List<MilkModel> _getSortedEntries(List<MilkModel> milkEntries) {
-    final List<MilkModel> filtered = List<MilkModel>.from(milkEntries);
-
-    switch (_sortBy) {
-      case 'Quantity':
-        filtered.sort(
-          (MilkModel a, MilkModel b) =>
-              b.quantityInLiter.compareTo(a.quantityInLiter),
-        );
-      default:
-        filtered.sort((MilkModel a, MilkModel b) => b.date.compareTo(a.date));
-    }
-
-    return filtered;
   }
 
   @override
@@ -108,234 +80,160 @@ class _MilkScreenState extends State<MilkScreen> {
       child: BlocListener<MilkCubit, MilkState>(
         listener: (BuildContext context, MilkState state) {
           if (state is MilkFailure && state.milkLogList.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: context.colorScheme.error,
-              ),
+            showAppSnackbar(
+              context,
+              message: state.message,
+              type: SnackbarType.error,
             );
           }
         },
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: <Widget>[
-            SliverAppBar(
-              toolbarHeight: 80,
-              backgroundColor: Colors.transparent,
-              title: HeaderForAdd(
-                padding: EdgeInsets.zero,
-                title: context.strings.navbarMilKLog,
-                subTitle: '',
-                onTap: () {
-                  context.push(AppRoutes.addMilk);
-                },
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: _buildSearchAndFilters(context),
-              ),
-            ),
-            // Only this part rebuilds when state changes
-            BlocBuilder<MilkCubit, MilkState>(
-              builder: (BuildContext context, MilkState state) {
-                if (state is MilkLoading && state.milkLogList.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
-                final List<MilkModel> sortedEntries = _getSortedEntries(
-                  state.milkLogList,
-                );
-
-                if (sortedEntries.isEmpty) {
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.water_drop_outlined,
-                            size: 64,
-                            color: context.colorScheme.onSurface.withAlpha(100),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            context.strings.milkScreenNoEntriesFound,
-                            style: context.textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            context.strings.milkScreenAdjustFilters,
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              color: context.colorScheme.onSurface.withAlpha(
-                                150,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                return SliverPadding(
-                  padding: EdgeInsets.only(
-                    top: 8,
-                    left: 16,
-                    right: 16,
-                    bottom: MediaQuery.of(context).size.height * 0.2,
-                  ),
-                  sliver: SliverList.builder(
-                    itemCount: sortedEntries.length + 2,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == 0) {
-                        return _buildSummaryRow(context, sortedEntries);
-                      }
-                      if (index == sortedEntries.length + 1) {
-                        if (state is MilkSuccess && state.hasMore) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Center(
-                              child: Column(
-                                children: <Widget>[
-                                  const CircularProgressIndicator(),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    context.strings.milkScreenLoadingMore,
-                                    style: context.textTheme.bodySmall,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }
-                      return _buildMilkEntryCard(
-                        context,
-                        sortedEntries[index - 1],
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-
-  Widget _buildSearchAndFilters(BuildContext context) => Column(
-    children: <Widget>[
-      TextField(
-        controller: _searchController,
-        onChanged: (String value) {
-          setState(() => _searchQuery = value);
-
-          if (_debounce?.isActive ?? false) {
-            _debounce!.cancel();
-          }
-
-          _debounce = Timer(const Duration(milliseconds: 500), _performSearch);
-        },
-        decoration: InputDecoration(
-          hintText: context.strings.milkScreenSearchHint,
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: _searchQuery.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() => _searchQuery = '');
-                    _debounce?.cancel();
-                    context.read<MilkCubit>().getMilkLog(refresh: true);
+        child: RefreshIndicator(
+          onRefresh: () {
+            setState(() {});
+            return context.read<MilkCubit>().refreshMilkLog();
+          },
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                title: HeaderForAdd(
+                  padding: EdgeInsets.zero,
+                  title: context.strings.navbarMilKLog,
+                  subTitle: '',
+                  onTap: () {
+                    context.push(AppRoutes.addMilk);
                   },
-                )
-              : null,
-          filled: true,
-          fillColor: context.colorScheme.surfaceContainerHighest,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
-              color: context.colorScheme.outline.withAlpha(100),
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
-              color: context.colorScheme.primary,
-              width: 1.5,
-            ),
-          ),
-        ),
-      ),
-      const SizedBox(height: 12),
-      GestureDetector(
-        onTap: () => _showSortOptions(context),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: context.colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: context.colorScheme.outline.withAlpha(100),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                context.strings.milkScreenSortFilterOptions,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
                 ),
               ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    _getSortDisplayText(context),
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: context.colorScheme.primary,
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: SearchAndFilters(
+                    searchController: _searchController,
+                    searchQuery: _searchQuery,
+                    onSearchChanged: (String value) {
+                      setState(() => _searchQuery = value);
+                      debouncer.run(_performSearch);
+                    },
+                    onSearchCleared: () {
+                      _searchController.clear();
+                      setState(() => _searchQuery = '');
+                      _debounce?.cancel();
+                      context.read<MilkCubit>().getMilkLog(refresh: true);
+                    },
+
+                    sortBy: _sortBy,
+                    onSortTapped: () => _showSortOptions(context),
+                  ),
+                ),
+              ),
+              BlocBuilder<MilkCubit, MilkState>(
+                builder: (BuildContext context, MilkState state) {
+                  if (state is MilkLoading && state.milkLogList.isEmpty) {
+                    return const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  final List<MilkModel> sortedEntries = state.milkLogList;
+
+                  if (sortedEntries.isEmpty) {
+                    return SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.water_drop_outlined,
+                              size: 64,
+                              color: context.colorScheme.onSurface.withAlpha(
+                                100,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              context.strings.milkScreenNoEntriesFound,
+                              style: context.textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              context.strings.milkScreenAdjustFilters,
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: context.colorScheme.onSurface.withAlpha(
+                                  150,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: 8,
+                      left: 16,
+                      right: 16,
+                      bottom: MediaQuery.of(context).size.height * 0.2,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.sort,
-                    size: 20,
-                    color: context.colorScheme.primary,
-                  ),
-                ],
+                    sliver: SliverList.builder(
+                      itemCount: sortedEntries.length + 2,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == 0) {
+                          return _buildSummaryRow(context, sortedEntries);
+                        }
+                        if (index == sortedEntries.length + 1) {
+                          if (state is MilkSuccess && state.hasMore) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    const CircularProgressIndicator(),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      context.strings.milkScreenLoadingMore,
+                                      style: context.textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }
+                        return _buildMilkEntryCard(
+                          context,
+                          sortedEntries[index - 1],
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ],
           ),
         ),
       ),
-    ],
+    ),
   );
 
   Widget _buildSummaryRow(BuildContext context, List<MilkModel> entries) {
     final double totalMilk = entries.fold(
-      0.0,
+      0,
       (double sum, MilkModel e) => sum + e.quantityInLiter,
     );
     final double morningMilk = entries
         .where((MilkModel e) => e.shift == ShiftType.morning)
-        .fold(0.0, (double sum, MilkModel e) => sum + e.quantityInLiter);
+        .fold(0, (double sum, MilkModel e) => sum + e.quantityInLiter);
     final double eveningMilk = entries
         .where((MilkModel e) => e.shift == ShiftType.evening)
-        .fold(0.0, (double sum, MilkModel e) => sum + e.quantityInLiter);
+        .fold(0, (double sum, MilkModel e) => sum + e.quantityInLiter);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12, top: 8),
@@ -509,19 +407,6 @@ class _MilkScreenState extends State<MilkScreen> {
     ),
   );
 
-  String _getSortDisplayText(BuildContext context) {
-    switch (_sortBy) {
-      case 'Morning Shift':
-        return '${context.strings.morning} Only';
-      case 'Evening Shift':
-        return '${context.strings.evening} Only';
-      case 'All Shifts':
-        return 'All Entries';
-      default:
-        return _sortBy;
-    }
-  }
-
   void _showSortOptions(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
@@ -557,17 +442,7 @@ class _MilkScreenState extends State<MilkScreen> {
                 onTap: () {
                   setState(() => _sortBy = option);
                   Navigator.pop(context);
-
-                  // Trigger search/filter based on selection
-                  if (option == 'Morning Shift' || option == 'Evening Shift') {
-                    _performSearch();
-                  } else if (option == 'All Shifts') {
-                    if (_searchQuery.isNotEmpty) {
-                      _performSearch();
-                    } else {
-                      context.read<MilkCubit>().getMilkLog(refresh: true);
-                    }
-                  }
+                  _performSearch();
                 },
               ),
             ),
@@ -618,23 +493,25 @@ class _MilkScreenState extends State<MilkScreen> {
       return context.strings.milkScreenYesterday;
     }
 
-    final String month = switch (date.month) {
-      1 => context.strings.jan,
-      2 => context.strings.feb,
-      3 => context.strings.mar,
-      4 => context.strings.apr,
-      5 => context.strings.may,
-      6 => context.strings.jun,
-      7 => context.strings.jul,
-      8 => context.strings.aug,
-      9 => context.strings.sep,
-      10 => context.strings.oct,
-      11 => context.strings.nov,
-      12 => context.strings.dec,
-      _ => '',
-    };
+    final String month = _formatMonthName(date.month, context);
     return '${date.day} $month';
   }
+
+  String _formatMonthName(int month, BuildContext context) => switch (month) {
+    1 => context.strings.jan,
+    2 => context.strings.feb,
+    3 => context.strings.mar,
+    4 => context.strings.apr,
+    5 => context.strings.may,
+    6 => context.strings.jun,
+    7 => context.strings.jul,
+    8 => context.strings.aug,
+    9 => context.strings.sep,
+    10 => context.strings.oct,
+    11 => context.strings.nov,
+    12 => context.strings.dec,
+    _ => '',
+  };
 
   void _showMilkEntryDetail(BuildContext context, MilkModel milkEntry) {
     showDialog<void>(
@@ -735,21 +612,7 @@ class _MilkScreenState extends State<MilkScreen> {
       );
 
   String _formatFullDate(DateTime date, BuildContext context) {
-    final String month = switch (date.month) {
-      1 => context.strings.jan,
-      2 => context.strings.feb,
-      3 => context.strings.mar,
-      4 => context.strings.apr,
-      5 => context.strings.may,
-      6 => context.strings.jun,
-      7 => context.strings.jul,
-      8 => context.strings.aug,
-      9 => context.strings.sep,
-      10 => context.strings.oct,
-      11 => context.strings.nov,
-      12 => context.strings.dec,
-      _ => '',
-    };
+    final String month = _formatMonthName(date.month, context);
     return '${date.day} $month ${date.year}';
   }
 }
