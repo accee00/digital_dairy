@@ -5,6 +5,7 @@ import 'package:digital_dairy/core/utils/age_calculator.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
+import 'package:digital_dairy/features/cattle/presentation/widget/circular_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class CattleDetailScreen extends StatefulWidget {
 
 class _CattleDetailScreenState extends State<CattleDetailScreen> {
   late Cattle cattle;
+
   @override
   void initState() {
     cattle = widget.cattle;
@@ -43,7 +45,6 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
           const SnackBar(content: Text('Cattle deleted successfully')),
         );
       }
-
       if (state is CattleDeleteFailure) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(state.msg), backgroundColor: Colors.red),
@@ -51,38 +52,42 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
       }
     },
     child: Scaffold(
-      extendBodyBehindAppBar: true,
       body: CustomScaffoldContainer(
         child: CustomScrollView(
           slivers: <Widget>[
-            _buildAppBar(context),
             SliverToBoxAdapter(
               child: Stack(
                 children: <Widget>[
                   _cattleImage(context),
-
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(height: context.height * 0.25),
-                        _buildHeaderCard(context),
-                        const SizedBox(height: 20),
-                        _buildBasicInfoCard(context),
-                        const SizedBox(height: 16),
-                        _buildPhysicalDetailsCard(context),
-                        const SizedBox(height: 16),
-                        _buildDatesCard(context),
-                        if (widget.cattle.notes.isNotEmpty) ...<Widget>[
-                          const SizedBox(height: 16),
-                          _buildNotesCard(context),
-                        ],
-                        const SizedBox(height: 16),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(height: context.height * 0.30),
+                            _buildHeaderCard(context),
+                            const SizedBox(height: 20),
+                            _buildBasicInfoCard(context),
+                            const SizedBox(height: 16),
+                            _buildPhysicalDetailsCard(context),
+                            const SizedBox(height: 16),
+                            _buildDatesCard(context),
+                            if (widget.cattle.notes.isNotEmpty) ...<Widget>[
+                              const SizedBox(height: 16),
+                              _buildNotesCard(context),
+                            ],
+                            const SizedBox(height: 16),
+                            if (widget.cattle.gender == 'Female')
+                              _buildActionButtons(context)
+                            else
+                              const SizedBox.shrink(),
+                            const SizedBox(height: 50),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -93,54 +98,67 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     ),
   );
 
-  Center _cattleImage(BuildContext context) => Center(
-    child: Container(
-      decoration: BoxDecoration(
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: context.colorScheme.shadow.withAlpha(50),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+  Widget _cattleImage(BuildContext context) => SizedBox(
+    height: context.height * 0.35,
+    width: double.infinity,
+    child: Stack(
+      children: <Widget>[
+        Positioned.fill(
+          child: CachedNetworkImage(
+            imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
+                ? cattle.imageUrl!
+                : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
-      child: CachedNetworkImage(
-        imageUrl: (widget.cattle.imageUrl?.isNotEmpty ?? false)
-            ? cattle.imageUrl!
-            : 'https://thumbs.dreamstime.com/b/comic-cow-model-taken-closeup-effect-40822303.jpg',
-        fit: BoxFit.fill,
-      ),
-    ),
-  );
+        ),
 
-  Widget _buildAppBar(BuildContext context) => SliverAppBar(
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    title: const Text('Cattle Deatils'),
-    leading: Container(
-      margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface.withAlpha(200),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: IconButton(
-        onPressed: () => context.pop(),
-        icon: Icon(Icons.arrow_back, color: context.colorScheme.onSurface),
-      ),
+        Positioned(
+          top: MediaQuery.of(context).padding.top + 8,
+          left: 16,
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              shape: BoxShape.circle,
+              boxShadow: const <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black38,
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              padding: const EdgeInsets.only(left: 10),
+              onPressed: () => context.pop(),
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: context.colorScheme.onSurface,
+              ),
+            ),
+          ),
+        ),
+
+        Positioned(
+          top: MediaQuery.of(context).padding.top + 8,
+          right: 16,
+          child: Row(
+            children: <Widget>[
+              CircularButton(
+                icon: Icons.edit,
+                iconColor: Colors.black,
+                onTap: () => context.push(AppRoutes.addCattle, extra: cattle),
+              ),
+              const SizedBox(width: 15),
+              CircularButton(
+                iconColor: context.colorScheme.error,
+                icon: Icons.delete,
+                onTap: () => _confirmDelete(context),
+              ),
+            ],
+          ),
+        ),
+      ],
     ),
-    actions: <Widget>[
-      Container(
-        margin: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: context.colorScheme.surface.withAlpha(200),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: IconButton(
-          onPressed: () => _confirmDelete(context),
-          icon: Icon(Icons.delete, color: context.colorScheme.error),
-        ),
-      ),
-    ],
   );
 
   Widget _buildHeaderCard(BuildContext context) => Container(
@@ -365,70 +383,27 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     ),
   );
 
-  Widget _buildActionButtons(BuildContext context) => Column(
-    children: <Widget>[
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => context.push(AppRoutes.addCattle, extra: cattle),
-              icon: const Icon(Icons.edit),
-              label: const Text('Edit Details'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colorScheme.primary,
-                foregroundColor: context.colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Add health record functionality
-            },
-            icon: const Icon(Icons.medical_information),
-            label: const Text('Health Records'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colorScheme.primary,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              side: BorderSide(color: context.colorScheme.primary),
-            ),
-          ),
-        ],
+  Widget _buildActionButtons(BuildContext context) => SizedBox(
+    width: double.infinity,
+    child: ElevatedButton.icon(
+      onPressed: () {
+        context.push(
+          AppRoutes.cattleMilkDetail,
+          extra: <String, String?>{
+            'cattleId': cattle.id,
+            'cattleName': cattle.name,
+          },
+        );
+      },
+      icon: const Icon(Icons.water_drop),
+      label: const Text('View Milk Production'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: context.colorScheme.secondary,
+        foregroundColor: context.colorScheme.onSecondaryContainer,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      const SizedBox(height: 12),
-      if (widget.cattle.gender == 'Female')
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              context.push(
-                AppRoutes.cattleMilkDetail,
-                extra: <String, String?>{
-                  'cattleId': cattle.id,
-                  'cattleName': cattle.name,
-                },
-              );
-            },
-            icon: const Icon(Icons.water_drop),
-            label: const Text('View Milk Production'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colorScheme.secondary,
-              foregroundColor: context.colorScheme.onSecondaryContainer,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ),
-    ],
+    ),
   );
 
   String _formatDate(DateTime? date) {

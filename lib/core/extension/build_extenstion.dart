@@ -1,4 +1,4 @@
-import 'package:digital_dairy/l10n/localization/app_localizations.dart';
+import 'package:digital_dairy/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// Extension on [BuildContext] to provide easy access to commonly used properties.

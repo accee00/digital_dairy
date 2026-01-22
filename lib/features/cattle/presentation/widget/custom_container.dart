@@ -28,10 +28,10 @@ class CustomContainer extends StatelessWidget {
   final bool showBorder;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
+    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
     decoration: BoxDecoration(
       color: context.colorScheme.surface,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       border: showBorder
           ? Border.all(color: context.colorScheme.outline.withAlpha(50))
           : null,
