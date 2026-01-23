@@ -94,19 +94,27 @@ class _SignInPageState extends State<SignInPage> {
                       children: <Widget>[
                         const SizedBox(height: 10),
 
-                        // Back button
-                        IconButton(
-                          onPressed: () => context.pop(),
-                          icon: Icon(
-                            Icons.arrow_back_ios_rounded,
-                            color: colorScheme.onPrimary,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: context.colorScheme.surface,
+                            shape: BoxShape.circle,
+                            boxShadow: const <BoxShadow>[
+                              BoxShadow(
+                                color: Colors.black38,
+                                blurRadius: 8,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
-                          style: IconButton.styleFrom(
-                            backgroundColor: colorScheme.primary.withAlpha(150),
-                            padding: const EdgeInsets.all(12),
+                          child: IconButton(
+                            padding: const EdgeInsets.only(left: 10),
+                            onPressed: () => context.pop(),
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              color: context.colorScheme.onSurface,
+                            ),
                           ),
                         ),
-
                         const SizedBox(height: 40),
 
                         // Welcome text
@@ -128,7 +136,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
 
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 20),
 
                         // Email field
                         CustomTextField(
@@ -139,7 +147,7 @@ class _SignInPageState extends State<SignInPage> {
                           validator: _validateEmail,
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 15),
                         // Password feild
                         CustomTextField(
                           controller: _passwordController,
@@ -163,7 +171,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 15),
                         // Forgot password
                         Align(
                           alignment: Alignment.centerRight,
@@ -179,7 +187,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
 
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 15),
 
                         SizedBox(
                           width: double.infinity,
@@ -197,7 +205,7 @@ class _SignInPageState extends State<SignInPage> {
                             children: <Widget>[
                               Text(
                                 context.strings.authDontHaveAccount,
-                                style: textTheme.bodyMedium?.copyWith(
+                                style: textTheme.bodyLarge?.copyWith(
                                   color: colorScheme.onSurface.withAlpha(150),
                                 ),
                               ),
@@ -205,7 +213,7 @@ class _SignInPageState extends State<SignInPage> {
                                 onTap: () => context.push(AppRoutes.signUp),
                                 child: Text(
                                   context.strings.authSignUp,
-                                  style: TextStyle(
+                                  style: context.textTheme.bodyLarge?.copyWith(
                                     decoration: TextDecoration.underline,
                                     color: colorScheme.primary,
                                     fontWeight: FontWeight.w600,

@@ -114,7 +114,7 @@ class CustomTextField extends StatelessWidget {
         if (labelText != null) ...<Widget>[
           Text(
             labelText!,
-            style: textTheme.titleMedium?.copyWith(
+            style: textTheme.titleLarge?.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
@@ -123,16 +123,7 @@ class CustomTextField extends StatelessWidget {
         ],
         Container(
           height: height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: colorScheme.primary.withAlpha(50),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
           child: TextFormField(
             controller: controller,
             focusNode: focusNode,
@@ -154,14 +145,14 @@ class CustomTextField extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: textTheme.bodyLarge?.copyWith(
-                color: colorScheme.onSurface.withAlpha(100),
+                color: colorScheme.onSurface.withAlpha(200),
               ),
               prefixIcon: prefixIcon != null
                   ? Container(
                       margin: const EdgeInsets.only(left: 16, right: 12),
                       child: Icon(
                         prefixIcon,
-                        color: colorScheme.primary.withAlpha(178),
+                        color: context.colorScheme.onSurface,
                         size: 22,
                       ),
                     )
@@ -215,6 +206,7 @@ class CustomTextField extends StatelessWidget {
                 ),
               ),
               errorStyle: textTheme.bodySmall?.copyWith(
+                fontSize: 15,
                 color: colorScheme.error,
                 fontWeight: FontWeight.w500,
               ),
