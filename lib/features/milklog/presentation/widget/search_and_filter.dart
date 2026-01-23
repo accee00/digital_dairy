@@ -11,6 +11,7 @@ class SearchAndFilters extends StatelessWidget {
     required this.onSearchCleared,
     required this.sortBy,
     required this.onSortTapped,
+    super.key,
   });
 
   ///

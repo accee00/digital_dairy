@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
-import 'package:digital_dairy/features/cattle/presentation/widget/style_filte_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,153 +19,153 @@ class CattleScreen extends StatefulWidget {
 }
 
 class _CattleScreenState extends State<CattleScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
+  String _searchQuery = '';
   @override
   void initState() {
     super.initState();
     context.read<CattleCubit>().getAllCattle();
   }
 
-  String _searchQuery = '';
-  String _selectedStatus = 'All';
-  String _selectedBreed = 'All';
-  String _selectedGender = 'All';
-  String _sortBy = 'Name';
-
-  final List<String> _statuses = <String>[
-    'All',
-    'Active',
-    'Sick',
-    'Sold',
-    'Dead',
-  ];
-  final List<String> _breeds = <String>[
-    'All',
-    'Holstein',
-    'Jersey',
-    'Gir',
-    'Sahiwal',
-  ];
-  final List<String> _genders = <String>['All', 'Female', 'Male'];
-  final List<String> _sortOptions = <String>[
-    'Name',
-    'Age',
-    'Milk Production',
-    'Status',
-  ];
-  List<Cattle> get _filteredCattle {
-    final List<Cattle> cattle = context.watch<CattleCubit>().state.cattle;
-
-    final List<Cattle> filtered = cattle.where((Cattle cattle) {
-      final bool matchesSearch =
-          cattle.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          cattle.tagId.toLowerCase().contains(_searchQuery.toLowerCase());
-      final bool matchesStatus =
-          _selectedStatus == 'All' || cattle.status == _selectedStatus;
-      final bool matchesBreed =
-          _selectedBreed == 'All' || cattle.breed == _selectedBreed;
-      final bool matchesGender =
-          _selectedGender == 'All' || cattle.gender == _selectedGender;
-
-      return matchesSearch && matchesStatus && matchesBreed && matchesGender;
-    }).toList();
-
-    // switch (_sortBy) {
-    //   case 'Age':
-    //     filtered.sort((a, b) => a.ageInMonths.compareTo(b.ageInMonths));
-    //     break;
-    //   case 'Milk Production':
-    //     filtered.sort((a, b) => b.monthlyMilk.compareTo(a.monthlyMilk));
-    //     break;
-    //   case 'Status':
-    //     filtered.sort((a, b) => a.status.compareTo(b.status));
-    //     break;
-    //   default:
-    //     filtered.sort((a, b) => a.name.compareTo(b.name));
-    // }
-
-    return filtered;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-    child: Column(
-      children: <Widget>[
-        HeaderForAdd(
-          title: 'My Cattles',
-          subTitle: '${3} Cattle',
-          onTap: () => context.push(AppRoutes.addCattle),
-        ),
+  Widget build(BuildContext context) => Scaffold(
+    body: CustomScaffoldContainer(
+      child: RefreshIndicator(
+        onRefresh: () => context.read<CattleCubit>().getAllCattle(),
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.transparent,
+              title: BlocBuilder<CattleCubit, CattleState>(
+                builder: (BuildContext context, CattleState state) {
+                  final int cattleCount = state.cattle.length;
+                  return HeaderForAdd(
+                    padding: EdgeInsets.zero,
+                    title: 'My Cattles',
+                    subTitle:
+                        '$cattleCount Cattle${cattleCount != 1 ? 's' : ''}',
+                    onTap: () => context.push(AppRoutes.addCattle),
+                  );
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (String v) {},
+                  decoration: InputDecoration(
+                    hintText: context.strings.milkScreenSearchHint,
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {},
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: context.colorScheme.surfaceContainerHighest,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.outline.withAlpha(100),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.primary,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
-        SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: <Widget>[
-              StyledFilterChip(
-                label: 'Status',
-                selected: _selectedStatus,
-                options: _statuses,
-                onSelected: (String value) =>
-                    setState(() => _selectedStatus = value),
-              ),
-              const SizedBox(width: 8),
-              StyledFilterChip(
-                label: 'Breed',
-                selected: _selectedBreed,
-                options: _breeds,
-                onSelected: (String value) =>
-                    setState(() => _selectedBreed = value),
-              ),
-              const SizedBox(width: 8),
-              StyledFilterChip(
-                label: 'Gender',
-                selected: _selectedGender,
-                options: _genders,
-                onSelected: (String value) =>
-                    setState(() => _selectedGender = value),
-              ),
-              const SizedBox(width: 8),
-              StyledFilterChip(
-                label: 'Sort',
-                selected: _sortBy,
-                options: _sortOptions,
-                onSelected: (String value) => setState(() => _sortBy = value),
-              ),
-            ],
-          ),
+            BlocBuilder<CattleCubit, CattleState>(
+              builder: (BuildContext context, CattleState state) {
+                final List<Cattle> cattleList = state.cattle;
+                if (state is CattleLoadingState && state.cattle.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (state is CattleLoadedFailure && state.cattle.isEmpty) {
+                  return SliverFillRemaining(
+                    child: Center(child: Text(state.msg)),
+                  );
+                }
+
+                if (cattleList.isEmpty) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.pets_outlined,
+                            size: 64,
+                            color: context.colorScheme.onSurface.withAlpha(100),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No cattle found',
+                            style: context.textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Try adjusting your filters',
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              color: context.colorScheme.onSurface.withAlpha(
+                                150,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: 8,
+                    left: 16,
+                    right: 16,
+                    bottom: MediaQuery.of(context).size.height * 0.15,
+                  ),
+                  sliver: SliverList.builder(
+                    itemCount: cattleList.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        _buildCattleCard(context, cattleList[index]),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
-        Expanded(child: _buildCattleList(context)),
-      ],
+      ),
     ),
   );
-
-  Widget _buildCattleList(BuildContext context) {
-    final CattleState state = context.watch<CattleCubit>().state;
-
-    if (state is CattleLoadingState) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (state is CattleLoadedFailure) {
-      return Center(child: Text(state.msg));
-    }
-
-    if (_filteredCattle.isEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text('No cattle found', style: context.textTheme.titleMedium),
-        ],
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _filteredCattle.length,
-      itemBuilder: (BuildContext context, int index) =>
-          _buildCattleCard(context, _filteredCattle[index]),
-    );
-  }
 
   Widget _buildCattleCard(BuildContext context, Cattle cattle) => Container(
     margin: const EdgeInsets.only(bottom: 12),
@@ -173,6 +173,7 @@ class _CattleScreenState extends State<CattleScreen> {
     decoration: BoxDecoration(
       color: context.colorScheme.surface,
       borderRadius: BorderRadius.circular(15),
+      border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
     ),
     child: InkWell(
       borderRadius: BorderRadius.circular(12),
@@ -200,7 +201,6 @@ class _CattleScreenState extends State<CattleScreen> {
                   ),
                 ),
               ),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
