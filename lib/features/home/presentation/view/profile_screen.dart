@@ -1,4 +1,8 @@
+import 'package:digital_dairy/core/di/init_di.dart';
+import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
+import 'package:digital_dairy/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 ///
 class ProfileScreen extends StatefulWidget {
@@ -381,8 +385,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              // Add logout logic here
+              serviceLocator<AuthService>().logOutUser();
             },
             child: const Text('Logout', style: TextStyle(color: Colors.red)),
           ),

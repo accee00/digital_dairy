@@ -411,7 +411,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
           padding: const EdgeInsets.only(left: 10, right: 4),
           decoration: const InputDecoration(border: InputBorder.none),
           hint: Text(
-            label.toLowerCase().replaceAll(' *', ''),
+            label.replaceAll(' *', ''),
             style: context.textTheme.bodyMedium?.copyWith(
               color: context.colorScheme.onSurface.withAlpha(100),
             ),

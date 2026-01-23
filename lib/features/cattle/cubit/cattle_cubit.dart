@@ -8,117 +8,236 @@ import 'package:fpdart/fpdart.dart';
 
 part 'cattle_state.dart';
 
-/// Cubit responsible for handling all cattle-related actions
-/// such as create, update, delete, fetch cattle and milk logs
+///
 class CattleCubit extends Cubit<CattleState> {
-  /// Injects [CattleService]
-  CattleCubit(this.cattleService) : super(const CattleInitial());
+  ///
+  CattleCubit(this._cattleService) : super(const CattleInitial());
 
-  /// Service layer for cattle APIs
-  final CattleService cattleService;
+  final CattleService _cattleService;
 
-  /// Creates a new cattle entry
+  final int _limit = 20;
+  bool _isLoading = false;
+
+  Future<void> _load({bool refresh = false, String? search}) async {
+    if (_isLoading || (!state.hasMore && !refresh)) {
+      return;
+    }
+    _isLoading = true;
+
+    final String? actualSearch = refresh ? search : (search ?? state.search);
+
+    Cattle? lastItem;
+    if (!refresh && state.cattle.isNotEmpty) {
+      lastItem = state.cattle.last;
+    }
+
+    emit(
+      CattleLoadingState(
+        cattle: refresh ? <Cattle>[] : state.cattle,
+        hasMore: refresh || state.hasMore,
+        search: actualSearch,
+        lastCreatedAt: refresh ? null : lastItem?.createdAt,
+        lastId: refresh ? null : lastItem?.id,
+      ),
+    );
+
+    try {
+      final Either<Failure, List<Cattle>> result = await _cattleService
+          .getAndSearchCattle(
+            limit: _limit,
+            search: actualSearch,
+            lastCreatedAt: refresh ? null : lastItem?.createdAt,
+            lastId: refresh ? null : lastItem?.id,
+          );
+
+      result.fold(
+        (Failure failure) => emit(
+          CattleLoadedFailure(
+            cattle: state.cattle,
+            hasMore: state.hasMore,
+            msg: failure.message,
+            search: actualSearch,
+            lastCreatedAt: state.lastCreatedAt,
+            lastId: state.lastId,
+          ),
+        ),
+        (List<Cattle> data) {
+          final List<Cattle> updatedList = refresh
+              ? data
+              : <Cattle>[...state.cattle, ...data];
+
+          final Cattle? newLastItem = updatedList.isNotEmpty
+              ? updatedList.last
+              : null;
+
+          emit(
+            CattleLoadedState(
+              cattle: updatedList,
+              hasMore: data.length == _limit,
+              search: actualSearch,
+              lastCreatedAt: newLastItem?.createdAt,
+              lastId: newLastItem?.id,
+            ),
+          );
+        },
+      );
+    } finally {
+      _isLoading = false;
+    }
+  }
+
+  Future<void> getCattle({bool refresh = false}) async =>
+      _load(refresh: refresh);
+
+  ///
+  Future<void> loadMore() async => _load();
+  ////
+  Future<void> refreshCattle() async => _load(refresh: true);
+
+  ///
+  Future<void> applySearch(String? search) async =>
+      _load(refresh: true, search: search);
+
+  ///
   Future<void> createCattle(Cattle cattle) async {
-    emit(CattleLoadingState(cattle: state.cattle));
+    emit(
+      CattleLoadingState(
+        cattle: state.cattle,
+        hasMore: state.hasMore,
+        search: state.search,
+        lastCreatedAt: state.lastCreatedAt,
+        lastId: state.lastId,
+      ),
+    );
 
-    final Either<Failure, List<Cattle>> result = await cattleService
+    final Either<Failure, List<Cattle>> result = await _cattleService
         .createCattle(cattle);
 
     result.fold(
-      /// On failure, emit error state with message
-      (Failure failure) {
-        emit(CattleCreatedFailure(cattle: state.cattle, msg: failure.message));
-      },
-
-      /// On success, emit created state with updated list
-      (List<Cattle> cattleList) {
-        emit(
-          CattleCreatedSuccess(
-            cattle: cattleList,
-            newlyCreatedCattle: cattleList.last,
-          ),
-        );
-      },
+      (Failure failure) => emit(
+        CattleCreatedFailure(
+          cattle: state.cattle,
+          hasMore: state.hasMore,
+          msg: failure.message,
+          search: state.search,
+          lastCreatedAt: state.lastCreatedAt,
+          lastId: state.lastId,
+        ),
+      ),
+      (List<Cattle> list) => emit(
+        CattleCreatedSuccess(
+          cattle: list,
+          hasMore: state.hasMore,
+          newlyCreatedCattle: list.last,
+          search: state.search,
+          lastCreatedAt: state.lastCreatedAt,
+          lastId: state.lastId,
+        ),
+      ),
     );
   }
 
-  /// Updates an existing cattle
+  ///
   Future<void> updateCattle(Cattle cattle) async {
-    emit(CattleLoadingState(cattle: state.cattle));
+    emit(
+      CattleLoadingState(
+        cattle: state.cattle,
+        hasMore: state.hasMore,
+        search: state.search,
+        lastCreatedAt: state.lastCreatedAt,
+        lastId: state.lastId,
+      ),
+    );
 
-    final Either<Failure, Cattle> result = await cattleService.updateCattle(
+    final Either<Failure, Cattle> result = await _cattleService.updateCattle(
       cattle,
     );
 
     result.fold(
-      /// Emit failure if update fails
-      (Failure failure) {
-        emit(CattleUpdateFailure(cattle: state.cattle, msg: failure.message));
-      },
+      (Failure failure) => emit(
+        CattleUpdateFailure(
+          cattle: state.cattle,
+          hasMore: state.hasMore,
+          msg: failure.message,
+          search: state.search,
+          lastCreatedAt: state.lastCreatedAt,
+          lastId: state.lastId,
+        ),
+      ),
+      (Cattle updated) => emit(
+        CattleUpdatedSuccess(
+          cattle: state.cattle,
+          hasMore: state.hasMore,
+          updatedCattle: updated,
+          search: state.search,
+          lastCreatedAt: state.lastCreatedAt,
+          lastId: state.lastId,
+        ),
+      ),
+    );
+  }
 
-      /// Emit success with updated cattle list
-      (Cattle updatedCattle) {
+  ///
+  Future<void> deleteCattle(String cattleId) async {
+    emit(
+      CattleLoadingState(
+        cattle: state.cattle,
+        hasMore: state.hasMore,
+        search: state.search,
+        lastCreatedAt: state.lastCreatedAt,
+        lastId: state.lastId,
+      ),
+    );
+
+    final Either<Failure, bool> result = await _cattleService.deleteCattle(
+      cattleId,
+    );
+
+    result.fold(
+      (Failure failure) => emit(
+        CattleDeleteFailure(
+          cattle: state.cattle,
+          hasMore: state.hasMore,
+          msg: failure.message,
+          search: state.search,
+          lastCreatedAt: state.lastCreatedAt,
+          lastId: state.lastId,
+        ),
+      ),
+      (_) {
+        final List<Cattle> updatedList = state.cattle
+            .where((Cattle c) => c.id != cattleId)
+            .toList();
         emit(
-          CattleUpdatedSuccess(
-            cattle: state.cattle,
-            updatedCattle: updatedCattle,
+          CattleDeletedSuccess(
+            cattle: updatedList,
+            hasMore: state.hasMore,
+            search: state.search,
+            lastCreatedAt: state.lastCreatedAt,
+            lastId: state.lastId,
           ),
         );
       },
     );
   }
 
-  /// Deletes a cattle using its ID
-  Future<void> deleteCattle(String cattleId) async {
-    emit(CattleLoadingState(cattle: state.cattle));
-
-    final Either<Failure, bool> result = await cattleService.deleteCattle(
-      cattleId,
-    );
-
-    result.fold(
-      /// Emit failure state if deletion fails
-      (Failure failure) {
-        emit(CattleDeleteFailure(cattle: state.cattle, msg: failure.message));
-      },
-
-      /// Remove deleted cattle locally and emit success
-      (_) {
-        final List<Cattle> updatedList = state.cattle
-            .where((Cattle c) => c.id != cattleId)
-            .toList();
-
-        emit(CattleDeletedSuccess(cattle: updatedList));
-      },
-    );
-  }
-
-  /// Fetches all cattle for the logged-in user
-  Future<void> getAllCattle() async {
-    emit(CattleLoadingState(cattle: state.cattle));
-
-    final Either<Failure, List<Cattle>> result = await cattleService
-        .getAllCattle();
-
-    result.fold(
-      /// Emit failure if API fails
-      (Failure failure) =>
-          emit(CattleLoadedFailure(cattle: state.cattle, msg: failure.message)),
-
-      /// Emit loaded state with cattle list
-      (List<Cattle> cattleList) => emit(CattleLoadedState(cattle: cattleList)),
-    );
-  }
-
-  /// Fetches milk logs for a specific cattle within a date range
+  /// Milk logs
   Future<void> getMilkLogByCattle({
     required String cattleId,
     required DateTime startDate,
     required DateTime endDate,
   }) async {
-    emit(CattleMilkLogLoading(cattle: state.cattle));
+    emit(
+      CattleMilkLogLoading(
+        cattle: state.cattle,
+        hasMore: state.hasMore,
+        search: state.search,
+        lastCreatedAt: state.lastCreatedAt,
+        lastId: state.lastId,
+      ),
+    );
 
-    final Either<Failure, List<MilkModel>> result = await cattleService
+    final Either<Failure, List<MilkModel>> result = await _cattleService
         .getMilkLogByCattle(
           cattleId: cattleId,
           startDate: startDate,
@@ -126,14 +245,26 @@ class CattleCubit extends Cubit<CattleState> {
         );
 
     result.fold(
-      /// Emit failure state if fetching fails
-      (Failure failure) => emit(
-        CattleMilkLogFailure(cattle: state.cattle, msg: failure.message),
+      (Failure f) => emit(
+        CattleMilkLogFailure(
+          cattle: state.cattle,
+          hasMore: state.hasMore,
+          msg: f.message,
+          search: state.search,
+          lastCreatedAt: state.lastCreatedAt,
+          lastId: state.lastId,
+        ),
       ),
-
-      /// Emit loaded state with milk logs
-      (List<MilkModel> logs) =>
-          emit(CattleMilkLogLoaded(cattle: state.cattle, milkLogs: logs)),
+      (List<MilkModel> logs) => emit(
+        CattleMilkLogLoaded(
+          cattle: state.cattle,
+          hasMore: state.hasMore,
+          milkLogs: logs,
+          search: state.search,
+          lastCreatedAt: state.lastCreatedAt,
+          lastId: state.lastId,
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
+import 'package:digital_dairy/core/utils/debouncer.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
@@ -21,25 +22,47 @@ class CattleScreen extends StatefulWidget {
 class _CattleScreenState extends State<CattleScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-
+  final Debouncer _debouncer = Debouncer(const Duration(milliseconds: 500));
   String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
-    context.read<CattleCubit>().getAllCattle();
+    context.read<CattleCubit>().getCattle();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<CattleCubit>().loadMore();
+    }
+  }
+
+  void _performSearch() {
+    final String? search = _searchQuery.isNotEmpty ? _searchQuery : null;
+    context.read<CattleCubit>().applySearch(search);
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    setState(() => _searchQuery = '');
+
+    context.read<CattleCubit>().applySearch(null);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: CustomScaffoldContainer(
-      child: RefreshIndicator(
-        onRefresh: () => context.read<CattleCubit>().getAllCattle(),
+    body: RefreshIndicator(
+      onRefresh: () => context.read<CattleCubit>().refreshCattle(),
+      child: CustomScaffoldContainer(
         child: CustomScrollView(
           controller: _scrollController,
           slivers: <Widget>[
@@ -48,11 +71,14 @@ class _CattleScreenState extends State<CattleScreen> {
               title: BlocBuilder<CattleCubit, CattleState>(
                 builder: (BuildContext context, CattleState state) {
                   final int cattleCount = state.cattle.length;
+                  final bool isSearching = state.search?.isNotEmpty ?? false;
+
                   return HeaderForAdd(
                     padding: EdgeInsets.zero,
-                    title: 'My Cattles',
-                    subTitle:
-                        '$cattleCount Cattle${cattleCount != 1 ? 's' : ''}',
+                    title: isSearching ? 'Search Results' : 'My Cattles',
+                    subTitle: isSearching
+                        ? '$cattleCount found'
+                        : '$cattleCount Cattle${cattleCount != 1 ? 's' : ''}',
                     onTap: () => context.push(AppRoutes.addCattle),
                   );
                 },
@@ -66,14 +92,17 @@ class _CattleScreenState extends State<CattleScreen> {
                 ),
                 child: TextField(
                   controller: _searchController,
-                  onChanged: (String v) {},
+                  onChanged: (String value) {
+                    setState(() => _searchQuery = value);
+                    _debouncer.run(_performSearch);
+                  },
                   decoration: InputDecoration(
                     hintText: context.strings.milkScreenSearchHint,
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear),
-                            onPressed: () {},
+                            onPressed: _clearSearch,
                           )
                         : null,
                     filled: true,
@@ -103,6 +132,7 @@ class _CattleScreenState extends State<CattleScreen> {
             BlocBuilder<CattleCubit, CattleState>(
               builder: (BuildContext context, CattleState state) {
                 final List<Cattle> cattleList = state.cattle;
+
                 if (state is CattleLoadingState && state.cattle.isEmpty) {
                   return const SliverFillRemaining(
                     child: Center(child: CircularProgressIndicator()),
@@ -111,10 +141,43 @@ class _CattleScreenState extends State<CattleScreen> {
 
                 if (state is CattleLoadedFailure && state.cattle.isEmpty) {
                   return SliverFillRemaining(
-                    child: Center(child: Text(state.msg)),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: context.colorScheme.error,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Failed to load cattle',
+                            style: context.textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            state.msg,
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              color: context.colorScheme.onSurface.withAlpha(
+                                150,
+                              ),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () =>
+                                context.read<CattleCubit>().refreshCattle(),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 }
 
+                // Show empty state
                 if (cattleList.isEmpty) {
                   return SliverFillRemaining(
                     child: Center(
@@ -128,18 +191,29 @@ class _CattleScreenState extends State<CattleScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No cattle found',
+                            (state.search?.isNotEmpty ?? false)
+                                ? 'No cattle found for "${state.search}"'
+                                : 'No cattle found',
                             style: context.textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Try adjusting your filters',
+                            (state.search?.isNotEmpty ?? false)
+                                ? 'Try a different search term'
+                                : 'Tap the + button to add your first cattle',
                             style: context.textTheme.bodyMedium?.copyWith(
                               color: context.colorScheme.onSurface.withAlpha(
                                 150,
                               ),
                             ),
                           ),
+                          if (state.search?.isNotEmpty ?? false) ...[
+                            const SizedBox(height: 16),
+                            OutlinedButton(
+                              onPressed: _clearSearch,
+                              child: const Text('Clear Search'),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -154,9 +228,21 @@ class _CattleScreenState extends State<CattleScreen> {
                     bottom: MediaQuery.of(context).size.height * 0.15,
                   ),
                   sliver: SliverList.builder(
-                    itemCount: cattleList.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        _buildCattleCard(context, cattleList[index]),
+                    itemCount: cattleList.length + (state.hasMore ? 1 : 0),
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index >= cattleList.length) {
+                        // Show loading indicator at the bottom when loading more
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Center(
+                            child: state is CattleLoadingState
+                                ? const CircularProgressIndicator()
+                                : const SizedBox.shrink(),
+                          ),
+                        );
+                      }
+                      return _buildCattleCard(context, cattleList[index]);
+                    },
                   ),
                 );
               },

@@ -534,8 +534,6 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     if (!mounted) {
       return;
     }
-
-    await context.read<CattleCubit>().getAllCattle();
   }
 
   Widget _buildImagePickerSection(BuildContext context) => Column(

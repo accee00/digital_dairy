@@ -91,20 +91,38 @@ class CattleService {
   }
 
   ///
-  Future<Either<Failure, List<Cattle>>> getAllCattle() async {
+  Future<Either<Failure, List<Cattle>>> getAndSearchCattle({
+    int limit = 10,
+    String? search,
+    DateTime? lastCreatedAt,
+    String? lastId,
+  }) async {
     try {
+      logInfo(
+        'getAndSearchCattle | '
+        'limit=$limit | '
+        'lastId=$lastId',
+      );
+
       final List<Map<String, dynamic>> response = await _client
           .rpc<List<Map<String, dynamic>>>(
-            'get_cattle_with_monthly_milk',
-            params: <String, dynamic>{'p_user_id': _userId},
+            'search_cattle_with_monthly_milk_cursor',
+            params: <String, dynamic>{
+              'p_user_id': _userId,
+              'p_limit': limit,
+              if (search != null && search.isNotEmpty) 'p_search': search,
+              if (lastCreatedAt != null)
+                'p_last_created_at': lastCreatedAt.toIso8601String(),
+              if (lastId != null) 'p_last_id': lastId,
+            },
           );
 
       final List<Cattle> data = response.map(Cattle.fromMap).toList();
-      logInfo(data);
       return right(data);
     } on PostgrestException catch (e) {
-      logInfo('Get cattle failure:$e');
       return left(Failure(e.message));
+    } catch (e) {
+      return left(Failure(e.toString()));
     }
   }
 
