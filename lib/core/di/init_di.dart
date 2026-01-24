@@ -2,8 +2,10 @@ import 'package:digital_dairy/core/bloc/locale_bloc.dart';
 import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
+import 'package:digital_dairy/features/home/cubit/analytics_cubit.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
+import 'package:digital_dairy/services/analytics_service.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:digital_dairy/services/cattle_service.dart';
 import 'package:digital_dairy/services/milk_log_service.dart';
@@ -46,6 +48,9 @@ void initService() {
   serviceLocator
     ..registerLazySingleton(() => AuthService(serviceLocator<SupabaseClient>()))
     ..registerLazySingleton(
+      () => AnalyticsService(serviceLocator<SupabaseClient>()),
+    )
+    ..registerLazySingleton(
       () => CattleService(serviceLocator<SupabaseClient>()),
     )
     ..registerLazySingleton(
@@ -61,6 +66,7 @@ void initCubits() {
   serviceLocator
     ..registerLazySingleton<LocaleBloc>(LocaleBloc.new)
     ..registerFactory<AuthCubit>(() => AuthCubit(serviceLocator<AuthService>()))
+    ..registerFactory(() => AnalyticsCubit(serviceLocator<AnalyticsService>()))
     ..registerFactory<CattleCubit>(
       () => CattleCubit(serviceLocator<CattleService>()),
     )
