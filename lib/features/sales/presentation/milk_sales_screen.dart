@@ -124,7 +124,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
                 });
               },
               decoration: InputDecoration(
-                hintText: context.strings.milkScreenSearchHint,
+                hintText: 'Search by name',
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: context.colorScheme.surfaceContainerHighest,
