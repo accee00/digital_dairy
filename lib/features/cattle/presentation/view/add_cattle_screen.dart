@@ -177,34 +177,34 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                           'Basic Information',
                           Icons.info,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 5),
                         _buildBasicInfoSection(context),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 10),
                         _buildSectionHeader(
                           context,
                           'Physical Details',
                           Icons.pets,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 5),
                         _buildPhysicalDetailsSection(context),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 10),
                         _buildSectionHeader(
                           context,
                           'Important Dates',
                           Icons.calendar_today,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 5),
                         _buildDatesSection(context),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 10),
                         _buildSectionHeader(
                           context,
                           'Additional Information',
                           Icons.note,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 5),
                         _buildAdditionalInfoSection(context),
 
                         const SizedBox(height: 40),

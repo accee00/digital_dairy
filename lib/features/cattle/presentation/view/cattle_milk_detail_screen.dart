@@ -11,6 +11,7 @@ import 'package:digital_dairy/services/milk_pdf_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 ///
@@ -123,17 +124,19 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
         pinned: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: context.colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 18,
+        leading: Container(
+          height: 43,
+          width: 43,
+          margin: const EdgeInsets.only(left: 10),
+          decoration: BoxDecoration(
+            color: context.colorScheme.surface,
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            padding: const EdgeInsets.only(left: 10),
+            onPressed: () => context.pop(),
+            icon: Icon(
+              Icons.arrow_back_ios,
               color: context.colorScheme.onSurface,
             ),
           ),
@@ -149,14 +152,14 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
           if (logs.isNotEmpty)
             PopupMenuButton<String>(
               icon: Container(
-                padding: const EdgeInsets.all(8),
+                height: 43,
+                width: 43,
                 decoration: BoxDecoration(
-                  color: context.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
+                  color: context.colorScheme.surface,
+                  shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.more_vert_rounded,
-                  size: 20,
                   color: context.colorScheme.onSurface,
                 ),
               ),
@@ -479,101 +482,98 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         child: CustomContainer(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: <Widget>[
-                // Date indicator
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.onSecondary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        DateFormat('dd').format(milk.date),
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: context.colorScheme.primary,
-                        ),
-                      ),
-                      Text(
-                        DateFormat('MMM').format(milk.date),
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: context.colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
+          child: Row(
+            children: <Widget>[
+              // Date indicator
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: context.colorScheme.secondary.withAlpha(100),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(width: 16),
-
-                // Shift info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            milk.shift == ShiftType.morning
-                                ? Icons.wb_sunny_rounded
-                                : Icons.nightlight_round,
-                            size: 16,
-                            color: milk.shift == ShiftType.morning
-                                ? Colors.orange
-                                : Colors.indigo,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            milk.shift == ShiftType.morning
-                                ? 'Morning'
-                                : 'Evening',
-                            style: context.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      DateFormat('dd').format(milk.date),
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: context.colorScheme.primary,
                       ),
-                      if (milk.notes.isNotEmpty) ...<Widget>[
-                        const SizedBox(height: 4),
+                    ),
+                    Text(
+                      DateFormat('MMM').format(milk.date),
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: context.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Shift info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          milk.shift == ShiftType.morning
+                              ? Icons.wb_sunny_rounded
+                              : Icons.nightlight_round,
+                          size: 16,
+                          color: milk.shift == ShiftType.morning
+                              ? Colors.orange
+                              : Colors.indigo,
+                        ),
+                        const SizedBox(width: 6),
                         Text(
-                          milk.notes,
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: context.colorScheme.onSurfaceVariant,
+                          milk.shift == ShiftType.morning
+                              ? 'Morning'
+                              : 'Evening',
+                          style: context.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                    ],
-                  ),
-                ),
-
-                // Quantity
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${milk.quantityInLiter.toStringAsFixed(1)} L',
-                    style: context.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.onSecondaryContainer,
                     ),
+                    if (milk.notes.isNotEmpty) ...<Widget>[
+                      const SizedBox(height: 4),
+                      Text(
+                        milk.notes,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: context.colorScheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              // Quantity
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${milk.quantityInLiter.toStringAsFixed(1)} L',
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: context.colorScheme.onSecondaryContainer,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );

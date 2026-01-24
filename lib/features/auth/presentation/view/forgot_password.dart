@@ -28,7 +28,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> _handleForgotPassword() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     setState(() => _isLoading = true);
     await context.read<AuthCubit>().forgotPassword(
@@ -53,11 +55,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     final TextTheme textTheme = context.textTheme;
 
     return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
+      listener: (BuildContext context, AuthState state) {
         if (state is AuthForgotPassSuccess) {
           showAppSnackbar(
             context,
             message: context.strings.authResetLinkSent,
+            type: SnackbarType.success,
+          );
+          context.pop();
+        }
+        if (state is AuthForgotPassFailure) {
+          showAppSnackbar(
+            context,
+            message: state.msg,
             type: SnackbarType.success,
           );
           context.pop();

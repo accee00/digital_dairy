@@ -145,7 +145,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
             children: <Widget>[
               CircularButton(
                 icon: Icons.edit,
-                iconColor: Colors.black,
+                iconColor: context.isDarkMode ? Colors.white : Colors.black,
                 onTap: () => context.push(AppRoutes.addCattle, extra: cattle),
               ),
               const SizedBox(width: 15),

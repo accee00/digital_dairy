@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+///
 class MilkSalesScreen extends StatefulWidget {
+  ///
   const MilkSalesScreen({super.key});
 
   @override
@@ -363,11 +365,11 @@ class _BuyerCard extends StatelessWidget {
     final ColorScheme colorScheme = theme.colorScheme;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       decoration: BoxDecoration(
-        color: colorScheme.surface.withAlpha(180),
-        borderRadius: BorderRadius.circular(15),
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.outline.withAlpha(51)),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -578,17 +580,17 @@ class _BuyerCard extends StatelessWidget {
     final Duration difference = now.difference(date);
 
     if (difference.inDays == 0) {
-      return 'today';
+      return 'Today';
     } else if (difference.inDays == 1) {
-      return 'yesterday';
+      return 'Yesterday';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
+      return '${difference.inDays}d ago';
     } else if (difference.inDays < 30) {
       final int weeks = (difference.inDays / 7).floor();
-      return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+      return '${weeks}w ago';
     } else if (difference.inDays < 365) {
       final int months = (difference.inDays / 30).floor();
-      return '$months ${months == 1 ? 'month' : 'months'} ago';
+      return '${months}mo ago';
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
