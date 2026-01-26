@@ -1,12 +1,16 @@
 import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/di/init_di.dart';
+import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/features/home/cubit/profile_cubit.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: implementation_imports
+import 'package:fpdart/src/either.dart';
 import 'package:go_router/go_router.dart';
 
 ///
@@ -24,9 +28,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final String defaultUserPhone = '';
   final DateTime defaultMemberSince = DateTime(2023, 1, 15);
 
-  bool pushNotifications = true;
+  bool pushNotifications = false;
   bool emailNotifications = false;
-  bool smsNotifications = true;
+  bool smsNotifications = false;
 
   @override
   void initState() {
@@ -136,12 +140,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: 'Phone Number',
             subtitle: userPhone,
             onTap: () {},
-          ),
-          _buildInfoTile(
-            icon: Icons.lock_outline,
-            title: 'Change Password',
-            onTap: () {},
-            showTrailing: true,
           ),
         ],
       ),
@@ -265,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             label: const Text('Logout'),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.colorScheme.error,
-              foregroundColor: context.colorScheme.onError,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -585,8 +583,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              serviceLocator<AuthService>().logOutUser();
+            onPressed: () async {
+              final Either<Failure, bool> response =
+                  await serviceLocator<AuthService>().logOutUser();
+              response.fold(
+                (Failure failure) {
+                  showAppSnackbar(context, message: failure.message);
+                  Navigator.pop(context);
+                },
+                (bool value) {
+                  context.pushReplacementNamed(AppRoutes.signUp);
+                },
+              );
             },
             child: Text(
               'Logout',
