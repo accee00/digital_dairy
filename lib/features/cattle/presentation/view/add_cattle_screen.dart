@@ -431,7 +431,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
         child: ListTile(
           title: selectedDate != null
               ? Text(
-                  _formatDate(selectedDate),
+                  _formatDate(selectedDate, context),
                   style: context.textTheme.bodyMedium,
                 )
               : Text(
@@ -468,25 +468,45 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     ],
   );
 
-  String _formatDate(DateTime? date) {
-    const List<String> months = <String>[
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    if (date != null) {
-      return '${date.day} ${months[date.month - 1]} ${date.year}';
+  String _formatDate(DateTime? date, BuildContext context) {
+    if (date == null) {
+      return '';
     }
-    return '';
+
+    final String monthName = _getLocalizedMonth(date.month, context);
+
+    return '${date.day} $monthName ${date.year}';
+  }
+
+  String _getLocalizedMonth(int month, BuildContext context) {
+    switch (month) {
+      case 1:
+        return context.strings.monthJanuary;
+      case 2:
+        return context.strings.monthFebruary;
+      case 3:
+        return context.strings.monthMarch;
+      case 4:
+        return context.strings.monthApril;
+      case 5:
+        return context.strings.monthMay;
+      case 6:
+        return context.strings.monthJune;
+      case 7:
+        return context.strings.monthJuly;
+      case 8:
+        return context.strings.monthAugust;
+      case 9:
+        return context.strings.monthSeptember;
+      case 10:
+        return context.strings.monthOctober;
+      case 11:
+        return context.strings.monthNovember;
+      case 12:
+        return context.strings.monthDecember;
+      default:
+        return '';
+    }
   }
 
   Future<void> _saveCattle() async {
