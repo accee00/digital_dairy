@@ -485,6 +485,12 @@ abstract class AppLocalizations {
   /// **'Edit Milk Entry'**
   String get milkEditEntry;
 
+  /// No description provided for @cattleEntryEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Cattle'**
+  String get cattleEntryEdit;
+
   /// No description provided for @milkCattleSelection.
   ///
   /// In en, this message translates to:
@@ -838,6 +844,558 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading more entries...'**
   String get milkScreenLoadingMore;
+
+  /// No description provided for @addCattleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Cattle'**
+  String get addCattleTitle;
+
+  /// No description provided for @cattleBasicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get cattleBasicInfo;
+
+  /// No description provided for @cattleNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle Name *'**
+  String get cattleNameLabel;
+
+  /// No description provided for @cattleNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter cattle name (e.g., Ganga, Kamdhenu)'**
+  String get cattleNameHint;
+
+  /// No description provided for @tagIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag ID *'**
+  String get tagIdLabel;
+
+  /// No description provided for @tagIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter unique tag ID (e.g., C001, TAG123)'**
+  String get tagIdHint;
+
+  /// No description provided for @cattlePhotoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle Photo (Optional)'**
+  String get cattlePhotoLabel;
+
+  /// No description provided for @tapToAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add photo'**
+  String get tapToAddPhoto;
+
+  /// No description provided for @physicalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Details'**
+  String get physicalDetails;
+
+  /// No description provided for @breedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Breed'**
+  String get breedLabel;
+
+  /// No description provided for @genderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get genderLabel;
+
+  /// No description provided for @statusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusLabel;
+
+  /// No description provided for @importantDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Dates'**
+  String get importantDates;
+
+  /// No description provided for @dobLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dobLabel;
+
+  /// No description provided for @calvingDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Calving Date'**
+  String get calvingDateLabel;
+
+  /// No description provided for @calvingDateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty if not applicable or unknown'**
+  String get calvingDateHint;
+
+  /// No description provided for @additionalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Information'**
+  String get additionalInfo;
+
+  /// No description provided for @notesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get notesLabel;
+
+  /// No description provided for @notesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add any additional notes about this cattle...'**
+  String get notesHint;
+
+  /// No description provided for @saveCattleButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Cattle'**
+  String get saveCattleButton;
+
+  /// No description provided for @cattleNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle name is required'**
+  String get cattleNameRequired;
+
+  /// No description provided for @tagIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag ID is required'**
+  String get tagIdRequired;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date'**
+  String get selectDate;
+
+  /// No description provided for @cattleRegisteredSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle registered successfully!'**
+  String get cattleRegisteredSuccess;
+
+  /// No description provided for @cattleUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle updated successfully!'**
+  String get cattleUpdatedSuccess;
+
+  /// No description provided for @failToUploadImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload image'**
+  String get failToUploadImage;
+
+  /// No description provided for @errorPickingImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking image:'**
+  String get errorPickingImage;
+
+  /// No description provided for @cattleDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle deleted successfully'**
+  String get cattleDeletedSuccess;
+
+  /// No description provided for @cattleDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting cattle'**
+  String get cattleDeleteError;
+
+  /// No description provided for @deleteCattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Cattle'**
+  String get deleteCattle;
+
+  /// No description provided for @deleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this cattle? This action cannot be undone.'**
+  String get deleteConfirmation;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @tag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get tag;
+
+  /// No description provided for @basicInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basicInformation;
+
+  /// No description provided for @breed.
+  ///
+  /// In en, this message translates to:
+  /// **'Breed'**
+  String get breed;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @age.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get age;
+
+  /// No description provided for @female.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// No description provided for @male.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// No description provided for @currentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Status'**
+  String get currentStatus;
+
+  /// No description provided for @monthlyMilk.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Milk'**
+  String get monthlyMilk;
+
+  /// No description provided for @expectedCalving.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Calving'**
+  String get expectedCalving;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @calvingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calving Date'**
+  String get calvingDate;
+
+  /// No description provided for @additionalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Notes'**
+  String get additionalNotes;
+
+  /// No description provided for @viewMilkProduction.
+  ///
+  /// In en, this message translates to:
+  /// **'View Milk Production'**
+  String get viewMilkProduction;
+
+  /// No description provided for @notSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get notSet;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @pregnant.
+  ///
+  /// In en, this message translates to:
+  /// **'Pregnant'**
+  String get pregnant;
+
+  /// No description provided for @sick.
+  ///
+  /// In en, this message translates to:
+  /// **'Sick'**
+  String get sick;
+
+  /// No description provided for @dry.
+  ///
+  /// In en, this message translates to:
+  /// **'Dry'**
+  String get dry;
+
+  /// No description provided for @sold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get sold;
+
+  /// No description provided for @dead.
+  ///
+  /// In en, this message translates to:
+  /// **'Dead'**
+  String get dead;
+
+  /// No description provided for @myCattles.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cattles'**
+  String get myCattles;
+
+  /// No description provided for @searchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Results'**
+  String get searchResults;
+
+  /// No description provided for @found.
+  ///
+  /// In en, this message translates to:
+  /// **'found'**
+  String get found;
+
+  /// No description provided for @cattleSingular.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattle'**
+  String get cattleSingular;
+
+  /// No description provided for @cattlePlural.
+  ///
+  /// In en, this message translates to:
+  /// **'Cattles'**
+  String get cattlePlural;
+
+  /// No description provided for @failedToLoadCattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load cattle'**
+  String get failedToLoadCattle;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @noCattleFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No cattle found'**
+  String get noCattleFound;
+
+  /// No description provided for @tryDifferentSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term'**
+  String get tryDifferentSearch;
+
+  /// No description provided for @addFirstCattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the + button to add your first cattle'**
+  String get addFirstCattle;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Search'**
+  String get clearSearch;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @months.
+  ///
+  /// In en, this message translates to:
+  /// **'mo'**
+  String get months;
+
+  /// No description provided for @years.
+  ///
+  /// In en, this message translates to:
+  /// **'y'**
+  String get years;
+
+  /// No description provided for @dailyRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Records'**
+  String get dailyRecords;
+
+  /// No description provided for @totalProduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Production'**
+  String get totalProduction;
+
+  /// No description provided for @dailyAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Average'**
+  String get dailyAverage;
+
+  /// No description provided for @daysRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Days Recorded'**
+  String get daysRecorded;
+
+  /// No description provided for @noMilkRecordsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No milk records found'**
+  String get noMilkRecordsFound;
+
+  /// No description provided for @recordsWillAppear.
+  ///
+  /// In en, this message translates to:
+  /// **'Records for monthYear will appear here'**
+  String get recordsWillAppear;
+
+  /// No description provided for @previewPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview PDF'**
+  String get previewPdf;
+
+  /// No description provided for @downloadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Download PDF'**
+  String get downloadPdf;
+
+  /// No description provided for @sharePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Share PDF'**
+  String get sharePdf;
+
+  /// No description provided for @pdfSavedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF saved to path'**
+  String get pdfSavedTo;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @monthJanuary.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get monthJanuary;
+
+  /// No description provided for @monthFebruary.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get monthFebruary;
+
+  /// No description provided for @monthMarch.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get monthMarch;
+
+  /// No description provided for @monthApril.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get monthApril;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMay;
+
+  /// No description provided for @monthJune.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get monthJune;
+
+  /// No description provided for @monthJuly.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get monthJuly;
+
+  /// No description provided for @monthAugust.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get monthAugust;
+
+  /// No description provided for @monthSeptember.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get monthSeptember;
+
+  /// No description provided for @monthOctober.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get monthOctober;
+
+  /// No description provided for @monthNovember.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get monthNovember;
+
+  /// No description provided for @monthDecember.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get monthDecember;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error:'**
+  String get error;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

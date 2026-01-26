@@ -75,10 +75,12 @@ class _CattleScreenState extends State<CattleScreen> {
 
                   return HeaderForAdd(
                     padding: EdgeInsets.zero,
-                    title: isSearching ? 'Search Results' : 'My Cattles',
+                    title: isSearching
+                        ? context.strings.searchResults
+                        : context.strings.myCattles,
                     subTitle: isSearching
-                        ? '$cattleCount found'
-                        : '$cattleCount Cattle${cattleCount != 1 ? 's' : ''}',
+                        ? '$cattleCount ${context.strings.found}'
+                        : '$cattleCount ${cattleCount != 1 ? context.strings.cattlePlural : context.strings.cattleSingular}',
                     onTap: () => context.push(AppRoutes.addCattle),
                   );
                 },
@@ -152,7 +154,7 @@ class _CattleScreenState extends State<CattleScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Failed to load cattle',
+                            context.strings.failedToLoadCattle,
                             style: context.textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
@@ -169,7 +171,7 @@ class _CattleScreenState extends State<CattleScreen> {
                           ElevatedButton(
                             onPressed: () =>
                                 context.read<CattleCubit>().refreshCattle(),
-                            child: const Text('Retry'),
+                            child: Text(context.strings.retry),
                           ),
                         ],
                       ),
@@ -192,15 +194,15 @@ class _CattleScreenState extends State<CattleScreen> {
                           const SizedBox(height: 16),
                           Text(
                             (state.search?.isNotEmpty ?? false)
-                                ? 'No cattle found for "${state.search}"'
-                                : 'No cattle found',
+                                ? '${context.strings.noCattleFound} "${state.search}"'
+                                : context.strings.noCattleFound,
                             style: context.textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             (state.search?.isNotEmpty ?? false)
-                                ? 'Try a different search term'
-                                : 'Tap the + button to add your first cattle',
+                                ? context.strings.tryDifferentSearch
+                                : context.strings.addFirstCattle,
                             style: context.textTheme.bodyMedium?.copyWith(
                               color: context.colorScheme.onSurface.withAlpha(
                                 150,
@@ -211,7 +213,7 @@ class _CattleScreenState extends State<CattleScreen> {
                             const SizedBox(height: 16),
                             OutlinedButton(
                               onPressed: _clearSearch,
-                              child: const Text('Clear Search'),
+                              child: Text(context.strings.clearSearch),
                             ),
                           ],
                         ],
@@ -319,7 +321,7 @@ class _CattleScreenState extends State<CattleScreen> {
                             ),
                           ),
                           child: Text(
-                            cattle.status,
+                            _getLocalizedStatus(cattle.status, context),
                             style: context.textTheme.labelSmall?.copyWith(
                               color: _getStatusColor(context, cattle.status),
                               fontWeight: FontWeight.w500,
@@ -329,7 +331,7 @@ class _CattleScreenState extends State<CattleScreen> {
                       ],
                     ),
                     Text(
-                      'Tag: ${cattle.tagId} • ${cattle.breed}',
+                      '${context.strings.tag}: ${cattle.tagId} • ${cattle.breed}',
                       style: context.textTheme.bodySmall?.copyWith(
                         color: context.colorScheme.onSurface.withAlpha(150),
                       ),
@@ -346,7 +348,7 @@ class _CattleScreenState extends State<CattleScreen> {
               Expanded(
                 child: _buildInfoItem(
                   context,
-                  'Age',
+                  context.strings.age,
                   calculateCattleAge(cattle.dob),
                   Icons.calendar_today,
                 ),
@@ -355,7 +357,7 @@ class _CattleScreenState extends State<CattleScreen> {
                 Expanded(
                   child: _buildInfoItem(
                     context,
-                    'This Month',
+                    context.strings.thisMonth,
                     '${cattle.thisMonthL}L',
                     Icons.water_drop,
                   ),
@@ -382,12 +384,12 @@ class _CattleScreenState extends State<CattleScreen> {
     }
 
     if (years == 0) {
-      return '$months mo';
+      return '$months ${context.strings.months}';
     }
     if (months == 0) {
-      return '$years y';
+      return '$years ${context.strings.years}';
     }
-    return '$years y $months mo';
+    return '$years ${context.strings.years} $months ${context.strings.months}';
   }
 
   Widget _buildInfoItem(
@@ -426,6 +428,21 @@ class _CattleScreenState extends State<CattleScreen> {
         return Colors.red;
       default:
         return context.colorScheme.onSurface;
+    }
+  }
+
+  String _getLocalizedStatus(String status, BuildContext context) {
+    switch (status) {
+      case 'Active':
+        return context.strings.active;
+      case 'Sick':
+        return context.strings.sick;
+      case 'Sold':
+        return context.strings.sold;
+      case 'Dead':
+        return context.strings.dead;
+      default:
+        return status;
     }
   }
 }

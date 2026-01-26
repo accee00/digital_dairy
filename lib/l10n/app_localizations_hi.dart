@@ -204,6 +204,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get milkEditEntry => 'दूध प्रविष्टि संपादित करें';
 
   @override
+  String get cattleEntryEdit => 'पशु संपादित करें';
+
+  @override
   String get milkCattleSelection => 'पशु चयन';
 
   @override
@@ -267,10 +270,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get milkCattleSeemsHealthy => 'पशु स्वस्थ लग रहा है';
 
   @override
-  String get milkSaveEntry => 'दूध प्रविष्टि सहेजें';
+  String get milkSaveEntry => 'सेव';
 
   @override
-  String get milkUpdateEntry => 'दूध प्रविष्टि अपडेट करें';
+  String get milkUpdateEntry => 'सेव';
 
   @override
   String get milkSelectCattleError => 'कृपया एक पशु चुनें';
@@ -379,4 +382,280 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get milkScreenLoadingMore => 'अधिक प्रविष्टियां लोड हो रही हैं...';
+
+  @override
+  String get addCattleTitle => 'पशु जोड़ें';
+
+  @override
+  String get cattleBasicInfo => 'मूल जानकारी';
+
+  @override
+  String get cattleNameLabel => 'पशु का नाम *';
+
+  @override
+  String get cattleNameHint => 'पशु का नाम दर्ज करें (जैसे, गंगा, कामधेनु)';
+
+  @override
+  String get tagIdLabel => 'टैग आईडी *';
+
+  @override
+  String get tagIdHint => 'अद्वितीय टैग आईडी दर्ज करें (जैसे, C001, TAG123)';
+
+  @override
+  String get cattlePhotoLabel => 'पशु की फोटो (वैकल्पिक)';
+
+  @override
+  String get tapToAddPhoto => 'फोटो जोड़ने के लिए टैप करें';
+
+  @override
+  String get physicalDetails => 'शारीरिक विवरण';
+
+  @override
+  String get breedLabel => 'नस्ल';
+
+  @override
+  String get genderLabel => 'लिंग';
+
+  @override
+  String get statusLabel => 'स्थिति';
+
+  @override
+  String get importantDates => 'महत्वपूर्ण तिथियाँ';
+
+  @override
+  String get dobLabel => 'जन्म तिथि';
+
+  @override
+  String get calvingDateLabel => 'प्रसव की अपेक्षित तिथि';
+
+  @override
+  String get calvingDateHint => 'यदि लागू या ज्ञात नहीं है तो खाली छोड़ दें';
+
+  @override
+  String get additionalInfo => 'अतिरिक्त जानकारी';
+
+  @override
+  String get notesLabel => 'नोट्स (वैकल्पिक)';
+
+  @override
+  String get notesHint => 'इस पशु के बारे में कोई अतिरिक्त नोट्स जोड़ें...';
+
+  @override
+  String get saveCattleButton => 'सेव';
+
+  @override
+  String get cattleNameRequired => 'पशु का नाम आवश्यक है';
+
+  @override
+  String get tagIdRequired => 'टैग आईडी आवश्यक है';
+
+  @override
+  String get selectDate => 'तिथि चुनें';
+
+  @override
+  String get cattleRegisteredSuccess => 'पशु सफलतापूर्वक पंजीकृत हुआ!';
+
+  @override
+  String get cattleUpdatedSuccess => 'पशु सफलतापूर्वक अपडेट किया गया!';
+
+  @override
+  String get failToUploadImage => 'फोटो अपलोड करने में विफल';
+
+  @override
+  String get errorPickingImage => 'फोटो चुनने में त्रुटि:';
+
+  @override
+  String get cattleDeletedSuccess => 'पशु सफलतापूर्वक हटा दिया गया';
+
+  @override
+  String get cattleDeleteError => 'पशु हटाने में त्रुटि';
+
+  @override
+  String get deleteCattle => 'पशु हटाएं';
+
+  @override
+  String get deleteConfirmation => 'क्या आप वाकई इस पशु को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।';
+
+  @override
+  String get cancel => 'रद्द करें';
+
+  @override
+  String get delete => 'हटाएं';
+
+  @override
+  String get tag => 'टैग';
+
+  @override
+  String get basicInformation => 'मूल जानकारी';
+
+  @override
+  String get breed => 'नस्ल';
+
+  @override
+  String get gender => 'लिंग';
+
+  @override
+  String get age => 'आयु';
+
+  @override
+  String get female => 'मादा';
+
+  @override
+  String get male => 'नर';
+
+  @override
+  String get currentStatus => 'वर्तमान स्थिति';
+
+  @override
+  String get monthlyMilk => 'मासिक दूध';
+
+  @override
+  String get expectedCalving => 'प्रत्याशित ब्याह';
+
+  @override
+  String get dateOfBirth => 'जन्म तिथि';
+
+  @override
+  String get calvingDate => 'ब्याह की तिथि';
+
+  @override
+  String get additionalNotes => 'अतिरिक्त नोट्स';
+
+  @override
+  String get viewMilkProduction => 'दूध उत्पादन देखें';
+
+  @override
+  String get notSet => 'सेट नहीं है';
+
+  @override
+  String get active => 'सक्रिय';
+
+  @override
+  String get pregnant => 'गर्भवती';
+
+  @override
+  String get sick => 'बीमार';
+
+  @override
+  String get dry => 'सूखा';
+
+  @override
+  String get sold => 'बेचा गया';
+
+  @override
+  String get dead => 'मृत';
+
+  @override
+  String get myCattles => 'मेरे पशु';
+
+  @override
+  String get searchResults => 'खोज परिणाम';
+
+  @override
+  String get found => 'मिले';
+
+  @override
+  String get cattleSingular => 'पशु';
+
+  @override
+  String get cattlePlural => 'पशु';
+
+  @override
+  String get failedToLoadCattle => 'पशु लोड करने में विफल';
+
+  @override
+  String get retry => 'पुनः प्रयास करें';
+
+  @override
+  String get noCattleFound => 'कोई पशु नहीं मिला';
+
+  @override
+  String get tryDifferentSearch => 'एक अलग खोज शब्द आज़माएं';
+
+  @override
+  String get addFirstCattle => 'अपना पहला पशु जोड़ने के लिए + बटन टैप करें';
+
+  @override
+  String get clearSearch => 'खोज साफ़ करें';
+
+  @override
+  String get thisMonth => 'इस महीने';
+
+  @override
+  String get months => 'महीना';
+
+  @override
+  String get years => 'वर्ष';
+
+  @override
+  String get dailyRecords => 'दैनिक रिकॉर्ड';
+
+  @override
+  String get totalProduction => 'कुल उत्पादन';
+
+  @override
+  String get dailyAverage => 'दैनिक औसत';
+
+  @override
+  String get daysRecorded => 'रिकॉर्ड किए गए दिन';
+
+  @override
+  String get noMilkRecordsFound => 'कोई दूध रिकॉर्ड नहीं मिला';
+
+  @override
+  String get recordsWillAppear => 'monthYear के रिकॉर्ड यहां दिखाई देंगे';
+
+  @override
+  String get previewPdf => 'पीडीएफ पूर्वावलोकन';
+
+  @override
+  String get downloadPdf => 'पीडीएफ डाउनलोड करें';
+
+  @override
+  String get sharePdf => 'पीडीएफ साझा करें';
+
+  @override
+  String get pdfSavedTo => 'पीडीएफ path पर सहेजा गया';
+
+  @override
+  String get ok => 'ठीक है';
+
+  @override
+  String get monthJanuary => 'जनवरी';
+
+  @override
+  String get monthFebruary => 'फरवरी';
+
+  @override
+  String get monthMarch => 'मार्च';
+
+  @override
+  String get monthApril => 'अप्रैल';
+
+  @override
+  String get monthMay => 'मई';
+
+  @override
+  String get monthJune => 'जून';
+
+  @override
+  String get monthJuly => 'जुलाई';
+
+  @override
+  String get monthAugust => 'अगस्त';
+
+  @override
+  String get monthSeptember => 'सितंबर';
+
+  @override
+  String get monthOctober => 'अक्टूबर';
+
+  @override
+  String get monthNovember => 'नवंबर';
+
+  @override
+  String get monthDecember => 'दिसंबर';
+
+  @override
+  String get error => 'त्रुटि:';
 }

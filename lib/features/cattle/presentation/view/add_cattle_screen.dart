@@ -126,8 +126,8 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
           showAppSnackbar(
             context,
             message: isEdit
-                ? 'Cattle updated successfully!'
-                : 'Cattle registered successfully!',
+                ? context.strings.cattleUpdatedSuccess
+                : context.strings.cattleRegisteredSuccess,
             type: SnackbarType.success,
           );
           context
@@ -154,7 +154,9 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                   ),
                 ),
                 title: Text(
-                  'Add Cattle',
+                  isEdit
+                      ? context.strings.cattleEntryEdit
+                      : context.strings.addCattleTitle,
                   style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
@@ -174,7 +176,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                       children: <Widget>[
                         _buildSectionHeader(
                           context,
-                          'Basic Information',
+                          context.strings.cattleBasicInfo,
                           Icons.info,
                         ),
                         const SizedBox(height: 5),
@@ -183,7 +185,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                         const SizedBox(height: 10),
                         _buildSectionHeader(
                           context,
-                          'Physical Details',
+                          context.strings.physicalDetails,
                           Icons.pets,
                         ),
                         const SizedBox(height: 5),
@@ -192,7 +194,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                         const SizedBox(height: 10),
                         _buildSectionHeader(
                           context,
-                          'Important Dates',
+                          context.strings.importantDates,
                           Icons.calendar_today,
                         ),
                         const SizedBox(height: 5),
@@ -201,7 +203,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                         const SizedBox(height: 10),
                         _buildSectionHeader(
                           context,
-                          'Additional Information',
+                          context.strings.additionalInfo,
                           Icons.note,
                         ),
                         const SizedBox(height: 5),
@@ -239,26 +241,26 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     child: Column(
       children: <Widget>[
         CustomTextField(
-          labelText: 'Cattle Name *',
+          labelText: context.strings.cattleNameLabel,
           controller: _nameController,
-          hintText: 'Enter cattle name (e.g., Ganga, Kamdhenu)',
+          hintText: context.strings.cattleNameHint,
           suffixIcon: const Icon(Icons.pets),
           validator: (String? value) {
             if (value == null || value.trim().isEmpty) {
-              return 'Cattle name is required';
+              return context.strings.cattleNameRequired;
             }
             return null;
           },
         ),
         const SizedBox(height: 16),
         CustomTextField(
-          labelText: 'Tag ID *',
+          labelText: context.strings.tagIdLabel,
           controller: _tagController,
-          hintText: 'Enter unique tag ID (e.g., C001, TAG123)',
+          hintText: context.strings.tagIdHint,
           suffixIcon: const Icon(Icons.qr_code),
           validator: (String? value) {
             if (value == null || value.trim().isEmpty) {
-              return 'Tag ID is required';
+              return context.strings.tagIdRequired;
             }
             return null;
           },
@@ -274,7 +276,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
       children: <Widget>[
         _buildDropdownField(
           context,
-          'Breed',
+          context.strings.breedLabel,
           _selectedBreed,
           _breeds,
           Icons.category,
@@ -286,7 +288,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
             Expanded(
               child: _buildDropdownField(
                 context,
-                'Gender',
+                context.strings.genderLabel,
                 _selectedGender,
                 _genders,
                 _selectedGender == 'Female' ? Icons.female : Icons.male,
@@ -297,7 +299,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
             Expanded(
               child: _buildDropdownField(
                 context,
-                'Status',
+                context.strings.statusLabel,
                 _selectedStatus,
                 _statuses,
                 Icons.health_and_safety,
@@ -315,7 +317,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
       children: <Widget>[
         _buildDateField(
           context,
-          'Date of Birth',
+          context.strings.dobLabel,
           _selectedDob,
           Icons.cake,
           (DateTime date) => setState(() => _selectedDob = date),
@@ -326,7 +328,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
         if (_selectedGender == 'Female') ...<Widget>[
           _buildDateField(
             context,
-            'Expected Calving Date',
+            context.strings.calvingDateLabel,
             _selectedCalvingDate,
             Icons.baby_changing_station,
             (DateTime date) => setState(() => _selectedCalvingDate = date),
@@ -335,7 +337,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Leave empty if not applicable or unknown',
+            context.strings.calvingDateHint,
             style: context.textTheme.bodySmall?.copyWith(
               color: context.colorScheme.onSurface.withAlpha(150),
             ),
@@ -347,9 +349,9 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
 
   Widget _buildAdditionalInfoSection(BuildContext context) => CustomContainer(
     child: CustomTextField(
-      labelText: 'Notes (Optional)',
+      labelText: context.strings.notesLabel,
       controller: _notesController,
-      hintText: 'Add any additional notes about this cattle...',
+      hintText: context.strings.notesHint,
       suffixIcon: const Icon(Icons.notes_rounded),
       maxLines: 4,
       textInputAction: TextInputAction.done,
@@ -433,7 +435,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                   style: context.textTheme.bodyMedium,
                 )
               : Text(
-                  'Select Date',
+                  context.strings.selectDate,
                   style: context.textTheme.bodyLarge?.copyWith(
                     color: context.colorScheme.onSurface.withAlpha(100),
                   ),
@@ -459,7 +461,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     children: <Widget>[
       SaveElevatedButton(
         key: UniqueKey(),
-        label: 'Save Cattle',
+        label: context.strings.saveCattleButton,
         onTap: _saveCattle,
       ),
       const SizedBox(height: 12),
@@ -501,7 +503,10 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
           await serviceLocator<CattleService>().uploadImage(_selectedImage!);
 
       response.fold(
-        (_) => showAppSnackbar(context, message: 'Fail to upload image'),
+        (_) => showAppSnackbar(
+          context,
+          message: context.strings.failToUploadImage,
+        ),
         (String url) => imageUrl = url,
       );
     }
@@ -540,7 +545,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Text(
-        'Cattle Photo (Optional)',
+        context.strings.cattlePhotoLabel,
         style: context.textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w500,
           color: context.colorScheme.onSurface,
@@ -616,7 +621,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Tap to add cattle photo',
+                      context.strings.tapToAddPhoto,
                       style: context.textTheme.bodyMedium?.copyWith(
                         color: context.colorScheme.onSurface.withAlpha(150),
                       ),
@@ -644,12 +649,10 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error picking image: $e'),
-            backgroundColor: context.colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-          ),
+        showAppSnackbar(
+          context,
+          message: '${context.strings.errorPickingImage} $e',
+          type: SnackbarType.error,
         );
       }
     }

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/age_calculator.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
@@ -41,14 +42,10 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
       }
       if (state is CattleDeletedSuccess) {
         context.pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cattle deleted successfully')),
-        );
+        showAppSnackbar(context, message: context.strings.cattleDeletedSuccess);
       }
       if (state is CattleDeleteFailure) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.msg), backgroundColor: Colors.red),
-        );
+        showAppSnackbar(context, message: state.msg, type: SnackbarType.error);
       }
     },
     child: Scaffold(
@@ -195,7 +192,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
             border: Border.all(color: _getStatusColor(context, cattle.status)),
           ),
           child: Text(
-            cattle.status,
+            _getLocalizedStatus(cattle.status, context),
             style: context.textTheme.labelLarge?.copyWith(
               color: _getStatusColor(context, cattle.status),
               fontWeight: FontWeight.bold,
@@ -204,7 +201,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          'Tag: ${widget.cattle.tagId}',
+          '${context.strings.tag}: ${widget.cattle.tagId}',
           style: context.textTheme.bodyLarge?.copyWith(
             color: context.colorScheme.onSurface.withAlpha(180),
             fontWeight: FontWeight.w500,
@@ -214,88 +211,107 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     ),
   );
 
-  Widget _buildBasicInfoCard(BuildContext context) =>
-      _buildInfoCard(context, 'Basic Information', Icons.info_outline, <Widget>[
-        _buildInfoRow(context, 'Breed', cattle.breed, Icons.category),
-        _buildInfoRow(
-          context,
-          'Gender',
-          cattle.gender,
-          cattle.gender == 'Female' ? Icons.female : Icons.male,
-        ),
-        _buildInfoRow(
-          context,
-          'Age',
-          calculateAge(widget.cattle.dob),
-          Icons.calendar_today,
-        ),
-      ]);
+  Widget _buildBasicInfoCard(BuildContext context) => _buildInfoCard(
+    context,
+    context.strings.basicInformation,
+    Icons.info_outline,
+    <Widget>[
+      _buildInfoRow(
+        context,
+        context.strings.breed,
+        cattle.breed,
+        Icons.category,
+      ),
+      _buildInfoRow(
+        context,
+        context.strings.gender,
+        _getLocalizedGender(cattle.gender, context),
+        cattle.gender == 'Female' ? Icons.female : Icons.male,
+      ),
+      _buildInfoRow(
+        context,
+        context.strings.age,
+        calculateAge(widget.cattle.dob),
+        Icons.calendar_today,
+      ),
+    ],
+  );
 
-  Widget _buildPhysicalDetailsCard(BuildContext context) =>
-      _buildInfoCard(context, 'Physical Details', Icons.pets, <Widget>[
+  Widget _buildPhysicalDetailsCard(BuildContext context) => _buildInfoCard(
+    context,
+    context.strings.physicalDetails,
+    Icons.pets,
+    <Widget>[
+      _buildInfoRow(
+        context,
+        context.strings.currentStatus,
+        _getLocalizedStatus(cattle.status, context),
+        Icons.health_and_safety,
+        valueColor: _getStatusColor(context, cattle.status),
+      ),
+      if (widget.cattle.gender == 'Female') ...<Widget>[
         _buildInfoRow(
           context,
-          'Current Status',
-          cattle.status,
-          Icons.health_and_safety,
-          valueColor: _getStatusColor(context, cattle.status),
+          context.strings.monthlyMilk,
+          '${widget.cattle.thisMonthL!} L',
+          Icons.water_drop,
         ),
-        if (widget.cattle.gender == 'Female') ...<Widget>[
-          _buildInfoRow(
-            context,
-            'Monthly Milk',
-            '${widget.cattle.thisMonthL!} L',
-            Icons.water_drop,
-          ),
-          if (widget.cattle.calvingDate != null)
-            _buildInfoRow(
-              context,
-              'Expected Calving',
-              _formatDate(widget.cattle.calvingDate),
-              Icons.baby_changing_station,
-            ),
-        ],
-      ]);
-
-  Widget _buildDatesCard(BuildContext context) =>
-      _buildInfoCard(context, 'Important Dates', Icons.event, <Widget>[
-        if (widget.cattle.dob != null)
-          _buildInfoRow(
-            context,
-            'Date of Birth',
-            _formatDate(widget.cattle.dob),
-            Icons.cake,
-          ),
         if (widget.cattle.calvingDate != null)
           _buildInfoRow(
             context,
-            'Calving Date',
-            _formatDate(widget.cattle.calvingDate),
+            context.strings.expectedCalving,
+            _formatDate(widget.cattle.calvingDate, context),
             Icons.baby_changing_station,
           ),
-      ]);
+      ],
+    ],
+  );
 
-  Widget _buildNotesCard(BuildContext context) =>
-      _buildInfoCard(context, 'Additional Notes', Icons.note, <Widget>[
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: context.colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: context.colorScheme.outline.withAlpha(50),
-            ),
-          ),
-          child: Text(
-            cattle.notes,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-              height: 1.5,
-            ),
+  Widget _buildDatesCard(BuildContext context) => _buildInfoCard(
+    context,
+    context.strings.importantDates,
+    Icons.event,
+    <Widget>[
+      if (widget.cattle.dob != null)
+        _buildInfoRow(
+          context,
+          context.strings.dateOfBirth,
+          _formatDate(widget.cattle.dob, context),
+          Icons.cake,
+        ),
+      if (widget.cattle.calvingDate != null)
+        _buildInfoRow(
+          context,
+          context.strings.calvingDate,
+          _formatDate(widget.cattle.calvingDate, context),
+          Icons.baby_changing_station,
+        ),
+    ],
+  );
+
+  Widget _buildNotesCard(BuildContext context) => _buildInfoCard(
+    context,
+    context.strings.additionalNotes,
+    Icons.note,
+    <Widget>[
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: context.colorScheme.outline.withAlpha(50)),
+        ),
+        child: Text(
+          cattle.notes,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
+            height: 1.5,
           ),
         ),
-      ]);
+      ),
+    ],
+  );
 
   Widget _buildInfoCard(
     BuildContext context,
@@ -396,7 +412,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         );
       },
       icon: const Icon(Icons.water_drop),
-      label: const Text('View Milk Production'),
+      label: Text(context.strings.viewMilkProduction),
       style: ElevatedButton.styleFrom(
         backgroundColor: context.colorScheme.secondary,
         foregroundColor: context.colorScheme.onSecondaryContainer,
@@ -406,27 +422,66 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     ),
   );
 
-  String _formatDate(DateTime? date) {
+  String _formatDate(DateTime? date, BuildContext context) {
     if (date == null) {
-      return 'Not set';
+      return context.strings.notSet;
     }
 
-    const List<String> months = <String>[
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+    // Get localized month names from context.strings
+    final String monthName = _getLocalizedMonth(date.month - 1, context);
+
+    return '${date.day} $monthName ${date.year}';
+  }
+
+  String _getLocalizedMonth(int monthIndex, BuildContext context) {
+    final List<String> monthKeys = <String>[
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
+    if (monthIndex >= 0 && monthIndex < monthKeys.length) {
+      // Access the localized month name from context.strings
+      // Using a switch or map to map month keys to actual string access
+      switch (monthIndex) {
+        case 0:
+          return context.strings.jan;
+        case 1:
+          return context.strings.feb;
+        case 2:
+          return context.strings.mar;
+        case 3:
+          return context.strings.apr;
+        case 4:
+          return context.strings.may;
+        case 5:
+          return context.strings.jun;
+        case 6:
+          return context.strings.jul;
+        case 7:
+          return context.strings.aug;
+        case 8:
+          return context.strings.sep;
+        case 9:
+          return context.strings.oct;
+        case 10:
+          return context.strings.nov;
+        case 11:
+          return context.strings.dec;
+        default:
+          return '';
+      }
+    }
+    return '';
   }
 
   Color _getStatusColor(BuildContext context, String status) {
@@ -448,25 +503,53 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     }
   }
 
+  String _getLocalizedStatus(String status, BuildContext context) {
+    switch (status) {
+      case 'Active':
+        return context.strings.active;
+      case 'Pregnant':
+        return context.strings.pregnant;
+      case 'Sick':
+        return context.strings.sick;
+      case 'Dry':
+        return context.strings.dry;
+      case 'Sold':
+        return context.strings.sold;
+      case 'Dead':
+        return context.strings.dead;
+      default:
+        return status;
+    }
+  }
+
+  String _getLocalizedGender(String gender, BuildContext context) {
+    switch (gender) {
+      case 'Female':
+        return context.strings.female;
+      case 'Male':
+        return context.strings.male;
+      default:
+        return gender;
+    }
+  }
+
   Future<void> _confirmDelete(BuildContext context) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Delete Cattle'),
-        content: const Text(
-          'Are you sure you want to delete this cattle? This action cannot be undone.',
-        ),
+        title: Text(context.strings.deleteCattle),
+        content: Text(context.strings.deleteConfirmation),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.strings.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(context.strings.delete),
           ),
         ],
       ),

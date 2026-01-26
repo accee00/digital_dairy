@@ -101,7 +101,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
                     child: Text(
-                      'Daily Records',
+                      context.strings.dailyRecords,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -165,33 +165,33 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
               ),
               onSelected: (String value) => _handlePdfAction(value, logs),
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'preview',
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.visibility_rounded, size: 20),
-                      SizedBox(width: 12),
-                      Text('Preview PDF'),
+                      const Icon(Icons.visibility_rounded, size: 20),
+                      const SizedBox(width: 12),
+                      Text(context.strings.previewPdf),
                     ],
                   ),
                 ),
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'download',
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.download_rounded, size: 20),
-                      SizedBox(width: 12),
-                      Text('Download PDF'),
+                      const Icon(Icons.download_rounded, size: 20),
+                      const SizedBox(width: 12),
+                      Text(context.strings.downloadPdf),
                     ],
                   ),
                 ),
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'share',
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.share_rounded, size: 20),
-                      SizedBox(width: 12),
-                      Text('Share PDF'),
+                      const Icon(Icons.share_rounded, size: 20),
+                      const SizedBox(width: 12),
+                      Text(context.strings.sharePdf),
                     ],
                   ),
                 ),
@@ -221,10 +221,12 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
           if (file != null && mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('PDF saved to ${file.path}'),
+                content: Text(
+                  context.strings.pdfSavedTo.replaceAll('{path}', file.path),
+                ),
                 backgroundColor: Colors.green,
                 action: SnackBarAction(
-                  label: 'OK',
+                  label: context.strings.ok,
                   onPressed: () {},
                   textColor: Colors.white,
                 ),
@@ -243,7 +245,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
       if (mounted) {
         showAppSnackbar(
           context,
-          message: 'Error: $e',
+          message: context.strings.error.replaceAll('{error}', e.toString()),
           type: SnackbarType.error,
         );
       }
@@ -278,7 +280,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    DateFormat('MMMM').format(_selectedMonth),
+                    _getLocalizedMonthName(_selectedMonth, context),
                     style: context.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -366,7 +368,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            'Total Production',
+                            context.strings.totalProduction,
                             style: context.textTheme.bodyLarge?.copyWith(
                               color: context.colorScheme.onSurfaceVariant,
                             ),
@@ -397,7 +399,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                 child: _buildStatCard(
                   context,
                   icon: Icons.trending_up_rounded,
-                  label: 'Daily Average',
+                  label: context.strings.dailyAverage,
                   value: '${avgMilk.toStringAsFixed(1)} L',
                   color: context.colorScheme.tertiary,
                 ),
@@ -407,7 +409,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                 child: _buildStatCard(
                   context,
                   icon: Icons.calendar_month_rounded,
-                  label: 'Days Recorded',
+                  label: context.strings.daysRecorded,
                   value: '$daysRecorded',
                   color: context.colorScheme.secondary,
                 ),
@@ -424,7 +426,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                 child: _buildStatCard(
                   context,
                   icon: Icons.wb_sunny_rounded,
-                  label: 'Morning',
+                  label: context.strings.morning,
                   value: '${morningMilk.toStringAsFixed(1)} L',
                   color: Colors.orange,
                 ),
@@ -434,7 +436,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                 child: _buildStatCard(
                   context,
                   icon: Icons.nightlight_round,
-                  label: 'Evening',
+                  label: context.strings.evening,
                   value: '${eveningMilk.toStringAsFixed(1)} L',
                   color: Colors.indigo,
                 ),
@@ -503,7 +505,7 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                       ),
                     ),
                     Text(
-                      DateFormat('MMM').format(milk.date),
+                      _getLocalizedShortMonth(milk.date, context),
                       style: context.textTheme.bodySmall?.copyWith(
                         color: context.colorScheme.primary,
                       ),
@@ -532,8 +534,8 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
                         const SizedBox(width: 6),
                         Text(
                           milk.shift == ShiftType.morning
-                              ? 'Morning'
-                              : 'Evening',
+                              ? context.strings.morning
+                              : context.strings.evening,
                           style: context.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -599,14 +601,17 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
         ),
         const SizedBox(height: 24),
         Text(
-          'No milk records found',
+          context.strings.noMilkRecordsFound,
           style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          'Records for ${DateFormat('MMMM yyyy').format(_selectedMonth)} will appear here',
+          context.strings.recordsWillAppear.replaceAll(
+            'monthYear',
+            '${_getLocalizedMonthName(_selectedMonth, context)} ${_selectedMonth.year}',
+          ),
           style: context.textTheme.bodyMedium?.copyWith(
             color: context.colorScheme.onSurfaceVariant,
           ),
@@ -615,4 +620,67 @@ class _CattleMilkDetailScreenState extends State<CattleMilkDetailScreen> {
       ],
     ),
   );
+
+  // Helper methods for localized dates
+  String _getLocalizedMonthName(DateTime date, BuildContext context) {
+    switch (date.month) {
+      case 1:
+        return context.strings.monthJanuary;
+      case 2:
+        return context.strings.monthFebruary;
+      case 3:
+        return context.strings.monthMarch;
+      case 4:
+        return context.strings.monthApril;
+      case 5:
+        return context.strings.monthMay;
+      case 6:
+        return context.strings.monthJune;
+      case 7:
+        return context.strings.monthJuly;
+      case 8:
+        return context.strings.monthAugust;
+      case 9:
+        return context.strings.monthSeptember;
+      case 10:
+        return context.strings.monthOctober;
+      case 11:
+        return context.strings.monthNovember;
+      case 12:
+        return context.strings.monthDecember;
+      default:
+        return '';
+    }
+  }
+
+  String _getLocalizedShortMonth(DateTime date, BuildContext context) {
+    switch (date.month) {
+      case 1:
+        return context.strings.jan;
+      case 2:
+        return context.strings.feb;
+      case 3:
+        return context.strings.mar;
+      case 4:
+        return context.strings.apr;
+      case 5:
+        return context.strings.may;
+      case 6:
+        return context.strings.jun;
+      case 7:
+        return context.strings.jul;
+      case 8:
+        return context.strings.aug;
+      case 9:
+        return context.strings.sep;
+      case 10:
+        return context.strings.oct;
+      case 11:
+        return context.strings.nov;
+      case 12:
+        return context.strings.dec;
+      default:
+        return '';
+    }
+  }
 }

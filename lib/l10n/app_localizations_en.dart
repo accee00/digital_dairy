@@ -204,6 +204,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get milkEditEntry => 'Edit Milk Entry';
 
   @override
+  String get cattleEntryEdit => 'Edit Cattle';
+
+  @override
   String get milkCattleSelection => 'Cattle Selection';
 
   @override
@@ -379,4 +382,280 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get milkScreenLoadingMore => 'Loading more entries...';
+
+  @override
+  String get addCattleTitle => 'Add Cattle';
+
+  @override
+  String get cattleBasicInfo => 'Basic Information';
+
+  @override
+  String get cattleNameLabel => 'Cattle Name *';
+
+  @override
+  String get cattleNameHint => 'Enter cattle name (e.g., Ganga, Kamdhenu)';
+
+  @override
+  String get tagIdLabel => 'Tag ID *';
+
+  @override
+  String get tagIdHint => 'Enter unique tag ID (e.g., C001, TAG123)';
+
+  @override
+  String get cattlePhotoLabel => 'Cattle Photo (Optional)';
+
+  @override
+  String get tapToAddPhoto => 'Tap to add photo';
+
+  @override
+  String get physicalDetails => 'Physical Details';
+
+  @override
+  String get breedLabel => 'Breed';
+
+  @override
+  String get genderLabel => 'Gender';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get importantDates => 'Important Dates';
+
+  @override
+  String get dobLabel => 'Date of Birth';
+
+  @override
+  String get calvingDateLabel => 'Expected Calving Date';
+
+  @override
+  String get calvingDateHint => 'Leave empty if not applicable or unknown';
+
+  @override
+  String get additionalInfo => 'Additional Information';
+
+  @override
+  String get notesLabel => 'Notes (Optional)';
+
+  @override
+  String get notesHint => 'Add any additional notes about this cattle...';
+
+  @override
+  String get saveCattleButton => 'Save Cattle';
+
+  @override
+  String get cattleNameRequired => 'Cattle name is required';
+
+  @override
+  String get tagIdRequired => 'Tag ID is required';
+
+  @override
+  String get selectDate => 'Select Date';
+
+  @override
+  String get cattleRegisteredSuccess => 'Cattle registered successfully!';
+
+  @override
+  String get cattleUpdatedSuccess => 'Cattle updated successfully!';
+
+  @override
+  String get failToUploadImage => 'Failed to upload image';
+
+  @override
+  String get errorPickingImage => 'Error picking image:';
+
+  @override
+  String get cattleDeletedSuccess => 'Cattle deleted successfully';
+
+  @override
+  String get cattleDeleteError => 'Error deleting cattle';
+
+  @override
+  String get deleteCattle => 'Delete Cattle';
+
+  @override
+  String get deleteConfirmation => 'Are you sure you want to delete this cattle? This action cannot be undone.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get tag => 'Tag';
+
+  @override
+  String get basicInformation => 'Basic Information';
+
+  @override
+  String get breed => 'Breed';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get age => 'Age';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get currentStatus => 'Current Status';
+
+  @override
+  String get monthlyMilk => 'Monthly Milk';
+
+  @override
+  String get expectedCalving => 'Expected Calving';
+
+  @override
+  String get dateOfBirth => 'Date of Birth';
+
+  @override
+  String get calvingDate => 'Calving Date';
+
+  @override
+  String get additionalNotes => 'Additional Notes';
+
+  @override
+  String get viewMilkProduction => 'View Milk Production';
+
+  @override
+  String get notSet => 'Not set';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get pregnant => 'Pregnant';
+
+  @override
+  String get sick => 'Sick';
+
+  @override
+  String get dry => 'Dry';
+
+  @override
+  String get sold => 'Sold';
+
+  @override
+  String get dead => 'Dead';
+
+  @override
+  String get myCattles => 'My Cattles';
+
+  @override
+  String get searchResults => 'Search Results';
+
+  @override
+  String get found => 'found';
+
+  @override
+  String get cattleSingular => 'Cattle';
+
+  @override
+  String get cattlePlural => 'Cattles';
+
+  @override
+  String get failedToLoadCattle => 'Failed to load cattle';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get noCattleFound => 'No cattle found';
+
+  @override
+  String get tryDifferentSearch => 'Try a different search term';
+
+  @override
+  String get addFirstCattle => 'Tap the + button to add your first cattle';
+
+  @override
+  String get clearSearch => 'Clear Search';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get months => 'mo';
+
+  @override
+  String get years => 'y';
+
+  @override
+  String get dailyRecords => 'Daily Records';
+
+  @override
+  String get totalProduction => 'Total Production';
+
+  @override
+  String get dailyAverage => 'Daily Average';
+
+  @override
+  String get daysRecorded => 'Days Recorded';
+
+  @override
+  String get noMilkRecordsFound => 'No milk records found';
+
+  @override
+  String get recordsWillAppear => 'Records for monthYear will appear here';
+
+  @override
+  String get previewPdf => 'Preview PDF';
+
+  @override
+  String get downloadPdf => 'Download PDF';
+
+  @override
+  String get sharePdf => 'Share PDF';
+
+  @override
+  String get pdfSavedTo => 'PDF saved to path';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get monthJanuary => 'January';
+
+  @override
+  String get monthFebruary => 'February';
+
+  @override
+  String get monthMarch => 'March';
+
+  @override
+  String get monthApril => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJune => 'June';
+
+  @override
+  String get monthJuly => 'July';
+
+  @override
+  String get monthAugust => 'August';
+
+  @override
+  String get monthSeptember => 'September';
+
+  @override
+  String get monthOctober => 'October';
+
+  @override
+  String get monthNovember => 'November';
+
+  @override
+  String get monthDecember => 'December';
+
+  @override
+  String get error => 'Error:';
 }
