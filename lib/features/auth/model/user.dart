@@ -13,11 +13,17 @@ class UserModel extends Equatable {
   });
   factory UserModel.fromMap(Map<String, dynamic> map) => UserModel(
     id: map['id']?.toString() ?? '',
-    name: map['name'].toString(),
+    name: map['full_name'].toString(),
     email: map['email'].toString(),
     phoneNumber: map['phone_number'].toString(),
-    createdAt: DateTime.parse(map['created_at'] as String),
-    updatedAt: DateTime.parse(map['updated_at'] as String),
+    createdAt:
+        map['created_at'] != null && map['created_at'].toString().isNotEmpty
+        ? DateTime.parse(map['created_at'].toString())
+        : null,
+    updatedAt:
+        map['updated_at'] != null && map['updated_at'].toString().isNotEmpty
+        ? DateTime.parse(map['updated_at'].toString())
+        : null,
   );
   final String? id;
   final String name;

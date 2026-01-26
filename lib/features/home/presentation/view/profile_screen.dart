@@ -1,7 +1,9 @@
 import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
+import 'package:digital_dairy/features/home/cubit/profile_cubit.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,217 +19,329 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Mock user data - replace with actual user data from your state management
-  final String userName = 'John Doe';
-  final String userEmail = 'john.doe@example.com';
-  final String userPhone = '+1 234 567 8900';
-  final DateTime memberSince = DateTime(2023, 1, 15);
+  final String defaultUserName = '';
+  final String defaultUserEmail = '';
+  final String defaultUserPhone = '';
+  final DateTime defaultMemberSince = DateTime(2023, 1, 15);
 
-  // Settings states
   bool pushNotifications = true;
   bool emailNotifications = false;
   bool smsNotifications = true;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: CustomScaffoldContainer(
-      child: CustomScrollView(
-        slivers: <Widget>[
-          _appBar(context),
+  void initState() {
+    super.initState();
 
-          // Profile Header Section
-          SliverToBoxAdapter(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 20),
-                // Profile Picture
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: context.colorScheme.primary.withAlpha(200),
-                  child: CircleAvatar(
-                    radius: 55,
-                    backgroundColor:
-                        context.colorScheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.person,
-                      size: 50,
-                      color: context.colorScheme.onSurfaceVariant,
+    context.read<ProfileCubit>().fetchProfile();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocConsumer<ProfileCubit, ProfileState>(
+        listener: (BuildContext context, ProfileState state) {},
+        builder: (BuildContext context, ProfileState state) {
+          final String userName = state is FetchProfileSuccess
+              ? state.user.name
+              : defaultUserName;
+          final String userEmail = state is FetchProfileSuccess
+              ? state.user.email
+              : defaultUserEmail;
+          final String userPhone = state is FetchProfileSuccess
+              ? state.user.phoneNumber
+              : defaultUserPhone;
+          final DateTime memberSince =
+              state is FetchProfileSuccess && state.user.createdAt != null
+              ? state.user.createdAt!
+              : defaultMemberSince;
+
+          return Scaffold(
+            body: CustomScaffoldContainer(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  _appBar(context),
+
+                  if (state is ProfileInitial)
+                    const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                // User Name
-                Text(userName, style: context.textTheme.headlineLarge),
-                const SizedBox(height: 5),
-                // Member Since
-                Text(
-                  'Member since ${_formatDate(memberSince)}',
-                  style: context.textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
 
-          // Account Information Section
-          SliverToBoxAdapter(
-            child: _buildSection(
-              title: 'Account Information',
-              children: <Widget>[
-                _buildInfoTile(
-                  icon: Icons.email_outlined,
-                  title: 'Email',
-                  subtitle: userEmail,
-                  onTap: () {},
-                ),
-                _buildInfoTile(
-                  icon: Icons.phone_outlined,
-                  title: 'Phone Number',
-                  subtitle: userPhone,
-                  onTap: () {},
-                ),
-                _buildInfoTile(
-                  icon: Icons.lock_outline,
-                  title: 'Change Password',
-                  onTap: () {},
-                  showTrailing: true,
-                ),
-              ],
-            ),
-          ),
+                  if (state is FetchProfileFailure)
+                    SliverFillRemaining(child: _buildErrorState(state.msg)),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 15)),
-
-          // Preferences Section
-          SliverToBoxAdapter(
-            child: BlocBuilder<AppConfigBloc, AppConfigState>(
-              builder: (context, state) => _buildSection(
-                title: 'Preferences',
-                children: [
-                  _buildInfoTile(
-                    icon: Icons.language_outlined,
-                    title: 'Language',
-                    subtitle: _getLanguageName(state.locale.languageCode),
-                    onTap: () => _showLocaleDialog(state),
-                    showTrailing: true,
-                  ),
-                  _buildThemeModeTile(
-                    icon: Icons.brightness_6_outlined,
-                    title: 'Theme',
-                    currentThemeMode: state.themeMode,
-                    onChanged: (ThemeMode mode) {
-                      context.read<AppConfigBloc>().add(ThemeChangeEvent(mode));
-                    },
-                  ),
+                  if (state is! ProfileInitial && state is! FetchProfileFailure)
+                    ..._buildContent(
+                      context,
+                      userName,
+                      userEmail,
+                      '+91 $userPhone',
+                      memberSince,
+                    ),
                 ],
               ),
             ),
-          ),
+          );
+        },
+      );
 
-          const SliverToBoxAdapter(child: SizedBox(height: 15)),
-
-          // Notifications Section
-          SliverToBoxAdapter(
-            child: _buildSection(
-              title: 'Notifications',
-              children: [
-                _buildSwitchTile(
-                  icon: Icons.notifications_outlined,
-                  title: 'Push Notifications',
-                  subtitle: 'Receive push notifications',
-                  value: pushNotifications,
-                  onChanged: (bool value) {
-                    setState(() => pushNotifications = value);
-                  },
-                ),
-                _buildSwitchTile(
-                  icon: Icons.email_outlined,
-                  title: 'Email Notifications',
-                  subtitle: 'Receive email updates',
-                  value: emailNotifications,
-                  onChanged: (bool value) {
-                    setState(() => emailNotifications = value);
-                  },
-                ),
-                _buildSwitchTile(
-                  icon: Icons.sms_outlined,
-                  title: 'SMS Notifications',
-                  subtitle: 'Receive text messages',
-                  value: smsNotifications,
-                  onChanged: (bool value) {
-                    setState(() => smsNotifications = value);
-                  },
-                ),
-              ],
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 15)),
-
-          // Other Options Section
-          SliverToBoxAdapter(
-            child: _buildSection(
-              title: 'Other',
-              children: [
-                _buildInfoTile(
-                  icon: Icons.privacy_tip_outlined,
-                  title: 'Privacy Policy',
-                  onTap: () {},
-                  showTrailing: true,
-                ),
-                _buildInfoTile(
-                  icon: Icons.description_outlined,
-                  title: 'Terms & Conditions',
-                  onTap: () {},
-                  showTrailing: true,
-                ),
-                _buildInfoTile(
-                  icon: Icons.help_outline,
-                  title: 'Help & Support',
-                  onTap: () {},
-                  showTrailing: true,
-                ),
-                _buildInfoTile(
-                  icon: Icons.info_outline,
-                  title: 'About',
-                  subtitle: 'Version 1.0.0',
-                  onTap: () {},
-                  showTrailing: true,
-                ),
-              ],
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 15)),
-
-          // Logout Button
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _showLogoutDialog,
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Logout'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colorScheme.error,
-                    foregroundColor: context.colorScheme.onError,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
+  List<Widget> _buildContent(
+    BuildContext context,
+    String userName,
+    String userEmail,
+    String userPhone,
+    DateTime memberSince,
+  ) => <Widget>[
+    SliverToBoxAdapter(
+      child: Column(
+        children: <Widget>[
+          const SizedBox(height: 20),
+          CircleAvatar(
+            radius: 60,
+            backgroundColor: context.colorScheme.primary.withAlpha(200),
+            child: CircleAvatar(
+              radius: 55,
+              backgroundColor: context.colorScheme.surfaceContainerHighest,
+              child: Icon(
+                Icons.person,
+                size: 50,
+                color: context.colorScheme.onSurfaceVariant,
               ),
             ),
           ),
+          const SizedBox(height: 15),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 30)),
+          Text(userName, style: context.textTheme.headlineLarge),
+          const SizedBox(height: 5),
+
+          Text(
+            'Member since ${_formatDate(memberSince)}',
+            style: context.textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     ),
-  );
+
+    SliverToBoxAdapter(
+      child: _buildSection(
+        title: 'Account Information',
+        children: <Widget>[
+          _buildInfoTile(
+            icon: Icons.email_outlined,
+            title: 'Email',
+            subtitle: userEmail,
+            onTap: () {},
+          ),
+          _buildInfoTile(
+            icon: Icons.phone_outlined,
+            title: 'Phone Number',
+            subtitle: userPhone,
+            onTap: () {},
+          ),
+          _buildInfoTile(
+            icon: Icons.lock_outline,
+            title: 'Change Password',
+            onTap: () {},
+            showTrailing: true,
+          ),
+        ],
+      ),
+    ),
+
+    const SliverToBoxAdapter(child: SizedBox(height: 15)),
+
+    SliverToBoxAdapter(
+      child: BlocBuilder<AppConfigBloc, AppConfigState>(
+        builder: (BuildContext context, AppConfigState state) => _buildSection(
+          title: 'Preferences',
+          children: <Widget>[
+            _buildInfoTile(
+              icon: Icons.language_outlined,
+              title: 'Language',
+              subtitle: _getLanguageName(state.locale.languageCode),
+              onTap: () => _showLocaleDialog(state),
+              showTrailing: true,
+            ),
+            _buildThemeModeTile(
+              icon: Icons.brightness_6_outlined,
+              title: 'Theme',
+              currentThemeMode: state.themeMode,
+              onChanged: (ThemeMode mode) {
+                context.read<AppConfigBloc>().add(ThemeChangeEvent(mode));
+              },
+            ),
+          ],
+        ),
+      ),
+    ),
+
+    const SliverToBoxAdapter(child: SizedBox(height: 15)),
+
+    SliverToBoxAdapter(
+      child: _buildSection(
+        title: 'Notifications',
+        children: <Widget>[
+          _buildSwitchTile(
+            icon: Icons.notifications_outlined,
+            title: 'Push Notifications',
+            subtitle: 'Receive push notifications',
+            value: pushNotifications,
+            onChanged: (bool value) {
+              showAppSnackbar(context, message: 'This feature will come soon.');
+              return;
+              // setState(() => pushNotifications = value);
+            },
+          ),
+          _buildSwitchTile(
+            icon: Icons.email_outlined,
+            title: 'Email Notifications',
+            subtitle: 'Receive email updates',
+            value: emailNotifications,
+            onChanged: (bool value) {
+              showAppSnackbar(context, message: 'This feature will come soon.');
+              return;
+              // setState(() => emailNotifications = value);
+            },
+          ),
+          _buildSwitchTile(
+            icon: Icons.sms_outlined,
+            title: 'SMS Notifications',
+            subtitle: 'Receive text messages',
+            value: smsNotifications,
+            onChanged: (bool value) {
+              showAppSnackbar(context, message: 'This feature will come soon.');
+              return;
+              // setState(() => smsNotifications = value);
+            },
+          ),
+        ],
+      ),
+    ),
+
+    const SliverToBoxAdapter(child: SizedBox(height: 15)),
+
+    SliverToBoxAdapter(
+      child: _buildSection(
+        title: 'Other',
+        children: <Widget>[
+          _buildInfoTile(
+            icon: Icons.privacy_tip_outlined,
+            title: 'Privacy Policy',
+            onTap: () {},
+            showTrailing: true,
+          ),
+          _buildInfoTile(
+            icon: Icons.description_outlined,
+            title: 'Terms & Conditions',
+            onTap: () {},
+            showTrailing: true,
+          ),
+          _buildInfoTile(
+            icon: Icons.help_outline,
+            title: 'Help & Support',
+            onTap: () {},
+            showTrailing: true,
+          ),
+          _buildInfoTile(
+            icon: Icons.info_outline,
+            title: 'About',
+            subtitle: 'Version 1.0.0',
+            onTap: () {},
+            showTrailing: true,
+          ),
+        ],
+      ),
+    ),
+
+    const SliverToBoxAdapter(child: SizedBox(height: 15)),
+
+    SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: _showLogoutDialog,
+            icon: const Icon(Icons.logout),
+            label: const Text('Logout'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: context.colorScheme.error,
+              foregroundColor: context.colorScheme.onError,
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+
+    const SliverToBoxAdapter(child: SizedBox(height: 30)),
+  ];
+
+  Widget _buildErrorState(String errorMessage) {
+    final bool isUserNotFound =
+        errorMessage.toLowerCase().contains('user not found') ||
+        errorMessage.toLowerCase().contains('user not signed in');
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            isUserNotFound ? Icons.person_off : Icons.error_outline,
+            size: 64,
+            color: context.colorScheme.error,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            isUserNotFound ? 'User Not Found' : 'Error Loading Profile',
+            style: context.textTheme.headlineMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            errorMessage,
+            style: context.textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 30),
+          if (isUserNotFound)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _showLogoutDialog,
+                icon: const Icon(Icons.logout),
+                label: const Text('Logout'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.colorScheme.error,
+                  foregroundColor: context.colorScheme.onError,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            )
+          else
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<ProfileCubit>().fetchProfile();
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 
   SliverAppBar _appBar(BuildContext context) => SliverAppBar(
     backgroundColor: Colors.transparent,
@@ -411,9 +525,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               _radioRow('English', 'en', state.locale.languageCode),
-              _radioRow('Spanish', 'es', state.locale.languageCode),
-              _radioRow('French', 'fr', state.locale.languageCode),
-              _radioRow('German', 'de', state.locale.languageCode),
               _radioRow('Hindi', 'hi', state.locale.languageCode),
             ],
           ),

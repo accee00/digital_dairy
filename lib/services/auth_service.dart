@@ -1,4 +1,5 @@
-import 'package:digital_dairy/core/exceptions/failure.dart';
+import 'package:digital_dairy/core/exceptions/failure.dart' show Failure;
+import 'package:digital_dairy/features/auth/model/user.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -82,6 +83,23 @@ class AuthService {
       return right(true);
     } on AuthException catch (e) {
       return left(mapAuthError(e));
+    }
+  }
+
+  ///
+  Future<Either<Failure, UserModel>> fetchUserProfile() async {
+    try {
+      if (_currentUserSession == null) {
+        return left(Failure('User not signed in.'));
+      }
+      final PostgrestMap response = await _client
+          .from('user_profiles')
+          .select()
+          .eq('id', _currentUserSession!.user.id)
+          .single();
+      return right(UserModel.fromMap(response));
+    } on PostgrestException catch (e) {
+      return left(Failure(e.message));
     }
   }
 

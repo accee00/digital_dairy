@@ -3,6 +3,7 @@ import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/home/cubit/analytics_cubit.dart';
+import 'package:digital_dairy/features/home/cubit/profile_cubit.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/services/analytics_service.dart';
@@ -66,6 +67,9 @@ void initCubits() {
   serviceLocator
     ..registerLazySingleton<AppConfigBloc>(AppConfigBloc.new)
     ..registerFactory<AuthCubit>(() => AuthCubit(serviceLocator<AuthService>()))
+    ..registerFactory<ProfileCubit>(
+      () => ProfileCubit(serviceLocator<AuthService>()),
+    )
     ..registerFactory(() => AnalyticsCubit(serviceLocator<AnalyticsService>()))
     ..registerFactory<CattleCubit>(
       () => CattleCubit(serviceLocator<CattleService>()),
