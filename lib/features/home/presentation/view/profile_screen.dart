@@ -1,8 +1,11 @@
+import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/di/init_di.dart';
-import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
+import 'package:digital_dairy/core/extension/build_extenstion.dart';
+import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 ///
 class ProfileScreen extends StatefulWidget {
@@ -24,217 +27,230 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool pushNotifications = true;
   bool emailNotifications = false;
   bool smsNotifications = true;
-  String selectedLocale = 'English';
-  bool isDarkMode = false;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Colors.grey[100],
-    appBar: AppBar(
-      title: const Text('Profile'),
-      centerTitle: true,
-      elevation: 0,
-    ),
-    body: SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
+    body: CustomScaffoldContainer(
+      child: CustomScrollView(
+        slivers: <Widget>[
+          _appBar(context),
+
           // Profile Header Section
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
+          SliverToBoxAdapter(
             child: Column(
               children: <Widget>[
                 const SizedBox(height: 20),
                 // Profile Picture
                 CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.white,
+                  radius: 60,
+                  backgroundColor: context.colorScheme.primary.withAlpha(200),
                   child: CircleAvatar(
-                    radius: 47,
-                    backgroundColor: Colors.grey[300],
+                    radius: 55,
+                    backgroundColor:
+                        context.colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.person,
                       size: 50,
-                      color: Colors.grey[600],
+                      color: context.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
                 const SizedBox(height: 15),
                 // User Name
-                Text(
-                  userName,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                Text(userName, style: context.textTheme.headlineLarge),
                 const SizedBox(height: 5),
                 // Member Since
                 Text(
                   'Member since ${_formatDate(memberSince)}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
-                  ),
+                  style: context.textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 20),
               ],
             ),
           ),
 
-          const SizedBox(height: 20),
-
           // Account Information Section
-          _buildSection(
-            title: 'Account Information',
-            children: [
-              _buildInfoTile(
-                icon: Icons.email_outlined,
-                title: 'Email',
-                subtitle: userEmail,
-                onTap: () {},
-              ),
-              _buildInfoTile(
-                icon: Icons.phone_outlined,
-                title: 'Phone Number',
-                subtitle: userPhone,
-                onTap: () {},
-              ),
-              _buildInfoTile(
-                icon: Icons.lock_outline,
-                title: 'Change Password',
-                onTap: () {},
-                showTrailing: true,
-              ),
-            ],
+          SliverToBoxAdapter(
+            child: _buildSection(
+              title: 'Account Information',
+              children: <Widget>[
+                _buildInfoTile(
+                  icon: Icons.email_outlined,
+                  title: 'Email',
+                  subtitle: userEmail,
+                  onTap: () {},
+                ),
+                _buildInfoTile(
+                  icon: Icons.phone_outlined,
+                  title: 'Phone Number',
+                  subtitle: userPhone,
+                  onTap: () {},
+                ),
+                _buildInfoTile(
+                  icon: Icons.lock_outline,
+                  title: 'Change Password',
+                  onTap: () {},
+                  showTrailing: true,
+                ),
+              ],
+            ),
           ),
 
-          const SizedBox(height: 15),
+          const SliverToBoxAdapter(child: SizedBox(height: 15)),
 
           // Preferences Section
-          _buildSection(
-            title: 'Preferences',
-            children: [
-              _buildInfoTile(
-                icon: Icons.language_outlined,
-                title: 'Language',
-                subtitle: selectedLocale,
-                onTap: () => _showLocaleDialog(),
-                showTrailing: true,
+          SliverToBoxAdapter(
+            child: BlocBuilder<AppConfigBloc, AppConfigState>(
+              builder: (context, state) => _buildSection(
+                title: 'Preferences',
+                children: [
+                  _buildInfoTile(
+                    icon: Icons.language_outlined,
+                    title: 'Language',
+                    subtitle: _getLanguageName(state.locale.languageCode),
+                    onTap: () => _showLocaleDialog(state),
+                    showTrailing: true,
+                  ),
+                  _buildThemeModeTile(
+                    icon: Icons.brightness_6_outlined,
+                    title: 'Theme',
+                    currentThemeMode: state.themeMode,
+                    onChanged: (ThemeMode mode) {
+                      context.read<AppConfigBloc>().add(ThemeChangeEvent(mode));
+                    },
+                  ),
+                ],
               ),
-              _buildSwitchTile(
-                icon: Icons.dark_mode_outlined,
-                title: 'Dark Mode',
-                value: isDarkMode,
-                onChanged: (value) {
-                  setState(() => isDarkMode = value);
-                },
-              ),
-            ],
+            ),
           ),
 
-          const SizedBox(height: 15),
+          const SliverToBoxAdapter(child: SizedBox(height: 15)),
 
           // Notifications Section
-          _buildSection(
-            title: 'Notifications',
-            children: [
-              _buildSwitchTile(
-                icon: Icons.notifications_outlined,
-                title: 'Push Notifications',
-                subtitle: 'Receive push notifications',
-                value: pushNotifications,
-                onChanged: (value) {
-                  setState(() => pushNotifications = value);
-                },
-              ),
-              _buildSwitchTile(
-                icon: Icons.email_outlined,
-                title: 'Email Notifications',
-                subtitle: 'Receive email updates',
-                value: emailNotifications,
-                onChanged: (value) {
-                  setState(() => emailNotifications = value);
-                },
-              ),
-              _buildSwitchTile(
-                icon: Icons.sms_outlined,
-                title: 'SMS Notifications',
-                subtitle: 'Receive text messages',
-                value: smsNotifications,
-                onChanged: (value) {
-                  setState(() => smsNotifications = value);
-                },
-              ),
-            ],
+          SliverToBoxAdapter(
+            child: _buildSection(
+              title: 'Notifications',
+              children: [
+                _buildSwitchTile(
+                  icon: Icons.notifications_outlined,
+                  title: 'Push Notifications',
+                  subtitle: 'Receive push notifications',
+                  value: pushNotifications,
+                  onChanged: (bool value) {
+                    setState(() => pushNotifications = value);
+                  },
+                ),
+                _buildSwitchTile(
+                  icon: Icons.email_outlined,
+                  title: 'Email Notifications',
+                  subtitle: 'Receive email updates',
+                  value: emailNotifications,
+                  onChanged: (bool value) {
+                    setState(() => emailNotifications = value);
+                  },
+                ),
+                _buildSwitchTile(
+                  icon: Icons.sms_outlined,
+                  title: 'SMS Notifications',
+                  subtitle: 'Receive text messages',
+                  value: smsNotifications,
+                  onChanged: (bool value) {
+                    setState(() => smsNotifications = value);
+                  },
+                ),
+              ],
+            ),
           ),
 
-          const SizedBox(height: 15),
+          const SliverToBoxAdapter(child: SizedBox(height: 15)),
 
           // Other Options Section
-          _buildSection(
-            title: 'Other',
-            children: [
-              _buildInfoTile(
-                icon: Icons.privacy_tip_outlined,
-                title: 'Privacy Policy',
-                onTap: () {},
-                showTrailing: true,
-              ),
-              _buildInfoTile(
-                icon: Icons.description_outlined,
-                title: 'Terms & Conditions',
-                onTap: () {},
-                showTrailing: true,
-              ),
-              _buildInfoTile(
-                icon: Icons.help_outline,
-                title: 'Help & Support',
-                onTap: () {},
-                showTrailing: true,
-              ),
-              _buildInfoTile(
-                icon: Icons.info_outline,
-                title: 'About',
-                subtitle: 'Version 1.0.0',
-                onTap: () {},
-                showTrailing: true,
-              ),
-            ],
+          SliverToBoxAdapter(
+            child: _buildSection(
+              title: 'Other',
+              children: [
+                _buildInfoTile(
+                  icon: Icons.privacy_tip_outlined,
+                  title: 'Privacy Policy',
+                  onTap: () {},
+                  showTrailing: true,
+                ),
+                _buildInfoTile(
+                  icon: Icons.description_outlined,
+                  title: 'Terms & Conditions',
+                  onTap: () {},
+                  showTrailing: true,
+                ),
+                _buildInfoTile(
+                  icon: Icons.help_outline,
+                  title: 'Help & Support',
+                  onTap: () {},
+                  showTrailing: true,
+                ),
+                _buildInfoTile(
+                  icon: Icons.info_outline,
+                  title: 'About',
+                  subtitle: 'Version 1.0.0',
+                  onTap: () {},
+                  showTrailing: true,
+                ),
+              ],
+            ),
           ),
 
-          const SizedBox(height: 15),
+          const SliverToBoxAdapter(child: SizedBox(height: 15)),
 
           // Logout Button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _showLogoutDialog(),
-                icon: const Icon(Icons.logout),
-                label: const Text('Logout'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _showLogoutDialog,
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Logout'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.colorScheme.error,
+                    foregroundColor: context.colorScheme.onError,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SliverToBoxAdapter(child: SizedBox(height: 30)),
         ],
+      ),
+    ),
+  );
+
+  SliverAppBar _appBar(BuildContext context) => SliverAppBar(
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    leading: Container(
+      height: 43,
+      width: 43,
+      margin: const EdgeInsets.only(left: 10),
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        padding: const EdgeInsets.only(left: 10),
+        onPressed: () => context.pop(),
+        icon: Icon(Icons.arrow_back_ios, color: context.colorScheme.onSurface),
+      ),
+    ),
+    title: Text(
+      'Profile',
+      style: context.textTheme.headlineLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: context.colorScheme.onSurface,
       ),
     ),
   );
@@ -244,32 +260,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required List<Widget> children,
   }) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
+    children: <Widget>[
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[700],
-          ),
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(title, style: context.textTheme.titleLarge),
       ),
       const SizedBox(height: 8),
       Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(children: children),
       ),
@@ -282,51 +283,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String? subtitle,
     VoidCallback? onTap,
     bool showTrailing = false,
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: Theme.of(context).primaryColor),
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+  }) => ListTile(
+    leading: Icon(icon, color: context.colorScheme.primary.withAlpha(200)),
+    title: Text(title, style: context.textTheme.bodyLarge),
+    subtitle: subtitle != null
+        ? Text(
+            subtitle,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
+          )
+        : null,
+    trailing: showTrailing
+        ? Icon(
+            Icons.chevron_right,
+            color: context.colorScheme.onSurfaceVariant.withAlpha(102),
+          )
+        : null,
+    onTap: onTap,
+  );
+
+  Widget _buildThemeModeTile({
+    required IconData icon,
+    required String title,
+    required ThemeMode currentThemeMode,
+    required ValueChanged<ThemeMode> onChanged,
+  }) => ListTile(
+    leading: Icon(icon, color: context.colorScheme.primary.withAlpha(200)),
+    title: Text(title, style: context.textTheme.bodyLarge),
+    subtitle: Text(
+      _getThemeModeName(currentThemeMode),
+      style: context.textTheme.bodyMedium?.copyWith(
+        color: context.colorScheme.onSurfaceVariant,
       ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            )
-          : null,
-      trailing: showTrailing
-          ? Icon(Icons.chevron_right, color: Colors.grey[400])
-          : null,
-      onTap: onTap,
-    );
-  }
+    ),
+    trailing: Icon(
+      Icons.chevron_right,
+      color: context.colorScheme.onSurfaceVariant.withAlpha(102),
+    ),
+    onTap: () => _showThemeModeDialog(currentThemeMode, onChanged),
+  );
 
   Widget _buildSwitchTile({
     required IconData icon,
     required String title,
-    String? subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
+    String? subtitle,
   }) => SwitchListTile(
-    secondary: Icon(icon, color: Theme.of(context).primaryColor),
-    title: Text(
-      title,
-      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-    ),
+    secondary: Icon(icon, color: context.colorScheme.primary.withAlpha(200)),
+    title: Text(title, style: context.textTheme.bodyLarge),
     subtitle: subtitle != null
         ? Text(
             subtitle,
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
           )
         : null,
     value: value,
     onChanged: onChanged,
-    activeColor: Theme.of(context).primaryColor,
+    activeThumbColor: context.colorScheme.primary,
   );
 
   String _formatDate(DateTime date) {
-    final months = [
+    final List<String> months = <String>[
       'January',
       'February',
       'March',
@@ -343,51 +364,123 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return '${months[date.month - 1]} ${date.year}';
   }
 
-  void _showLocaleDialog() {
-    showDialog(
+  String _getLanguageName(String languageCode) {
+    switch (languageCode) {
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Spanish';
+      case 'fr':
+        return 'French';
+      case 'de':
+        return 'German';
+      case 'hi':
+        return 'Hindi';
+      default:
+        return 'English';
+    }
+  }
+
+  String _getThemeModeName(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return 'Light';
+      case ThemeMode.dark:
+        return 'Dark';
+      case ThemeMode.system:
+        return 'System Default';
+    }
+  }
+
+  void _showLocaleDialog(AppConfigState state) {
+    showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: const Text('Select Language'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildLocaleOption('English'),
-            _buildLocaleOption('Spanish'),
-            _buildLocaleOption('French'),
-            _buildLocaleOption('German'),
-            _buildLocaleOption('Hindi'),
-          ],
+        content: RadioGroup<String>(
+          groupValue: state.locale.languageCode,
+          onChanged: (String? value) {
+            if (value != null) {
+              context.read<AppConfigBloc>().add(
+                LocaleChangeEvent(Locale(value), hasShownLanguageDialog: true),
+              );
+              Navigator.pop(context);
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _radioRow('English', 'en', state.locale.languageCode),
+              _radioRow('Spanish', 'es', state.locale.languageCode),
+              _radioRow('French', 'fr', state.locale.languageCode),
+              _radioRow('German', 'de', state.locale.languageCode),
+              _radioRow('Hindi', 'hi', state.locale.languageCode),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildLocaleOption(String locale) => RadioListTile<String>(
-    title: Text(locale),
-    value: locale,
-    groupValue: selectedLocale,
-    onChanged: (value) {
-      setState(() => selectedLocale = value!);
-      Navigator.pop(context);
-    },
+  Widget _radioRow(String label, String value, String groupValue) => ListTile(
+    leading: Radio<String>(value: value),
+    title: Text(label),
   );
 
-  void _showLogoutDialog() {
-    showDialog(
+  Widget _themeRadioRow(String label, ThemeMode value, ThemeMode groupValue) =>
+      ListTile(
+        leading: Radio<ThemeMode>(value: value),
+        title: Text(label),
+      );
+
+  void _showThemeModeDialog(
+    ThemeMode currentMode,
+    ValueChanged<ThemeMode> onChanged,
+  ) {
+    showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
+        title: const Text('Select Theme'),
+        content: RadioGroup<ThemeMode>(
+          groupValue: currentMode,
+          onChanged: (ThemeMode? value) {
+            if (value != null) {
+              onChanged(value);
+              Navigator.pop(context);
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _themeRadioRow('Light', ThemeMode.light, currentMode),
+              _themeRadioRow('Dark', ThemeMode.dark, currentMode),
+              _themeRadioRow('System Default', ThemeMode.system, currentMode),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
-        actions: [
+        actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               serviceLocator<AuthService>().logOutUser();
             },
-            child: const Text('Logout', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Logout',
+              style: TextStyle(color: context.colorScheme.error),
+            ),
           ),
         ],
       ),

@@ -1,4 +1,4 @@
-import 'package:digital_dairy/core/bloc/locale_bloc.dart';
+import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
@@ -64,7 +64,7 @@ void initService() {
 ///
 void initCubits() {
   serviceLocator
-    ..registerLazySingleton<LocaleBloc>(LocaleBloc.new)
+    ..registerLazySingleton<AppConfigBloc>(AppConfigBloc.new)
     ..registerFactory<AuthCubit>(() => AuthCubit(serviceLocator<AuthService>()))
     ..registerFactory(() => AnalyticsCubit(serviceLocator<AnalyticsService>()))
     ..registerFactory<CattleCubit>(

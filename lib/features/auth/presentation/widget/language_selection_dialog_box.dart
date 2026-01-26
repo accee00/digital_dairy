@@ -1,4 +1,4 @@
-import 'package:digital_dairy/core/bloc/locale_bloc.dart';
+import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +67,7 @@ void showLanguageSelectionDialog({required BuildContext context}) {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(12),
                               onTap: () {
-                                context.read<LocaleBloc>().add(
+                                context.read<AppConfigBloc>().add(
                                   LocaleChangeEvent(
                                     Locale(language['code']!),
                                     hasShownLanguageDialog: true,

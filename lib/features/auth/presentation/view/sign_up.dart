@@ -1,4 +1,4 @@
-import 'package:digital_dairy/core/bloc/locale_bloc.dart';
+import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
@@ -49,11 +49,11 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final LocaleState localeState = context.read<LocaleBloc>().state;
+      final AppConfigState localeState = context.read<AppConfigBloc>().state;
 
       if (!localeState.hasShownLanguageDialog) {
         showLanguageSelectionDialog(context: context);
-        context.read<LocaleBloc>().add(
+        context.read<AppConfigBloc>().add(
           LocaleChangeEvent(localeState.locale, hasShownLanguageDialog: true),
         );
       }
