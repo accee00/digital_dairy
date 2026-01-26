@@ -658,4 +658,91 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get error => 'त्रुटि:';
+
+  @override
+  String get homeWelcome => 'स्वागत है, name';
+
+  @override
+  String get todaysSummary => 'आज का सारांश';
+
+  @override
+  String get milkProductionOverview => 'दूध उत्पादन अवलोकन';
+
+  @override
+  String get dailyTotal => 'दैनिक कुल';
+
+  @override
+  String get total => 'कुल';
+
+  @override
+  String get income => 'आय';
+
+  @override
+  String get today => 'आज';
+
+  @override
+  String get monthlySummary => 'मासिक सारांश';
+
+  @override
+  String get totalIncome => 'कुल आय';
+
+  @override
+  String get avgPerDay => 'औसत/दिन';
+
+  @override
+  String get days => 'दिन';
+
+  @override
+  String get ratePerLiter => 'दर/लीटर';
+
+  @override
+  String get quickActions => 'त्वरित कार्य';
+
+  @override
+  String get milkEntry => 'दूध प्रविष्टि';
+
+  @override
+  String get newCattle => 'नया पशु';
+
+  @override
+  String get finance => 'वित्त';
+
+  @override
+  String get comingSoon => 'जल्द ही आ रहा है...';
+
+  @override
+  String get noDataAvailable => 'कोई डेटा उपलब्ध नहीं है';
+
+  @override
+  String get january => 'जनवरी';
+
+  @override
+  String get february => 'फरवरी';
+
+  @override
+  String get march => 'मार्च';
+
+  @override
+  String get april => 'अप्रैल';
+
+  @override
+  String get june => 'जून';
+
+  @override
+  String get july => 'जुलाई';
+
+  @override
+  String get august => 'अगस्त';
+
+  @override
+  String get september => 'सितंबर';
+
+  @override
+  String get october => 'अक्टूबर';
+
+  @override
+  String get november => 'नवंबर';
+
+  @override
+  String get december => 'दिसंबर';
 }

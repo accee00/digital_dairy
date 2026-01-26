@@ -1,7 +1,10 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/theme/app_theme.dart';
+import 'package:digital_dairy/core/utils/custom_snackbar.dart';
+import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/home/cubit/analytics_cubit.dart';
+import 'package:digital_dairy/features/home/cubit/profile_cubit.dart';
 import 'package:digital_dairy/features/home/model/analytics_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,60 +73,102 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     ),
   );
+  Widget _buildHeader(BuildContext context) =>
+      BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (BuildContext context, ProfileState state) {
+          String userName = 'Guest';
+          String? profileImageUrl;
 
-  Widget _buildHeader(BuildContext context) => Container(
-    padding: const EdgeInsets.all(15),
-    decoration: AppTheme.glassmorphism(
-      opacity: 0.15,
-      blur: 90,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Row(
-      children: <Widget>[
-        GestureDetector(
-          onTap: () => context.push(AppRoutes.profile),
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              image: const DecorationImage(
-                image: NetworkImage(
-                  'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg',
+          if (state is FetchProfileSuccess) {
+            userName = state.user.name;
+            // profileImageUrl = state.user.profileImageUrl;
+          } else if (state is FetchProfileFailure) {}
+
+          return Container(
+            padding: const EdgeInsets.all(15),
+            decoration: AppTheme.glassmorphism(
+              opacity: 0.15,
+              blur: 90,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: <Widget>[
+                // GestureDetector(
+                //   onTap: () => context.push(AppRoutes.profile),
+                //   child: Container(
+                //     height: 50,
+                //     width: 50,
+                //     decoration: BoxDecoration(
+                //       image: profileImageUrl != null
+                //           ? DecorationImage(
+                //               image: NetworkImage(profileImageUrl),
+                //               fit: BoxFit.cover,
+                //             )
+                //           : null,
+                //       color: AppTheme.textOnPrimary.withAlpha(51),
+                //       borderRadius: BorderRadius.circular(16),
+                //       border: Border.all(
+                //         color: AppTheme.textOnPrimary.withAlpha(76),
+                //       ),
+                //     ),
+                //     child: profileImageUrl == null
+                //         ? const Icon(
+                //             Icons.person,
+                //             color: AppTheme.textOnPrimary,
+                //             size: 24,
+                //           )
+                //         : null,
+                //   ),
+                // ),
+                GestureDetector(
+                  onTap: () => context.push(AppRoutes.profile),
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: AppTheme.textOnPrimary.withAlpha(51),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppTheme.textOnPrimary.withAlpha(76),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      color: AppTheme.textOnPrimary,
+                      size: 24,
+                    ),
+                  ),
                 ),
-                fit: BoxFit.cover,
-              ),
-              color: AppTheme.textOnPrimary.withAlpha(51),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppTheme.textOnPrimary.withAlpha(76)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    context.strings.homeWelcome.replaceAll('name', userName),
+                    style: context.textTheme.headlineSmall?.copyWith(
+                      color: context.colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.textOnPrimary.withAlpha(51),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppTheme.textOnPrimary.withAlpha(76),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.notifications_outlined,
+                    color: AppTheme.textOnPrimary,
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            'Welcome, Harsh',
-            style: context.textTheme.headlineSmall?.copyWith(
-              color: context.colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppTheme.textOnPrimary.withAlpha(51),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppTheme.textOnPrimary.withAlpha(76)),
-          ),
-          child: const Icon(
-            Icons.notifications_outlined,
-            color: AppTheme.textOnPrimary,
-            size: 20,
-          ),
-        ),
-      ],
-    ),
-  );
+          );
+        },
+      );
 
   Widget _buildLoadingCard(BuildContext context) {
     final ColorScheme colorScheme = context.colorScheme;
@@ -200,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ElevatedButton.icon(
             onPressed: () => context.read<AnalyticsCubit>().fetchAnalytics(),
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
+            label: Text(context.strings.retry),
           ),
         ],
       ),
@@ -229,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Center(
         child: Text(
-          'No data available',
+          context.strings.noDataAvailable,
           style: context.textTheme.bodyLarge?.copyWith(
             color: colorScheme.onSurface.withAlpha(153),
           ),
@@ -280,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Today's Summary",
+                    context.strings.todaysSummary,
                     style: context.textTheme.headlineSmall?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.w800,
@@ -289,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Milk Production Overview',
+                    context.strings.milkProductionOverview,
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withAlpha(153),
                       fontWeight: FontWeight.w500,
@@ -306,7 +351,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildSummaryItem(
                   context,
                   Icons.wb_sunny_rounded,
-                  'Morning',
+                  context.strings.morning,
                   '${analytics.todayMorningMilk.toStringAsFixed(1)} L',
                   AppTheme.info,
                   '06:00 AM',
@@ -317,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildSummaryItem(
                   context,
                   Icons.nightlight_round,
-                  'Evening',
+                  context.strings.evening,
                   '${analytics.todayEveningMilk.toStringAsFixed(1)} L',
                   context.isDarkMode
                       ? AppTheme.darkTextPrimary
@@ -334,12 +379,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildSummaryItem(
                   context,
                   Icons.analytics_rounded,
-                  'Total',
+                  context.strings.total,
                   '${analytics.todayTotalMilk.toStringAsFixed(1)} L',
                   context.isDarkMode
                       ? AppTheme.darkTextPrimary
                       : AppTheme.secondary,
-                  'Daily Total',
+                  context.strings.dailyTotal,
                 ),
               ),
               const SizedBox(width: 16),
@@ -347,10 +392,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildSummaryItem(
                   context,
                   Icons.currency_rupee_rounded,
-                  'Income',
+                  context.strings.income,
                   '₹${analytics.todayIncome.toStringAsFixed(0)}',
                   AppTheme.success,
-                  'Today',
+                  context.strings.today,
                 ),
               ),
             ],
@@ -363,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildMonthlyCard(BuildContext context, AnalyticsModel analytics) {
     final ColorScheme colorScheme = context.colorScheme;
     final DateTime now = DateTime.now();
-    final String monthName = _getMonthName(now.month);
+    final String monthName = _getLocalizedMonthName(now.month, context);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -411,7 +456,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Monthly Summary',
+                      context.strings.monthlySummary,
                       style: context.textTheme.titleLarge?.copyWith(
                         color: AppTheme.secondary,
                         fontWeight: FontWeight.w800,
@@ -438,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildMonthlyItem(
                   context,
                   Icons.water_drop_rounded,
-                  'Total Production',
+                  context.strings.totalProduction,
                   '${analytics.monthTotalMilk.toStringAsFixed(1)} L',
                   AppTheme.info,
                 ),
@@ -448,7 +493,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildMonthlyItem(
                   context,
                   Icons.account_balance_wallet_rounded,
-                  'Total Income',
+                  context.strings.totalIncome,
                   '₹${analytics.monthIncome.toStringAsFixed(0)}',
                   AppTheme.success,
                 ),
@@ -468,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: <Widget>[
                 _buildMonthStat(
                   context,
-                  'Avg/Day',
+                  context.strings.avgPerDay,
                   '${(analytics.monthTotalMilk / now.day).toStringAsFixed(1)} L',
                   AppTheme.primary,
                 ),
@@ -479,7 +524,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 _buildMonthStat(
                   context,
-                  'Days',
+                  context.strings.days,
                   '${now.day}',
                   AppTheme.secondary,
                 ),
@@ -490,7 +535,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 _buildMonthStat(
                   context,
-                  'Rate/L',
+                  context.strings.ratePerLiter,
                   analytics.monthTotalMilk > 0
                       ? '₹${(analytics.monthIncome / analytics.monthTotalMilk).toStringAsFixed(0)}'
                       : '₹0',
@@ -567,22 +612,35 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
   );
 
-  String _getMonthName(int month) {
-    const List<String> months = <String>[
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return months[month - 1];
+  String _getLocalizedMonthName(int month, BuildContext context) {
+    switch (month) {
+      case 1:
+        return context.strings.january;
+      case 2:
+        return context.strings.february;
+      case 3:
+        return context.strings.march;
+      case 4:
+        return context.strings.april;
+      case 5:
+        return context.strings.may;
+      case 6:
+        return context.strings.june;
+      case 7:
+        return context.strings.july;
+      case 8:
+        return context.strings.august;
+      case 9:
+        return context.strings.september;
+      case 10:
+        return context.strings.october;
+      case 11:
+        return context.strings.november;
+      case 12:
+        return context.strings.december;
+      default:
+        return '';
+    }
   }
 
   Widget _buildSummaryItem(
@@ -670,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'Quick Actions',
+            context.strings.quickActions,
             style: theme.textTheme.titleLarge?.copyWith(
               color: colorScheme.primary,
               fontWeight: FontWeight.w700,
@@ -683,23 +741,25 @@ class _HomeScreenState extends State<HomeScreen> {
               _actionButton(
                 context,
                 Icons.add_circle_outline,
-                'Milk Entry',
+                context.strings.milkEntry,
                 AppTheme.primary,
                 () => context.push(AppRoutes.addMilk),
               ),
               _actionButton(
                 context,
                 Icons.pets_outlined,
-                'New Cattle',
+                context.strings.newCattle,
                 AppTheme.secondary,
                 () => context.push(AppRoutes.addCattle),
               ),
               _actionButton(
                 context,
                 Icons.account_balance_wallet_outlined,
-                'Finance',
+                context.strings.finance,
                 AppTheme.success,
-                () {},
+                () {
+                  showAppSnackbar(context, message: context.strings.comingSoon);
+                },
               ),
             ],
           ),

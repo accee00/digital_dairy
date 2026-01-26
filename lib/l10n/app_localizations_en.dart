@@ -658,4 +658,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get error => 'Error:';
+
+  @override
+  String get homeWelcome => 'Welcome, name';
+
+  @override
+  String get todaysSummary => 'Today\'s Summary';
+
+  @override
+  String get milkProductionOverview => 'Milk Production Overview';
+
+  @override
+  String get dailyTotal => 'Daily Total';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get income => 'Income';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get monthlySummary => 'Monthly Summary';
+
+  @override
+  String get totalIncome => 'Total Income';
+
+  @override
+  String get avgPerDay => 'Avg/Day';
+
+  @override
+  String get days => 'Days';
+
+  @override
+  String get ratePerLiter => 'Rate/L';
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get milkEntry => 'Milk Entry';
+
+  @override
+  String get newCattle => 'New Cattle';
+
+  @override
+  String get finance => 'Finance';
+
+  @override
+  String get comingSoon => 'Coming soon...';
+
+  @override
+  String get noDataAvailable => 'No data available';
+
+  @override
+  String get january => 'January';
+
+  @override
+  String get february => 'February';
+
+  @override
+  String get march => 'March';
+
+  @override
+  String get april => 'April';
+
+  @override
+  String get june => 'June';
+
+  @override
+  String get july => 'July';
+
+  @override
+  String get august => 'August';
+
+  @override
+  String get september => 'September';
+
+  @override
+  String get october => 'October';
+
+  @override
+  String get november => 'November';
+
+  @override
+  String get december => 'December';
 }

@@ -40,7 +40,9 @@ class MyApp extends StatelessWidget {
         create: (_) => serviceLocator<AppConfigBloc>(),
       ),
       BlocProvider<AuthCubit>(create: (_) => serviceLocator<AuthCubit>()),
-      BlocProvider<ProfileCubit>(create: (_) => serviceLocator<ProfileCubit>()),
+      BlocProvider<ProfileCubit>(
+        create: (_) => serviceLocator<ProfileCubit>()..fetchProfile(),
+      ),
       BlocProvider<AnalyticsCubit>(
         create: (_) => serviceLocator<AnalyticsCubit>(),
       ),
