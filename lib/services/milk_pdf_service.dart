@@ -11,6 +11,17 @@ import 'package:printing/printing.dart';
 
 ///
 class MilkPdfService {
+  static pw.Font? _regularFont;
+  static pw.Font? _boldFont;
+
+  ///
+  Future<void> _loadFonts() async {
+    if (_regularFont == null || _boldFont == null) {
+      _regularFont = await PdfGoogleFonts.notoSansRegular();
+      _boldFont = await PdfGoogleFonts.notoSansBold();
+    }
+  }
+
   ///
   Future<File?> generateAndSaveMilkPdf({
     required List<MilkModel> logs,
@@ -22,6 +33,9 @@ class MilkPdfService {
       if (!await _requestStoragePermission()) {
         throw Exception('Storage permission denied');
       }
+
+      // Load fonts before generating PDF
+      await _loadFonts();
 
       final pw.Document pdf = await _generateMilkPdf(
         logs: logs,
@@ -72,6 +86,7 @@ class MilkPdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
+        theme: pw.ThemeData.withFont(base: _regularFont, bold: _boldFont),
         build: (pw.Context context) => <pw.Widget>[
           _buildHeader(cattleName, cattleId, selectedMonth),
           pw.SizedBox(height: 20),
@@ -448,7 +463,7 @@ class MilkPdfService {
     Directory? directory;
     if (Platform.isAndroid) {
       directory = Directory('/storage/emulated/0/Download');
-      if (!await directory.exists()) {
+      if (!directory.existsSync()) {
         directory = await getExternalStorageDirectory();
       }
     } else if (Platform.isIOS) {
@@ -488,6 +503,9 @@ class MilkPdfService {
     required String cattleId,
     required DateTime selectedMonth,
   }) async {
+    // Load fonts before generating PDF
+    await _loadFonts();
+
     final pw.Document pdf = await _generateMilkPdf(
       logs: logs,
       cattleName: cattleName,
@@ -507,6 +525,9 @@ class MilkPdfService {
     required String cattleId,
     required DateTime selectedMonth,
   }) async {
+    // Load fonts before generating PDF
+    await _loadFonts();
+
     final pw.Document pdf = await _generateMilkPdf(
       logs: logs,
       cattleName: cattleName,

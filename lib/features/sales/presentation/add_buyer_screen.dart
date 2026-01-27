@@ -65,7 +65,7 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
       if (state is BuyerAddedSuccess) {
         showAppSnackbar(
           context,
-          message: 'Buyer added successfully!',
+          message: context.strings.buyerAddedSuccess,
           type: SnackbarType.success,
         );
         context
@@ -83,7 +83,7 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
       if (state is BuyerUpdateSuccess) {
         showAppSnackbar(
           context,
-          message: 'Buyer updated successfully!',
+          message: context.strings.buyerUpdatedSuccess,
           type: SnackbarType.success,
         );
         context
@@ -105,56 +105,66 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      _buildSectionHeader(context, 'Name'),
+                      _buildSectionHeader(
+                        context,
+                        context.strings.buyerNameLabel,
+                      ),
                       const SizedBox(height: 10),
                       _buildInputFeild(
                         controller: _nameController,
-                        labelText: 'Buyer Name',
-                        hintText: 'Shaym Singh',
+                        labelText: context.strings.buyerNameLabel,
+                        hintText: context.strings.buyerNameHint,
                         validator: (String? value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter buyer name';
+                            return context.strings.buyerNameRequired;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(context, 'Contact'),
+                      _buildSectionHeader(
+                        context,
+                        context.strings.buyerContactLabel,
+                      ),
                       const SizedBox(height: 10),
                       _buildInputFeild(
                         controller: _contactController,
                         keyboardType: TextInputType.phone,
-                        labelText: 'Contact Number',
-                        hintText: '9023812023',
+                        labelText: context.strings.buyerContactLabel,
+                        hintText: context.strings.buyerContactHint,
                         validator: (String? value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter contact number';
+                            return context.strings.buyerContactRequired;
                           }
                           if (value.length < 10) {
-                            return 'Invalid contact number';
+                            return context.strings.buyerInvalidContact;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(context, 'Address'),
+                      _buildSectionHeader(
+                        context,
+                        context.strings.buyerAddressLabel,
+                      ),
                       const SizedBox(height: 10),
                       _buildInputFeild(
                         controller: _addressController,
-                        labelText: 'Address',
-                        hintText:
-                            'Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016',
+                        labelText: context.strings.buyerAddressLabel,
+                        hintText: context.strings.buyerAddressHint,
                         maxLine: 3,
                         validator: (String? value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter address';
+                            return context.strings.buyerAddressRequired;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 60),
                       SaveElevatedButton(
-                        label: isEdit ? 'Update' : 'Save',
+                        label: isEdit
+                            ? context.strings.buyerUpdate
+                            : context.strings.buyerSave,
                         onTap: isEdit ? _updateBuyer : _addBuyer,
                         key: UniqueKey(),
                       ),
@@ -230,7 +240,7 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
       ),
     ),
     title: Text(
-      isEdit ? 'Edit Buyer' : 'Add Buyer',
+      isEdit ? context.strings.buyerEditTitle : context.strings.buyerAddTitle,
       style: context.textTheme.headlineLarge?.copyWith(
         fontWeight: FontWeight.bold,
         color: context.colorScheme.onSurface,

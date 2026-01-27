@@ -8,12 +8,10 @@ import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/features/sales/model/buyer_model.dart';
-
 import 'package:digital_dairy/features/sales/model/milk_sales_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:intl/intl.dart';
 
 ///
@@ -83,7 +81,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
     if (_selectedBuyerId == null && widget.buyer == null) {
       showAppSnackbar(
         context,
-        message: 'Please select a buyer',
+        message: context.strings.milkSaleSelectBuyerError,
         type: SnackbarType.error,
       );
       return;
@@ -120,7 +118,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
       if (state is SaleAddSuccess) {
         showAppSnackbar(
           context,
-          message: 'Milk sale added successfully!',
+          message: context.strings.milkSaleAddSuccess,
           type: SnackbarType.success,
         );
         context
@@ -146,7 +144,10 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            _buildSectionHeader(context, 'Buyer'),
+                            _buildSectionHeader(
+                              context,
+                              context.strings.milkSaleBuyerLabel,
+                            ),
                             const SizedBox(height: 10),
                             CustomContainer(
                               child: Container(
@@ -200,7 +201,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
-                                        'Selected',
+                                        context.strings.milkSaleSelected,
                                         style: context.textTheme.bodySmall
                                             ?.copyWith(
                                               color:
@@ -219,57 +220,71 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            _buildSectionHeader(context, 'Buyer'),
+                            _buildSectionHeader(
+                              context,
+                              context.strings.milkSaleBuyerLabel,
+                            ),
                             const SizedBox(height: 10),
                             _buildBuyerDropdown(),
                           ],
                         ),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(context, 'Date'),
+                      _buildSectionHeader(
+                        context,
+                        context.strings.milkSaleDateLabel,
+                      ),
                       const SizedBox(height: 10),
                       _buildDatePicker(context),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(context, 'Quantity'),
+                      _buildSectionHeader(
+                        context,
+                        context.strings.milkSaleQuantityLabel,
+                      ),
                       const SizedBox(height: 10),
                       _buildInputFeild(
                         controller: _quantityController,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        labelText: 'Quantity (Litres)',
-                        hintText: '10.5',
+                        labelText: context.strings.milkSaleQuantityInputLabel,
+                        hintText: context.strings.milkSaleQuantityHint,
                         validator: (String? value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter quantity';
+                            return context.strings.milkSaleQuantityRequired;
                           }
                           if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number';
+                            return context.strings.milkSaleInvalidNumber;
                           }
                           if (double.parse(value) <= 0) {
-                            return 'Quantity must be greater than 0';
+                            return context
+                                .strings
+                                .milkSaleQuantityGreaterThanZero;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(context, 'Price'),
+                      _buildSectionHeader(
+                        context,
+                        context.strings.milkSalePriceLabel,
+                      ),
                       const SizedBox(height: 10),
                       _buildInputFeild(
                         controller: _priceController,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        labelText: 'Price per Litre (₹)',
-                        hintText: '50.00',
+                        labelText: context.strings.milkSalePriceInputLabel,
+                        hintText: context.strings.milkSalePriceHint,
                         validator: (String? value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter price per litre';
+                            return context.strings.milkSalePriceRequired;
                           }
                           if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number';
+                            return context.strings.milkSaleInvalidNumber;
                           }
                           if (double.parse(value) <= 0) {
-                            return 'Price must be greater than 0';
+                            return context.strings.milkSalePriceGreaterThanZero;
                           }
                           return null;
                         },
@@ -290,7 +305,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text(
-                                'Total Amount:',
+                                context.strings.milkSaleTotalAmount,
                                 style: context.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: context.colorScheme.onSurface,
@@ -308,17 +323,20 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
                         ),
                       ],
                       const SizedBox(height: 20),
-                      _buildSectionHeader(context, 'Notes'),
+                      _buildSectionHeader(
+                        context,
+                        context.strings.milkSaleNotesLabel,
+                      ),
                       const SizedBox(height: 10),
                       _buildInputFeild(
                         controller: _notesController,
-                        labelText: 'Notes (Optional)',
-                        hintText: 'Add any additional information...',
+                        labelText: context.strings.milkSaleNotesInputLabel,
+                        hintText: context.strings.milkSaleNotesHint,
                         maxLine: 3,
                       ),
                       const SizedBox(height: 60),
                       SaveElevatedButton(
-                        label: 'Save',
+                        label: context.strings.formSave,
                         onTap: _addMilkSale,
                         key: UniqueKey(),
                       ),
@@ -339,7 +357,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
       child: DropdownButtonFormField<String>(
         initialValue: _selectedBuyerId,
         hint: Text(
-          'Choose a buyer',
+          context.strings.milkSaleChooseBuyerHint,
           style: context.textTheme.bodyMedium?.copyWith(
             color: context.colorScheme.onSurface.withAlpha(100),
           ),
@@ -360,7 +378,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
         },
         validator: (String? value) {
           if (value == null || value.isEmpty) {
-            return 'Please select a buyer';
+            return context.strings.milkSaleSelectBuyerError;
           }
           return null;
         },
@@ -371,8 +389,8 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
   Widget _buildDatePicker(BuildContext context) => CustomContainer(
     child: CustomTextField(
       controller: _dateController,
-      labelText: 'Sale Date',
-      hintText: 'Select date',
+      labelText: context.strings.milkSaleDateInputLabel,
+      hintText: context.strings.milkSaleDateHint,
       readOnly: true,
       onTap: () async {
         final DateTime? picked = await showDatePicker(
@@ -394,7 +412,7 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
       ),
       validator: (String? value) {
         if (value == null || value.isEmpty) {
-          return 'Please select a date';
+          return context.strings.milkSaleDateRequired;
         }
         return null;
       },
@@ -438,7 +456,9 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
       ),
     ),
     title: Text(
-      isEdit ? 'Edit Milk Sale' : 'Add Milk Sale',
+      isEdit
+          ? context.strings.milkSaleEditTitle
+          : context.strings.milkSaleAddTitle,
       style: context.textTheme.headlineLarge?.copyWith(
         fontWeight: FontWeight.bold,
         color: context.colorScheme.onSurface,

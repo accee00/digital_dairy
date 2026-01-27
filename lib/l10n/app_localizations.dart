@@ -1775,23 +1775,407 @@ abstract class AppLocalizations {
   /// **'Hindi'**
   String get profileLanguageHindi;
 
-  /// No description provided for @profileLanguageSpanish.
+  /// No description provided for @buyerAddTitle.
   ///
   /// In en, this message translates to:
-  /// **'Spanish'**
-  String get profileLanguageSpanish;
+  /// **'Add Buyer'**
+  String get buyerAddTitle;
 
-  /// No description provided for @profileLanguageFrench.
+  /// No description provided for @buyerEditTitle.
   ///
   /// In en, this message translates to:
-  /// **'French'**
-  String get profileLanguageFrench;
+  /// **'Edit Buyer'**
+  String get buyerEditTitle;
 
-  /// No description provided for @profileLanguageGerman.
+  /// No description provided for @buyerNameLabel.
   ///
   /// In en, this message translates to:
-  /// **'German'**
-  String get profileLanguageGerman;
+  /// **'Name'**
+  String get buyerNameLabel;
+
+  /// No description provided for @buyerNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shaym Singh'**
+  String get buyerNameHint;
+
+  /// No description provided for @buyerNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter buyer name'**
+  String get buyerNameRequired;
+
+  /// No description provided for @buyerContactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get buyerContactLabel;
+
+  /// No description provided for @buyerContactHint.
+  ///
+  /// In en, this message translates to:
+  /// **'9023812023'**
+  String get buyerContactHint;
+
+  /// No description provided for @buyerContactRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter contact number'**
+  String get buyerContactRequired;
+
+  /// No description provided for @buyerInvalidContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid contact number'**
+  String get buyerInvalidContact;
+
+  /// No description provided for @buyerAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get buyerAddressLabel;
+
+  /// No description provided for @buyerAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016'**
+  String get buyerAddressHint;
+
+  /// No description provided for @buyerAddressRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter address'**
+  String get buyerAddressRequired;
+
+  /// No description provided for @buyerSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get buyerSave;
+
+  /// No description provided for @buyerUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get buyerUpdate;
+
+  /// No description provided for @buyerAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer added successfully!'**
+  String get buyerAddedSuccess;
+
+  /// No description provided for @buyerUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer updated successfully!'**
+  String get buyerUpdatedSuccess;
+
+  /// No description provided for @milkSaleAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Milk Sale'**
+  String get milkSaleAddTitle;
+
+  /// No description provided for @milkSaleEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Milk Sale'**
+  String get milkSaleEditTitle;
+
+  /// No description provided for @milkSaleBuyerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get milkSaleBuyerLabel;
+
+  /// No description provided for @milkSaleSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get milkSaleSelected;
+
+  /// No description provided for @milkSaleChooseBuyerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a buyer'**
+  String get milkSaleChooseBuyerHint;
+
+  /// No description provided for @milkSaleSelectBuyerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a buyer'**
+  String get milkSaleSelectBuyerError;
+
+  /// No description provided for @milkSaleDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get milkSaleDateLabel;
+
+  /// No description provided for @milkSaleDateInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale Date'**
+  String get milkSaleDateInputLabel;
+
+  /// No description provided for @milkSaleDateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get milkSaleDateHint;
+
+  /// No description provided for @milkSaleDateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a date'**
+  String get milkSaleDateRequired;
+
+  /// No description provided for @milkSaleQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get milkSaleQuantityLabel;
+
+  /// No description provided for @milkSaleQuantityInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity (Litres)'**
+  String get milkSaleQuantityInputLabel;
+
+  /// No description provided for @milkSaleQuantityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'10.5'**
+  String get milkSaleQuantityHint;
+
+  /// No description provided for @milkSaleQuantityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter quantity'**
+  String get milkSaleQuantityRequired;
+
+  /// No description provided for @milkSaleQuantityGreaterThanZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity must be greater than 0'**
+  String get milkSaleQuantityGreaterThanZero;
+
+  /// No description provided for @milkSalePriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get milkSalePriceLabel;
+
+  /// No description provided for @milkSalePriceInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per Litre (₹)'**
+  String get milkSalePriceInputLabel;
+
+  /// No description provided for @milkSalePriceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'50.00'**
+  String get milkSalePriceHint;
+
+  /// No description provided for @milkSalePriceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter price per litre'**
+  String get milkSalePriceRequired;
+
+  /// No description provided for @milkSalePriceGreaterThanZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Price must be greater than 0'**
+  String get milkSalePriceGreaterThanZero;
+
+  /// No description provided for @milkSaleInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid number'**
+  String get milkSaleInvalidNumber;
+
+  /// No description provided for @milkSaleTotalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount:'**
+  String get milkSaleTotalAmount;
+
+  /// No description provided for @milkSaleNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get milkSaleNotesLabel;
+
+  /// No description provided for @milkSaleNotesInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get milkSaleNotesInputLabel;
+
+  /// No description provided for @milkSaleNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add any additional information...'**
+  String get milkSaleNotesHint;
+
+  /// No description provided for @milkSaleAddSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Milk sale added successfully!'**
+  String get milkSaleAddSuccess;
+
+  /// No description provided for @buyerScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Buyers'**
+  String get buyerScreenTitle;
+
+  /// No description provided for @buyerSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get buyerSearchHint;
+
+  /// No description provided for @buyerDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Buyer'**
+  String get buyerDeleteTitle;
+
+  /// No description provided for @buyerDeleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete'**
+  String get buyerDeleteConfirmation;
+
+  /// No description provided for @buyerDeleteWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get buyerDeleteWarning;
+
+  /// No description provided for @buyerDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer deleted successfully'**
+  String get buyerDeleteSuccess;
+
+  /// No description provided for @buyerEmptyStateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Buyers Yet'**
+  String get buyerEmptyStateTitle;
+
+  /// No description provided for @buyerEmptyStateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start building your customer base by\nadding your first buyer'**
+  String get buyerEmptyStateSubtitle;
+
+  /// No description provided for @buyerAddFirstButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Your First Buyer'**
+  String get buyerAddFirstButton;
+
+  /// No description provided for @buyerNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Results Found'**
+  String get buyerNoResultsTitle;
+
+  /// No description provided for @buyerNoResultsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search terms'**
+  String get buyerNoResultsSubtitle;
+
+  /// No description provided for @buyerMenuAddBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Buyer'**
+  String get buyerMenuAddBuyer;
+
+  /// No description provided for @buyerMenuAddSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Sale'**
+  String get buyerMenuAddSale;
+
+  /// No description provided for @buyerMenuEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get buyerMenuEdit;
+
+  /// No description provided for @buyerMenuDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get buyerMenuDelete;
+
+  /// No description provided for @buyerPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get buyerPhoneLabel;
+
+  /// No description provided for @buyerAddedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get buyerAddedLabel;
+
+  /// No description provided for @buyerAddSaleButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Sale'**
+  String get buyerAddSaleButton;
+
+  /// No description provided for @buyerDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'d ago'**
+  String get buyerDaysAgo;
+
+  /// No description provided for @buyerWeeksAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'w ago'**
+  String get buyerWeeksAgo;
+
+  /// No description provided for @transactionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction History'**
+  String get transactionHistory;
+
+  /// No description provided for @totalRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Revenue'**
+  String get totalRevenue;
+
+  /// No description provided for @salesTotalQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Quantity'**
+  String get salesTotalQuantity;
+
+  /// No description provided for @transactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactions;
+
+  /// No description provided for @avgPricePerLitre.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Price per Litre'**
+  String get avgPricePerLitre;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

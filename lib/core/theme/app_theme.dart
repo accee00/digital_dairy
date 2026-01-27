@@ -435,7 +435,7 @@ class AppTheme {
           ? Colors.white.withAlpha(alpha ~/ 2)
           : Colors.white.withAlpha(alpha),
       borderRadius: borderRadius ?? BorderRadius.circular(16),
-      border: Border.all(color: Colors.white.withAlpha(30), width: 1),
+      border: Border.all(color: Colors.white.withAlpha(30)),
       boxShadow: <BoxShadow>[
         BoxShadow(
           color: Colors.black.withAlpha(isDark ? 51 : 25),

@@ -8,7 +8,6 @@ import 'package:digital_dairy/features/cattle/presentation/widget/custom_contain
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/features/sales/model/milk_sales_model.dart';
 import 'package:digital_dairy/services/sales_pdf_service.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -37,6 +36,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
   DateTime _selectedMonth = DateTime.now();
   final SalesPdfService _pdfService = SalesPdfService();
   List<MilkSale> _displayedSales = <MilkSale>[];
+
   @override
   void initState() {
     super.initState();
@@ -70,7 +70,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
     if (sales.isEmpty) {
       showAppSnackbar(
         context,
-        message: 'No sales data available',
+        message: context.strings.noDataAvailable,
         type: SnackbarType.error,
       );
       return;
@@ -95,13 +95,14 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
           if (file != null && mounted) {
             showAppSnackbar(
               context,
-              message: 'PDF saved to ${file.path}',
+              message: '${context.strings.pdfSavedTo} ${file.path}',
               type: SnackbarType.success,
             );
           } else if (mounted) {
             showAppSnackbar(
               context,
-              message: 'Failed to generate PDF',
+              message:
+                  '${context.strings.error} ${context.strings.failToUploadImage}',
               type: SnackbarType.error,
             );
           }
@@ -117,7 +118,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
       if (mounted) {
         showAppSnackbar(
           context,
-          message: 'Error: $e',
+          message: '${context.strings.error} $e',
           type: SnackbarType.error,
         );
       }
@@ -174,7 +175,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
                     child: Text(
-                      'Transaction History',
+                      context.strings.transactionHistory,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -207,7 +208,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
       },
       elevation: 4,
       icon: const Icon(Icons.add_rounded),
-      label: const Text('Add Sale'),
+      label: Text(context.strings.buyerAddSaleButton),
     ),
   );
 
@@ -257,33 +258,33 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
               ),
               onSelected: (String value) => _handlePdfAction(value, sales),
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'preview',
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.visibility_rounded, size: 20),
-                      SizedBox(width: 12),
-                      Text('Preview PDF'),
+                      const Icon(Icons.visibility_rounded, size: 20),
+                      const SizedBox(width: 12),
+                      Text(context.strings.previewPdf),
                     ],
                   ),
                 ),
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'download',
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.download_rounded, size: 20),
-                      SizedBox(width: 12),
-                      Text('Download PDF'),
+                      const Icon(Icons.download_rounded, size: 20),
+                      const SizedBox(width: 12),
+                      Text(context.strings.downloadPdf),
                     ],
                   ),
                 ),
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'share',
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.share_rounded, size: 20),
-                      SizedBox(width: 12),
-                      Text('Share PDF'),
+                      const Icon(Icons.share_rounded, size: 20),
+                      const SizedBox(width: 12),
+                      Text(context.strings.sharePdf),
                     ],
                   ),
                 ),
@@ -321,13 +322,13 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    DateFormat('MMMM').format(_selectedMonth),
+                    _getLocalizedMonthName(_selectedMonth, context),
                     style: context.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    DateFormat('yyyy').format(_selectedMonth),
+                    '${_selectedMonth.year}',
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: context.colorScheme.onSurfaceVariant,
                     ),
@@ -393,7 +394,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            'Total Revenue',
+                            context.strings.totalRevenue,
                             style: context.textTheme.bodyLarge?.copyWith(
                               color: context.colorScheme.onSurfaceVariant,
                             ),
@@ -424,7 +425,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                 child: _buildStatCard(
                   context,
                   icon: Icons.water_drop_rounded,
-                  label: 'Total Quantity',
+                  label: context.strings.salesTotalQuantity,
                   value: '${totalQuantity.toStringAsFixed(1)} L',
                   color: const Color(0xFF3B82F6),
                 ),
@@ -434,7 +435,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                 child: _buildStatCard(
                   context,
                   icon: Icons.receipt_long_rounded,
-                  label: 'Transactions',
+                  label: context.strings.transactions,
                   value: '$transactionCount',
                   color: context.colorScheme.secondary,
                 ),
@@ -448,9 +449,9 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
           CustomContainer(
             child: Row(
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.trending_up_rounded,
-                  color: const Color(0xFF10B981),
+                  color: Color(0xFF10B981),
                   size: 24,
                 ),
                 const SizedBox(width: 12),
@@ -459,7 +460,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Average Price per Litre',
+                        context.strings.avgPricePerLitre,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: context.colorScheme.onSurfaceVariant,
                         ),
@@ -543,7 +544,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                           ),
                         ),
                         Text(
-                          DateFormat('MMM').format(sale.date),
+                          _getLocalizedShortMonth(sale.date, context),
                           style: context.textTheme.bodySmall?.copyWith(
                             color: context.colorScheme.primary,
                           ),
@@ -560,10 +561,10 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Icon(
+                            const Icon(
                               Icons.water_drop_rounded,
                               size: 16,
-                              color: const Color(0xFF3B82F6),
+                              color: Color(0xFF3B82F6),
                             ),
                             const SizedBox(width: 6),
                             Text(
@@ -643,14 +644,17 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
         ),
         const SizedBox(height: 24),
         Text(
-          'No sales found',
+          context.strings.noMilkRecordsFound,
           style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          'Transactions for ${DateFormat('MMMM yyyy').format(_selectedMonth)} will appear here',
+          context.strings.recordsWillAppear.replaceAll(
+            'monthYear',
+            '${_getLocalizedMonthName(_selectedMonth, context)} ${_selectedMonth.year}',
+          ),
           style: context.textTheme.bodyMedium?.copyWith(
             color: context.colorScheme.onSurfaceVariant,
           ),
@@ -659,4 +663,67 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
       ],
     ),
   );
+
+  // Helper methods for localized dates
+  String _getLocalizedMonthName(DateTime date, BuildContext context) {
+    switch (date.month) {
+      case 1:
+        return context.strings.monthJanuary;
+      case 2:
+        return context.strings.monthFebruary;
+      case 3:
+        return context.strings.monthMarch;
+      case 4:
+        return context.strings.monthApril;
+      case 5:
+        return context.strings.monthMay;
+      case 6:
+        return context.strings.monthJune;
+      case 7:
+        return context.strings.monthJuly;
+      case 8:
+        return context.strings.monthAugust;
+      case 9:
+        return context.strings.monthSeptember;
+      case 10:
+        return context.strings.monthOctober;
+      case 11:
+        return context.strings.monthNovember;
+      case 12:
+        return context.strings.monthDecember;
+      default:
+        return '';
+    }
+  }
+
+  String _getLocalizedShortMonth(DateTime date, BuildContext context) {
+    switch (date.month) {
+      case 1:
+        return context.strings.jan;
+      case 2:
+        return context.strings.feb;
+      case 3:
+        return context.strings.mar;
+      case 4:
+        return context.strings.apr;
+      case 5:
+        return context.strings.may;
+      case 6:
+        return context.strings.jun;
+      case 7:
+        return context.strings.jul;
+      case 8:
+        return context.strings.aug;
+      case 9:
+        return context.strings.sep;
+      case 10:
+        return context.strings.oct;
+      case 11:
+        return context.strings.nov;
+      case 12:
+        return context.strings.dec;
+      default:
+        return '';
+    }
+  }
 }

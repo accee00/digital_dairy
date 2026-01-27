@@ -49,21 +49,20 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
   }
 
   void _showDeleteConfirmation(BuildContext context, Buyer buyer) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    final ColorScheme colorScheme = context.colorScheme;
 
     showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
         icon: Icon(Icons.delete_outline, color: colorScheme.error, size: 32),
-        title: const Text('Delete Buyer'),
+        title: Text(context.strings.buyerDeleteTitle),
         content: Text(
-          'Are you sure you want to delete "${buyer.name}"? This action cannot be undone.',
+          '${context.strings.buyerDeleteConfirmation} "${buyer.name}"? ${context.strings.buyerDeleteWarning}',
         ),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
+            child: Text(context.strings.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -74,7 +73,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
               backgroundColor: colorScheme.error,
               foregroundColor: colorScheme.onError,
             ),
-            child: const Text('Delete'),
+            child: Text(context.strings.delete),
           ),
         ],
       ),
@@ -87,7 +86,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
       if (state is BuyerDeleteSuccess) {
         showAppSnackbar(
           context,
-          message: 'Buyer deleted successfully',
+          message: context.strings.buyerDeleteSuccess,
           type: SnackbarType.success,
         );
       } else if (state is BuyerDeleteFailure) {
@@ -99,7 +98,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
       } else if (state is BuyerUpdateSuccess) {
         showAppSnackbar(
           context,
-          message: 'Buyer updated successfully',
+          message: context.strings.buyerUpdatedSuccess,
           type: SnackbarType.success,
         );
       } else if (state is BuyerUpdateFailure) {
@@ -124,7 +123,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search by name',
+                hintText: context.strings.buyerSearchHint,
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: context.colorScheme.surfaceContainerHighest,
@@ -193,8 +192,8 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
   );
 
   Widget _buildEmptyState(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = context.textTheme;
+    final ColorScheme colorScheme = context.colorScheme;
 
     return Center(
       child: Padding(
@@ -216,17 +215,17 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
             ),
             const SizedBox(height: 32),
             Text(
-              'No Buyers Yet',
-              style: theme.textTheme.headlineSmall?.copyWith(
+              context.strings.buyerEmptyStateTitle,
+              style: textTheme.headlineSmall?.copyWith(
                 color: colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Start building your customer base by\nadding your first buyer',
+              context.strings.buyerEmptyStateSubtitle,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
@@ -234,7 +233,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
             FilledButton.icon(
               onPressed: () => context.pushNamed(AppRoutes.addBuyer),
               icon: const Icon(Icons.person_add_alt_1_outlined),
-              label: const Text('Add Your First Buyer'),
+              label: Text(context.strings.buyerAddFirstButton),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -249,8 +248,8 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
   }
 
   Widget _buildNoSearchResults(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = context.textTheme;
+    final ColorScheme colorScheme = context.colorScheme;
 
     return Center(
       child: Padding(
@@ -265,16 +264,16 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'No Results Found',
-              style: theme.textTheme.titleLarge?.copyWith(
+              context.strings.buyerNoResultsTitle,
+              style: textTheme.titleLarge?.copyWith(
                 color: colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Try adjusting your search terms',
-              style: theme.textTheme.bodyMedium?.copyWith(
+              context.strings.buyerNoResultsSubtitle,
+              style: textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
@@ -290,7 +289,7 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
     snap: true,
     title: HeaderForAdd(
       padding: EdgeInsets.zero,
-      title: 'Add Buyers',
+      title: context.strings.buyerScreenTitle,
       subTitle: '',
       onTap: () async {
         final RenderBox overlay =
@@ -308,23 +307,23 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           items: <PopupMenuEntry<String>>[
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'buyer',
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.person_add_alt_1_outlined),
-                  SizedBox(width: 8),
-                  Text('Add Buyer'),
+                  const Icon(Icons.person_add_alt_1_outlined),
+                  const SizedBox(width: 8),
+                  Text(context.strings.buyerMenuAddBuyer),
                 ],
               ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'sales',
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.local_mall_outlined),
-                  SizedBox(width: 8),
-                  Text('Add Sale'),
+                  const Icon(Icons.local_mall_outlined),
+                  const SizedBox(width: 8),
+                  Text(context.strings.buyerMenuAddSale),
                 ],
               ),
             ),
@@ -361,8 +360,8 @@ class _BuyerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = context.textTheme;
+    final ColorScheme colorScheme = context.colorScheme;
 
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -399,7 +398,7 @@ class _BuyerCard extends StatelessWidget {
                   child: Center(
                     child: Text(
                       buyer.name.isNotEmpty ? buyer.name[0].toUpperCase() : '?',
-                      style: theme.textTheme.titleLarge?.copyWith(
+                      style: textTheme.titleLarge?.copyWith(
                         color: colorScheme.onPrimaryContainer,
                         fontWeight: FontWeight.bold,
                       ),
@@ -415,7 +414,7 @@ class _BuyerCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               buyer.name,
-                              style: theme.textTheme.titleMedium?.copyWith(
+                              style: textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -434,23 +433,29 @@ class _BuyerCard extends StatelessWidget {
                             ),
                             itemBuilder: (BuildContext context) =>
                                 <PopupMenuEntry<String>>[
-                                  const PopupMenuItem<String>(
+                                  PopupMenuItem<String>(
                                     value: 'edit',
                                     child: Row(
                                       children: <Widget>[
-                                        Icon(Icons.edit_outlined, size: 18),
-                                        SizedBox(width: 12),
-                                        Text('Edit'),
+                                        const Icon(
+                                          Icons.edit_outlined,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(context.strings.buyerMenuEdit),
                                       ],
                                     ),
                                   ),
-                                  const PopupMenuItem<String>(
+                                  PopupMenuItem<String>(
                                     value: 'delete',
                                     child: Row(
                                       children: <Widget>[
-                                        Icon(Icons.delete_outline, size: 18),
-                                        SizedBox(width: 12),
-                                        Text('Delete'),
+                                        const Icon(
+                                          Icons.delete_outline,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(context.strings.buyerMenuDelete),
                                       ],
                                     ),
                                   ),
@@ -467,8 +472,8 @@ class _BuyerCard extends StatelessWidget {
                       ),
                       if (buyer.contact.isNotEmpty)
                         Text(
-                          'Phone: ${buyer.contact}',
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          '${context.strings.buyerPhoneLabel}: ${buyer.contact}',
+                          style: textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurface.withAlpha(150),
                           ),
                         ),
@@ -481,7 +486,7 @@ class _BuyerCard extends StatelessWidget {
               const SizedBox(height: 12),
               _buildInfoItem(
                 context,
-                'Address',
+                context.strings.buyerAddressLabel,
                 buyer.address,
                 Icons.location_on_outlined,
               ),
@@ -492,8 +497,8 @@ class _BuyerCard extends StatelessWidget {
                 Expanded(
                   child: _buildInfoItem(
                     context,
-                    'Added',
-                    _formatDate(buyer.createdAt),
+                    context.strings.buyerAddedLabel,
+                    _formatDate(buyer.createdAt, context),
                     Icons.calendar_today_outlined,
                   ),
                 ),
@@ -509,7 +514,7 @@ class _BuyerCard extends StatelessWidget {
                     );
                   },
                   icon: const Icon(Icons.add_shopping_cart, size: 18),
-                  label: const Text('Add Sale'),
+                  label: Text(context.strings.buyerAddSaleButton),
                   style: FilledButton.styleFrom(
                     backgroundColor: colorScheme.secondary,
                     padding: const EdgeInsets.symmetric(
@@ -533,8 +538,8 @@ class _BuyerCard extends StatelessWidget {
     String value,
     IconData icon,
   ) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = context.textTheme;
+    final ColorScheme colorScheme = context.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -553,14 +558,14 @@ class _BuyerCard extends StatelessWidget {
               children: <Widget>[
                 Text(
                   label,
-                  style: theme.textTheme.labelSmall?.copyWith(
+                  style: textTheme.labelSmall?.copyWith(
                     color: colorScheme.onSurface.withAlpha(120),
                     fontSize: 10,
                   ),
                 ),
                 Text(
                   value,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
@@ -575,22 +580,22 @@ class _BuyerCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime date, BuildContext context) {
     final DateTime now = DateTime.now();
     final Duration difference = now.difference(date);
 
     if (difference.inDays == 0) {
-      return 'Today';
+      return context.strings.milkScreenToday;
     } else if (difference.inDays == 1) {
-      return 'Yesterday';
+      return context.strings.milkScreenYesterday;
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
+      return '${difference.inDays} ${context.strings.buyerDaysAgo}';
     } else if (difference.inDays < 30) {
       final int weeks = (difference.inDays / 7).floor();
-      return '${weeks}w ago';
+      return '$weeks ${context.strings.buyerWeeksAgo}';
     } else if (difference.inDays < 365) {
       final int months = (difference.inDays / 30).floor();
-      return '${months}mo ago';
+      return '$months ${context.strings.months}';
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }

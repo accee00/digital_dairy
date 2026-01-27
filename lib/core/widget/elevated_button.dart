@@ -1,7 +1,9 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:flutter/material.dart';
 
+///
 class CustomElevatedButton extends StatelessWidget {
+  ///
   const CustomElevatedButton({
     required this.onPressed,
     required this.text,
@@ -21,21 +23,52 @@ class CustomElevatedButton extends StatelessWidget {
     this.padding,
   });
 
+  ///
   final VoidCallback? onPressed;
+
+  ///
   final String text;
+
+  ///
   final IconData? icon;
+
+  ///
   final bool isLoading;
+
+  ///
   final bool isOutlined;
+
+  ///
   final double? width;
+
+  ///
   final double height;
+
+  ///
   final Color? backgroundColor;
+
+  ///
   final Color? foregroundColor;
+
+  ///
   final Color? borderColor;
+
+  ///
   final double elevation;
+
+  ///
   final double borderRadius;
+
+  ///
   final double fontSize;
+
+  ///
   final FontWeight fontWeight;
+
+  ///
   final EdgeInsetsGeometry? padding;
+
+  ///
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +168,7 @@ class CustomElevatedButton extends StatelessWidget {
         boxShadow: onPressed != null && !isLoading
             ? <BoxShadow>[
                 BoxShadow(
-                  color: effectiveBackgroundColor.withOpacity(0.3),
+                  color: effectiveBackgroundColor.withAlpha(77),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),

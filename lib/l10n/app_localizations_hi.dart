@@ -849,11 +849,203 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profileLanguageHindi => 'हिंदी';
 
   @override
-  String get profileLanguageSpanish => 'स्पेनिश';
+  String get buyerAddTitle => 'खरीदार जोड़ें';
 
   @override
-  String get profileLanguageFrench => 'फ्रेंच';
+  String get buyerEditTitle => 'खरीदार संपादित करें';
 
   @override
-  String get profileLanguageGerman => 'जर्मन';
+  String get buyerNameLabel => 'नाम';
+
+  @override
+  String get buyerNameHint => 'श्याम सिंह';
+
+  @override
+  String get buyerNameRequired => 'कृपया खरीदार का नाम दर्ज करें';
+
+  @override
+  String get buyerContactLabel => 'संपर्क';
+
+  @override
+  String get buyerContactHint => '9023812023';
+
+  @override
+  String get buyerContactRequired => 'कृपया संपर्क नंबर दर्ज करें';
+
+  @override
+  String get buyerInvalidContact => 'अमान्य संपर्क नंबर';
+
+  @override
+  String get buyerAddressLabel => 'पता';
+
+  @override
+  String get buyerAddressHint => 'अक्षय नगर पहला ब्लॉक पहला क्रॉस, राममूर्ति नगर, बैंगलोर-560016';
+
+  @override
+  String get buyerAddressRequired => 'कृपया पता दर्ज करें';
+
+  @override
+  String get buyerSave => 'सहेजें';
+
+  @override
+  String get buyerUpdate => 'अपडेट करें';
+
+  @override
+  String get buyerAddedSuccess => 'खरीदार सफलतापूर्वक जोड़ा गया!';
+
+  @override
+  String get buyerUpdatedSuccess => 'खरीदार सफलतापूर्वक अपडेट किया गया!';
+
+  @override
+  String get milkSaleAddTitle => 'दूध बिक्री जोड़ें';
+
+  @override
+  String get milkSaleEditTitle => 'दूध बिक्री संपादित करें';
+
+  @override
+  String get milkSaleBuyerLabel => 'खरीदार';
+
+  @override
+  String get milkSaleSelected => 'चयनित';
+
+  @override
+  String get milkSaleChooseBuyerHint => 'एक खरीदार चुनें';
+
+  @override
+  String get milkSaleSelectBuyerError => 'कृपया एक खरीदार चुनें';
+
+  @override
+  String get milkSaleDateLabel => 'तारीख';
+
+  @override
+  String get milkSaleDateInputLabel => 'बिक्री की तारीख';
+
+  @override
+  String get milkSaleDateHint => 'तारीख चुनें';
+
+  @override
+  String get milkSaleDateRequired => 'कृपया तारीख चुनें';
+
+  @override
+  String get milkSaleQuantityLabel => 'मात्रा';
+
+  @override
+  String get milkSaleQuantityInputLabel => 'मात्रा (लीटर)';
+
+  @override
+  String get milkSaleQuantityHint => '10.5';
+
+  @override
+  String get milkSaleQuantityRequired => 'कृपया मात्रा दर्ज करें';
+
+  @override
+  String get milkSaleQuantityGreaterThanZero => 'मात्रा 0 से अधिक होनी चाहिए';
+
+  @override
+  String get milkSalePriceLabel => 'मूल्य';
+
+  @override
+  String get milkSalePriceInputLabel => 'प्रति लीटर मूल्य (₹)';
+
+  @override
+  String get milkSalePriceHint => '50.00';
+
+  @override
+  String get milkSalePriceRequired => 'कृपया प्रति लीटर मूल्य दर्ज करें';
+
+  @override
+  String get milkSalePriceGreaterThanZero => 'मूल्य 0 से अधिक होना चाहिए';
+
+  @override
+  String get milkSaleInvalidNumber => 'कृपया एक वैध नंबर दर्ज करें';
+
+  @override
+  String get milkSaleTotalAmount => 'कुल राशि:';
+
+  @override
+  String get milkSaleNotesLabel => 'नोट्स';
+
+  @override
+  String get milkSaleNotesInputLabel => 'नोट्स (वैकल्पिक)';
+
+  @override
+  String get milkSaleNotesHint => 'कोई अतिरिक्त जानकारी जोड़ें...';
+
+  @override
+  String get milkSaleAddSuccess => 'दूध बिक्री सफलतापूर्वक जोड़ी गई!';
+
+  @override
+  String get buyerScreenTitle => 'खरीदार जोड़ें';
+
+  @override
+  String get buyerSearchHint => 'नाम से खोजें';
+
+  @override
+  String get buyerDeleteTitle => 'खरीदार हटाएं';
+
+  @override
+  String get buyerDeleteConfirmation => 'क्या आप वाकई हटाना चाहते हैं';
+
+  @override
+  String get buyerDeleteWarning => 'यह क्रिया पूर्ववत नहीं की जा सकती।';
+
+  @override
+  String get buyerDeleteSuccess => 'खरीदार सफलतापूर्वक हटाया गया';
+
+  @override
+  String get buyerEmptyStateTitle => 'अभी तक कोई खरीदार नहीं';
+
+  @override
+  String get buyerEmptyStateSubtitle => 'अपना पहला खरीदार जोड़कर\nअपने ग्राहक आधार का निर्माण शुरू करें';
+
+  @override
+  String get buyerAddFirstButton => 'अपना पहला खरीदार जोड़ें';
+
+  @override
+  String get buyerNoResultsTitle => 'कोई परिणाम नहीं मिला';
+
+  @override
+  String get buyerNoResultsSubtitle => 'अपनी खोज शर्तों को समायोजित करने का प्रयास करें';
+
+  @override
+  String get buyerMenuAddBuyer => 'खरीदार जोड़ें';
+
+  @override
+  String get buyerMenuAddSale => 'बिक्री जोड़ें';
+
+  @override
+  String get buyerMenuEdit => 'संपादित करें';
+
+  @override
+  String get buyerMenuDelete => 'हटाएं';
+
+  @override
+  String get buyerPhoneLabel => 'फोन';
+
+  @override
+  String get buyerAddedLabel => 'जोड़ा गया';
+
+  @override
+  String get buyerAddSaleButton => 'बिक्री जोड़ें';
+
+  @override
+  String get buyerDaysAgo => 'दिन पहले';
+
+  @override
+  String get buyerWeeksAgo => 'सप्ताह पहले';
+
+  @override
+  String get transactionHistory => 'लेनदेन इतिहास';
+
+  @override
+  String get totalRevenue => 'कुल राजस्व';
+
+  @override
+  String get salesTotalQuantity => 'कुल मात्रा';
+
+  @override
+  String get transactions => 'लेनदेन';
+
+  @override
+  String get avgPricePerLitre => 'प्रति लीटर औसत मूल्य';
 }

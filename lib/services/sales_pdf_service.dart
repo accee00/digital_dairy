@@ -11,6 +11,18 @@ import 'package:printing/printing.dart';
 
 ///
 class SalesPdfService {
+  //
+  static pw.Font? _regularFont;
+  static pw.Font? _boldFont;
+
+  ///
+  Future<void> _loadFonts() async {
+    if (_regularFont == null || _boldFont == null) {
+      _regularFont = await PdfGoogleFonts.notoSansRegular();
+      _boldFont = await PdfGoogleFonts.notoSansBold();
+    }
+  }
+
   ///
   Future<File?> generateAndSaveSalesPdf({
     required List<MilkSale> sales,
@@ -22,6 +34,9 @@ class SalesPdfService {
       if (!await _requestStoragePermission()) {
         throw Exception('Storage permission denied');
       }
+
+      // Load fonts before generating PDF
+      await _loadFonts();
 
       final pw.Document pdf = await _generateSalesPdf(
         sales: sales,
@@ -59,6 +74,7 @@ class SalesPdfService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
+        theme: pw.ThemeData.withFont(base: _regularFont, bold: _boldFont),
         build: (pw.Context context) => <pw.Widget>[
           _buildHeader(buyerName, buyerId, selectedMonth),
           pw.SizedBox(height: 20),
@@ -77,13 +93,13 @@ class SalesPdfService {
   pw.Widget _buildHeader(String buyerName, String buyerId, DateTime month) =>
       pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
+        children: <pw.Widget>[
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            children: [
+            children: <pw.Widget>[
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'SALES REPORT',
                     style: pw.TextStyle(
@@ -104,7 +120,7 @@ class SalesPdfService {
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
-                children: [
+                children: <pw.Widget>[
                   pw.Text(
                     'Generated on',
                     style: const pw.TextStyle(
@@ -134,11 +150,11 @@ class SalesPdfService {
               border: pw.Border.all(color: PdfColors.blue200),
             ),
             child: pw.Row(
-              children: [
+              children: <pw.Widget>[
                 pw.Expanded(
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
+                    children: <pw.Widget>[
                       pw.Text(
                         'Buyer Details',
                         style: pw.TextStyle(
@@ -173,7 +189,7 @@ class SalesPdfService {
       );
 
   pw.Widget _buildSummary(double totalQuantity, double totalAmount) => pw.Row(
-    children: [
+    children: <pw.Widget>[
       pw.Expanded(
         child: pw.Container(
           padding: const pw.EdgeInsets.all(16),
@@ -184,7 +200,7 @@ class SalesPdfService {
           ),
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
+            children: <pw.Widget>[
               pw.Text(
                 'Total Quantity',
                 style: const pw.TextStyle(
@@ -216,7 +232,7 @@ class SalesPdfService {
           ),
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
+            children: <pw.Widget>[
               pw.Text(
                 'Total Amount',
                 style: const pw.TextStyle(
@@ -226,7 +242,7 @@ class SalesPdfService {
               ),
               pw.SizedBox(height: 4),
               pw.Text(
-                'Rs. ${totalAmount.toStringAsFixed(2)}',
+                '₹ ${totalAmount.toStringAsFixed(2)}',
                 style: pw.TextStyle(
                   fontSize: 20,
                   fontWeight: pw.FontWeight.bold,
@@ -262,12 +278,12 @@ class SalesPdfService {
           ),
           ...sales.map(
             (MilkSale sale) => pw.TableRow(
-              children: [
+              children: <pw.Widget>[
                 _buildTableCell(DateFormat('dd MMM yyyy').format(sale.date)),
                 _buildTableCell(sale.quantityLitres.toStringAsFixed(1)),
-                _buildTableCell('Rs. ${sale.pricePerLitre.toStringAsFixed(2)}'),
+                _buildTableCell('₹ ${sale.pricePerLitre.toStringAsFixed(2)}'),
                 _buildTableCell(
-                  '₹${(sale.totalAmount ?? 0.0).toStringAsFixed(2)}',
+                  '₹ ${(sale.totalAmount ?? 0.0).toStringAsFixed(2)}',
                 ),
               ],
             ),
@@ -290,7 +306,7 @@ class SalesPdfService {
   );
 
   pw.Widget _buildFooter() => pw.Column(
-    children: [
+    children: <pw.Widget>[
       pw.Divider(),
       pw.SizedBox(height: 8),
       pw.Text(
@@ -309,7 +325,7 @@ class SalesPdfService {
     Directory? directory;
     if (Platform.isAndroid) {
       directory = Directory('/storage/emulated/0/Download');
-      if (!await directory.exists()) {
+      if (!directory.existsSync()) {
         directory = await getExternalStorageDirectory();
       }
     } else if (Platform.isIOS) {
@@ -342,12 +358,16 @@ class SalesPdfService {
     return true;
   }
 
+  ///
   Future<void> previewPdf({
     required List<MilkSale> sales,
     required String buyerName,
     required String buyerId,
     required DateTime selectedMonth,
   }) async {
+    // Load fonts before generating PDF
+    await _loadFonts();
+
     final pw.Document pdf = await _generateSalesPdf(
       sales: sales,
       buyerName: buyerName,
@@ -360,12 +380,16 @@ class SalesPdfService {
     );
   }
 
+  ///
   Future<void> sharePdf({
     required List<MilkSale> sales,
     required String buyerName,
     required String buyerId,
     required DateTime selectedMonth,
   }) async {
+    // Load fonts before generating PDF
+    await _loadFonts();
+
     final pw.Document pdf = await _generateSalesPdf(
       sales: sales,
       buyerName: buyerName,

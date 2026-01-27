@@ -849,11 +849,203 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileLanguageHindi => 'Hindi';
 
   @override
-  String get profileLanguageSpanish => 'Spanish';
+  String get buyerAddTitle => 'Add Buyer';
 
   @override
-  String get profileLanguageFrench => 'French';
+  String get buyerEditTitle => 'Edit Buyer';
 
   @override
-  String get profileLanguageGerman => 'German';
+  String get buyerNameLabel => 'Name';
+
+  @override
+  String get buyerNameHint => 'Shaym Singh';
+
+  @override
+  String get buyerNameRequired => 'Please enter buyer name';
+
+  @override
+  String get buyerContactLabel => 'Contact';
+
+  @override
+  String get buyerContactHint => '9023812023';
+
+  @override
+  String get buyerContactRequired => 'Please enter contact number';
+
+  @override
+  String get buyerInvalidContact => 'Invalid contact number';
+
+  @override
+  String get buyerAddressLabel => 'Address';
+
+  @override
+  String get buyerAddressHint => 'Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016';
+
+  @override
+  String get buyerAddressRequired => 'Please enter address';
+
+  @override
+  String get buyerSave => 'Save';
+
+  @override
+  String get buyerUpdate => 'Update';
+
+  @override
+  String get buyerAddedSuccess => 'Buyer added successfully!';
+
+  @override
+  String get buyerUpdatedSuccess => 'Buyer updated successfully!';
+
+  @override
+  String get milkSaleAddTitle => 'Add Milk Sale';
+
+  @override
+  String get milkSaleEditTitle => 'Edit Milk Sale';
+
+  @override
+  String get milkSaleBuyerLabel => 'Buyer';
+
+  @override
+  String get milkSaleSelected => 'Selected';
+
+  @override
+  String get milkSaleChooseBuyerHint => 'Choose a buyer';
+
+  @override
+  String get milkSaleSelectBuyerError => 'Please select a buyer';
+
+  @override
+  String get milkSaleDateLabel => 'Date';
+
+  @override
+  String get milkSaleDateInputLabel => 'Sale Date';
+
+  @override
+  String get milkSaleDateHint => 'Select date';
+
+  @override
+  String get milkSaleDateRequired => 'Please select a date';
+
+  @override
+  String get milkSaleQuantityLabel => 'Quantity';
+
+  @override
+  String get milkSaleQuantityInputLabel => 'Quantity (Litres)';
+
+  @override
+  String get milkSaleQuantityHint => '10.5';
+
+  @override
+  String get milkSaleQuantityRequired => 'Please enter quantity';
+
+  @override
+  String get milkSaleQuantityGreaterThanZero => 'Quantity must be greater than 0';
+
+  @override
+  String get milkSalePriceLabel => 'Price';
+
+  @override
+  String get milkSalePriceInputLabel => 'Price per Litre (₹)';
+
+  @override
+  String get milkSalePriceHint => '50.00';
+
+  @override
+  String get milkSalePriceRequired => 'Please enter price per litre';
+
+  @override
+  String get milkSalePriceGreaterThanZero => 'Price must be greater than 0';
+
+  @override
+  String get milkSaleInvalidNumber => 'Please enter a valid number';
+
+  @override
+  String get milkSaleTotalAmount => 'Total Amount:';
+
+  @override
+  String get milkSaleNotesLabel => 'Notes';
+
+  @override
+  String get milkSaleNotesInputLabel => 'Notes (Optional)';
+
+  @override
+  String get milkSaleNotesHint => 'Add any additional information...';
+
+  @override
+  String get milkSaleAddSuccess => 'Milk sale added successfully!';
+
+  @override
+  String get buyerScreenTitle => 'Add Buyers';
+
+  @override
+  String get buyerSearchHint => 'Search by name';
+
+  @override
+  String get buyerDeleteTitle => 'Delete Buyer';
+
+  @override
+  String get buyerDeleteConfirmation => 'Are you sure you want to delete';
+
+  @override
+  String get buyerDeleteWarning => 'This action cannot be undone.';
+
+  @override
+  String get buyerDeleteSuccess => 'Buyer deleted successfully';
+
+  @override
+  String get buyerEmptyStateTitle => 'No Buyers Yet';
+
+  @override
+  String get buyerEmptyStateSubtitle => 'Start building your customer base by\nadding your first buyer';
+
+  @override
+  String get buyerAddFirstButton => 'Add Your First Buyer';
+
+  @override
+  String get buyerNoResultsTitle => 'No Results Found';
+
+  @override
+  String get buyerNoResultsSubtitle => 'Try adjusting your search terms';
+
+  @override
+  String get buyerMenuAddBuyer => 'Add Buyer';
+
+  @override
+  String get buyerMenuAddSale => 'Add Sale';
+
+  @override
+  String get buyerMenuEdit => 'Edit';
+
+  @override
+  String get buyerMenuDelete => 'Delete';
+
+  @override
+  String get buyerPhoneLabel => 'Phone';
+
+  @override
+  String get buyerAddedLabel => 'Added';
+
+  @override
+  String get buyerAddSaleButton => 'Add Sale';
+
+  @override
+  String get buyerDaysAgo => 'd ago';
+
+  @override
+  String get buyerWeeksAgo => 'w ago';
+
+  @override
+  String get transactionHistory => 'Transaction History';
+
+  @override
+  String get totalRevenue => 'Total Revenue';
+
+  @override
+  String get salesTotalQuantity => 'Total Quantity';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
+  String get avgPricePerLitre => 'Average Price per Litre';
 }

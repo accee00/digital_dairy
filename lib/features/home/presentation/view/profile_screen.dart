@@ -491,12 +491,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     switch (languageCode) {
       case 'en':
         return context.strings.profileLanguageEnglish;
-      case 'es':
-        return context.strings.profileLanguageSpanish;
-      case 'fr':
-        return context.strings.profileLanguageFrench;
-      case 'de':
-        return context.strings.profileLanguageGerman;
       case 'hi':
         return context.strings.profileLanguageHindi;
       default:
