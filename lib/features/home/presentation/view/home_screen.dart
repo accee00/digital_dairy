@@ -515,7 +515,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   context.strings.avgPerDay,
                   '${(analytics.monthTotalMilk / now.day).toStringAsFixed(1)} L',
-                  AppTheme.primary,
+                  context.isDarkMode ? AppTheme.info : AppTheme.primary,
                 ),
                 Container(
                   height: 40,
@@ -742,7 +742,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 Icons.add_circle_outline,
                 context.strings.milkEntry,
-                AppTheme.primary,
+                context.isDarkMode ? AppTheme.info : AppTheme.primary,
                 () => context.push(AppRoutes.addMilk),
               ),
               _actionButton(

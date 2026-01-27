@@ -382,29 +382,29 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ),
                                 const SizedBox(height: 20),
 
-                                // Social Sign Up Buttons
-                                Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: CustomElevatedButton(
-                                        onPressed: () {},
-                                        text: context.strings.authWithGoogle,
-                                        icon: Icons.g_mobiledata_rounded,
-                                        isOutlined: true,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: CustomElevatedButton(
-                                        onPressed: () {},
-                                        text: context.strings.authWithApple,
-                                        icon: Icons.apple_rounded,
-                                        isOutlined: true,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
+                                // // Social Sign Up Buttons
+                                // Row(
+                                //   children: <Widget>[
+                                //     Expanded(
+                                //       child: CustomElevatedButton(
+                                //         onPressed: () {},
+                                //         text: context.strings.authWithGoogle,
+                                //         icon: Icons.g_mobiledata_rounded,
+                                //         isOutlined: true,
+                                //       ),
+                                //     ),
+                                //     const SizedBox(width: 16),
+                                //     Expanded(
+                                //       child: CustomElevatedButton(
+                                //         onPressed: () {},
+                                //         text: context.strings.authWithApple,
+                                //         icon: Icons.apple_rounded,
+                                //         isOutlined: true,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                // const SizedBox(height: 20),
 
                                 // Already have an account
                                 Center(
