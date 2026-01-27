@@ -117,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 5),
 
           Text(
-            'Member since ${_formatDate(memberSince)}',
+            '${context.strings.profileMemberSince} ${_formatDate(memberSince)}',
             style: context.textTheme.bodyLarge,
           ),
           const SizedBox(height: 20),
@@ -127,17 +127,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     SliverToBoxAdapter(
       child: _buildSection(
-        title: 'Account Information',
+        title: context.strings.profileAccountInformation,
         children: <Widget>[
           _buildInfoTile(
             icon: Icons.email_outlined,
-            title: 'Email',
+            title: context.strings.profileEmail,
             subtitle: userEmail,
             onTap: () {},
           ),
           _buildInfoTile(
             icon: Icons.phone_outlined,
-            title: 'Phone Number',
+            title: context.strings.profilePhoneNumber,
             subtitle: userPhone,
             onTap: () {},
           ),
@@ -150,18 +150,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     SliverToBoxAdapter(
       child: BlocBuilder<AppConfigBloc, AppConfigState>(
         builder: (BuildContext context, AppConfigState state) => _buildSection(
-          title: 'Preferences',
+          title: context.strings.profilePreferences,
           children: <Widget>[
             _buildInfoTile(
               icon: Icons.language_outlined,
-              title: 'Language',
-              subtitle: _getLanguageName(state.locale.languageCode),
+              title: context.strings.profileLanguage,
+              subtitle: _getLanguageName(state.locale.languageCode, context),
               onTap: () => _showLocaleDialog(state),
               showTrailing: true,
             ),
             _buildThemeModeTile(
               icon: Icons.brightness_6_outlined,
-              title: 'Theme',
+              title: context.strings.profileTheme,
               currentThemeMode: state.themeMode,
               onChanged: (ThemeMode mode) {
                 context.read<AppConfigBloc>().add(ThemeChangeEvent(mode));
@@ -176,37 +176,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     SliverToBoxAdapter(
       child: _buildSection(
-        title: 'Notifications',
+        title: context.strings.profileNotifications,
         children: <Widget>[
           _buildSwitchTile(
             icon: Icons.notifications_outlined,
-            title: 'Push Notifications',
-            subtitle: 'Receive push notifications',
+            title: context.strings.profilePushNotifications,
+            subtitle: context.strings.profileReceivePushNotifications,
             value: pushNotifications,
             onChanged: (bool value) {
-              showAppSnackbar(context, message: 'This feature will come soon.');
+              showAppSnackbar(
+                context,
+                message: context.strings.profileFeatureComingSoon,
+              );
               return;
               // setState(() => pushNotifications = value);
             },
           ),
           _buildSwitchTile(
             icon: Icons.email_outlined,
-            title: 'Email Notifications',
-            subtitle: 'Receive email updates',
+            title: context.strings.profileEmailNotifications,
+            subtitle: context.strings.profileReceiveEmailUpdates,
             value: emailNotifications,
             onChanged: (bool value) {
-              showAppSnackbar(context, message: 'This feature will come soon.');
+              showAppSnackbar(
+                context,
+                message: context.strings.profileFeatureComingSoon,
+              );
               return;
               // setState(() => emailNotifications = value);
             },
           ),
           _buildSwitchTile(
             icon: Icons.sms_outlined,
-            title: 'SMS Notifications',
-            subtitle: 'Receive text messages',
+            title: context.strings.profileSMSNotifications,
+            subtitle: context.strings.profileReceiveTextMessages,
             value: smsNotifications,
             onChanged: (bool value) {
-              showAppSnackbar(context, message: 'This feature will come soon.');
+              showAppSnackbar(
+                context,
+                message: context.strings.profileFeatureComingSoon,
+              );
               return;
               // setState(() => smsNotifications = value);
             },
@@ -219,30 +228,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     SliverToBoxAdapter(
       child: _buildSection(
-        title: 'Other',
+        title: context.strings.profileOther,
         children: <Widget>[
           _buildInfoTile(
             icon: Icons.privacy_tip_outlined,
-            title: 'Privacy Policy',
+            title: context.strings.profilePrivacyPolicy,
             onTap: () {},
             showTrailing: true,
           ),
           _buildInfoTile(
             icon: Icons.description_outlined,
-            title: 'Terms & Conditions',
+            title: context.strings.profileTermsConditions,
             onTap: () {},
             showTrailing: true,
           ),
           _buildInfoTile(
             icon: Icons.help_outline,
-            title: 'Help & Support',
+            title: context.strings.profileHelpSupport,
             onTap: () {},
             showTrailing: true,
           ),
           _buildInfoTile(
             icon: Icons.info_outline,
-            title: 'About',
-            subtitle: 'Version 1.0.0',
+            title: context.strings.profileAbout,
+            subtitle: context.strings.profileVersion,
             onTap: () {},
             showTrailing: true,
           ),
@@ -260,7 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: ElevatedButton.icon(
             onPressed: _showLogoutDialog,
             icon: const Icon(Icons.logout),
-            label: const Text('Logout'),
+            label: Text(context.strings.profileLogout),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.colorScheme.error,
               foregroundColor: Colors.white,
@@ -294,7 +303,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            isUserNotFound ? 'User Not Found' : 'Error Loading Profile',
+            isUserNotFound
+                ? context.strings.profileUserNotFound
+                : context.strings.profileErrorLoading,
             style: context.textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
@@ -311,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ElevatedButton.icon(
                 onPressed: _showLogoutDialog,
                 icon: const Icon(Icons.logout),
-                label: const Text('Logout'),
+                label: Text(context.strings.profileLogout),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.colorScheme.error,
                   foregroundColor: context.colorScheme.onError,
@@ -328,7 +339,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 context.read<ProfileCubit>().fetchProfile();
               },
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(context.strings.retry),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
@@ -359,7 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     ),
     title: Text(
-      'Profile',
+      context.strings.profileTitle,
       style: context.textTheme.headlineLarge?.copyWith(
         fontWeight: FontWeight.bold,
         color: context.colorScheme.onSurface,
@@ -424,7 +435,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     leading: Icon(icon, color: context.colorScheme.primary.withAlpha(200)),
     title: Text(title, style: context.textTheme.bodyLarge),
     subtitle: Text(
-      _getThemeModeName(currentThemeMode),
+      _getThemeModeName(currentThemeMode, context),
       style: context.textTheme.bodyMedium?.copyWith(
         color: context.colorScheme.onSurfaceVariant,
       ),
@@ -460,47 +471,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   String _formatDate(DateTime date) {
     final List<String> months = <String>[
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      context.strings.monthJanuary,
+      context.strings.monthFebruary,
+      context.strings.monthMarch,
+      context.strings.monthApril,
+      context.strings.monthMay,
+      context.strings.monthJune,
+      context.strings.monthJuly,
+      context.strings.monthAugust,
+      context.strings.monthSeptember,
+      context.strings.monthOctober,
+      context.strings.monthNovember,
+      context.strings.monthDecember,
     ];
     return '${months[date.month - 1]} ${date.year}';
   }
 
-  String _getLanguageName(String languageCode) {
+  String _getLanguageName(String languageCode, BuildContext context) {
     switch (languageCode) {
       case 'en':
-        return 'English';
+        return context.strings.profileLanguageEnglish;
       case 'es':
-        return 'Spanish';
+        return context.strings.profileLanguageSpanish;
       case 'fr':
-        return 'French';
+        return context.strings.profileLanguageFrench;
       case 'de':
-        return 'German';
+        return context.strings.profileLanguageGerman;
       case 'hi':
-        return 'Hindi';
+        return context.strings.profileLanguageHindi;
       default:
-        return 'English';
+        return context.strings.profileLanguageEnglish;
     }
   }
 
-  String _getThemeModeName(ThemeMode mode) {
+  String _getThemeModeName(ThemeMode mode, BuildContext context) {
     switch (mode) {
       case ThemeMode.light:
-        return 'Light';
+        return context.strings.profileLight;
       case ThemeMode.dark:
-        return 'Dark';
+        return context.strings.profileDark;
       case ThemeMode.system:
-        return 'System Default';
+        return context.strings.profileSystemDefault;
     }
   }
 
@@ -508,7 +519,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Select Language'),
+        title: Text(context.strings.profileSelectLanguage),
         content: RadioGroup<String>(
           groupValue: state.locale.languageCode,
           onChanged: (String? value) {
@@ -522,8 +533,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _radioRow('English', 'en', state.locale.languageCode),
-              _radioRow('Hindi', 'hi', state.locale.languageCode),
+              _radioRow(
+                context.strings.profileLanguageEnglish,
+                'en',
+                state.locale.languageCode,
+              ),
+              _radioRow(
+                context.strings.profileLanguageHindi,
+                'hi',
+                state.locale.languageCode,
+              ),
             ],
           ),
         ),
@@ -536,11 +555,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     title: Text(label),
   );
 
-  Widget _themeRadioRow(String label, ThemeMode value, ThemeMode groupValue) =>
-      ListTile(
-        leading: Radio<ThemeMode>(value: value),
-        title: Text(label),
-      );
+  Widget _themeRadioRow(
+    String label,
+    ThemeMode value,
+    ThemeMode groupValue,
+    BuildContext context,
+  ) => ListTile(
+    leading: Radio<ThemeMode>(value: value),
+    title: Text(label),
+  );
 
   void _showThemeModeDialog(
     ThemeMode currentMode,
@@ -549,7 +572,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Select Theme'),
+        title: Text(context.strings.profileSelectTheme),
         content: RadioGroup<ThemeMode>(
           groupValue: currentMode,
           onChanged: (ThemeMode? value) {
@@ -561,9 +584,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _themeRadioRow('Light', ThemeMode.light, currentMode),
-              _themeRadioRow('Dark', ThemeMode.dark, currentMode),
-              _themeRadioRow('System Default', ThemeMode.system, currentMode),
+              _themeRadioRow(
+                context.strings.profileLight,
+                ThemeMode.light,
+                currentMode,
+                context,
+              ),
+              _themeRadioRow(
+                context.strings.profileDark,
+                ThemeMode.dark,
+                currentMode,
+                context,
+              ),
+              _themeRadioRow(
+                context.strings.profileSystemDefault,
+                ThemeMode.system,
+                currentMode,
+                context,
+              ),
             ],
           ),
         ),
@@ -575,12 +613,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog<String>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(context.strings.profileLogout),
+        content: Text(context.strings.profileLogoutConfirmation),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(context.strings.profileCancel),
           ),
           TextButton(
             onPressed: () async {
@@ -597,7 +635,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
             child: Text(
-              'Logout',
+              context.strings.profileLogout,
               style: TextStyle(color: context.colorScheme.error),
             ),
           ),

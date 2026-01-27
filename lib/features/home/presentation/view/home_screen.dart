@@ -2,7 +2,7 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
-import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
+
 import 'package:digital_dairy/features/home/cubit/analytics_cubit.dart';
 import 'package:digital_dairy/features/home/cubit/profile_cubit.dart';
 import 'package:digital_dairy/features/home/model/analytics_model.dart';
@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       BlocBuilder<ProfileCubit, ProfileState>(
         builder: (BuildContext context, ProfileState state) {
           String userName = 'Guest';
-          String? profileImageUrl;
+          // String? profileImageUrl;
 
           if (state is FetchProfileSuccess) {
             userName = state.user.name;

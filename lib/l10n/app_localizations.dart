@@ -1570,6 +1570,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'December'**
   String get december;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get profileMemberSince;
+
+  /// No description provided for @profileAccountInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Information'**
+  String get profileAccountInformation;
+
+  /// No description provided for @profileEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get profileEmail;
+
+  /// No description provided for @profilePhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get profilePhoneNumber;
+
+  /// No description provided for @profilePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get profilePreferences;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get profileTheme;
+
+  /// No description provided for @profileLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get profileLight;
+
+  /// No description provided for @profileDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get profileDark;
+
+  /// No description provided for @profileSystemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get profileSystemDefault;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotifications;
+
+  /// No description provided for @profilePushNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications'**
+  String get profilePushNotifications;
+
+  /// No description provided for @profileReceivePushNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive push notifications'**
+  String get profileReceivePushNotifications;
+
+  /// No description provided for @profileEmailNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Notifications'**
+  String get profileEmailNotifications;
+
+  /// No description provided for @profileReceiveEmailUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive email updates'**
+  String get profileReceiveEmailUpdates;
+
+  /// No description provided for @profileSMSNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS Notifications'**
+  String get profileSMSNotifications;
+
+  /// No description provided for @profileReceiveTextMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive text messages'**
+  String get profileReceiveTextMessages;
+
+  /// No description provided for @profileOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get profileOther;
+
+  /// No description provided for @profilePrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get profilePrivacyPolicy;
+
+  /// No description provided for @profileTermsConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get profileTermsConditions;
+
+  /// No description provided for @profileHelpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get profileHelpSupport;
+
+  /// No description provided for @profileAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get profileAbout;
+
+  /// No description provided for @profileVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0.0'**
+  String get profileVersion;
+
+  /// No description provided for @profileLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get profileLogout;
+
+  /// No description provided for @profileLogoutConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get profileLogoutConfirmation;
+
+  /// No description provided for @profileCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileCancel;
+
+  /// No description provided for @profileUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User Not Found'**
+  String get profileUserNotFound;
+
+  /// No description provided for @profileErrorLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Error Loading Profile'**
+  String get profileErrorLoading;
+
+  /// No description provided for @profileSelectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get profileSelectLanguage;
+
+  /// No description provided for @profileSelectTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Theme'**
+  String get profileSelectTheme;
+
+  /// No description provided for @profileFeatureComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature will come soon.'**
+  String get profileFeatureComingSoon;
+
+  /// No description provided for @profileLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get profileLanguageEnglish;
+
+  /// No description provided for @profileLanguageHindi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi'**
+  String get profileLanguageHindi;
+
+  /// No description provided for @profileLanguageSpanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get profileLanguageSpanish;
+
+  /// No description provided for @profileLanguageFrench.
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get profileLanguageFrench;
+
+  /// No description provided for @profileLanguageGerman.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get profileLanguageGerman;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

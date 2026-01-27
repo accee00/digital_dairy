@@ -745,4 +745,115 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get december => 'December';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileMemberSince => 'Member since';
+
+  @override
+  String get profileAccountInformation => 'Account Information';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profilePhoneNumber => 'Phone Number';
+
+  @override
+  String get profilePreferences => 'Preferences';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileTheme => 'Theme';
+
+  @override
+  String get profileLight => 'Light';
+
+  @override
+  String get profileDark => 'Dark';
+
+  @override
+  String get profileSystemDefault => 'System Default';
+
+  @override
+  String get profileNotifications => 'Notifications';
+
+  @override
+  String get profilePushNotifications => 'Push Notifications';
+
+  @override
+  String get profileReceivePushNotifications => 'Receive push notifications';
+
+  @override
+  String get profileEmailNotifications => 'Email Notifications';
+
+  @override
+  String get profileReceiveEmailUpdates => 'Receive email updates';
+
+  @override
+  String get profileSMSNotifications => 'SMS Notifications';
+
+  @override
+  String get profileReceiveTextMessages => 'Receive text messages';
+
+  @override
+  String get profileOther => 'Other';
+
+  @override
+  String get profilePrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get profileTermsConditions => 'Terms & Conditions';
+
+  @override
+  String get profileHelpSupport => 'Help & Support';
+
+  @override
+  String get profileAbout => 'About';
+
+  @override
+  String get profileVersion => 'Version 1.0.0';
+
+  @override
+  String get profileLogout => 'Logout';
+
+  @override
+  String get profileLogoutConfirmation => 'Are you sure you want to logout?';
+
+  @override
+  String get profileCancel => 'Cancel';
+
+  @override
+  String get profileUserNotFound => 'User Not Found';
+
+  @override
+  String get profileErrorLoading => 'Error Loading Profile';
+
+  @override
+  String get profileSelectLanguage => 'Select Language';
+
+  @override
+  String get profileSelectTheme => 'Select Theme';
+
+  @override
+  String get profileFeatureComingSoon => 'This feature will come soon.';
+
+  @override
+  String get profileLanguageEnglish => 'English';
+
+  @override
+  String get profileLanguageHindi => 'Hindi';
+
+  @override
+  String get profileLanguageSpanish => 'Spanish';
+
+  @override
+  String get profileLanguageFrench => 'French';
+
+  @override
+  String get profileLanguageGerman => 'German';
 }

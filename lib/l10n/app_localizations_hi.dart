@@ -745,4 +745,115 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get december => 'दिसंबर';
+
+  @override
+  String get profileTitle => 'प्रोफ़ाइल';
+
+  @override
+  String get profileMemberSince => 'सदस्यता तिथि';
+
+  @override
+  String get profileAccountInformation => 'खाता जानकारी';
+
+  @override
+  String get profileEmail => 'ईमेल';
+
+  @override
+  String get profilePhoneNumber => 'फ़ोन नंबर';
+
+  @override
+  String get profilePreferences => 'प्राथमिकताएँ';
+
+  @override
+  String get profileLanguage => 'भाषा';
+
+  @override
+  String get profileTheme => 'थीम';
+
+  @override
+  String get profileLight => 'लाइट';
+
+  @override
+  String get profileDark => 'डार्क';
+
+  @override
+  String get profileSystemDefault => 'सिस्टम डिफ़ॉल्ट';
+
+  @override
+  String get profileNotifications => 'सूचनाएं';
+
+  @override
+  String get profilePushNotifications => 'पुश नोटिफिकेशन';
+
+  @override
+  String get profileReceivePushNotifications => 'पुश नोटिफिकेशन प्राप्त करें';
+
+  @override
+  String get profileEmailNotifications => 'ईमेल नोटिफिकेशन';
+
+  @override
+  String get profileReceiveEmailUpdates => 'ईमेल अपडेट प्राप्त करें';
+
+  @override
+  String get profileSMSNotifications => 'एसएमएस नोटिफिकेशन';
+
+  @override
+  String get profileReceiveTextMessages => 'टेक्स्ट मैसेज प्राप्त करें';
+
+  @override
+  String get profileOther => 'अन्य';
+
+  @override
+  String get profilePrivacyPolicy => 'गोपनीयता नीति';
+
+  @override
+  String get profileTermsConditions => 'नियम और शर्तें';
+
+  @override
+  String get profileHelpSupport => 'सहायता और समर्थन';
+
+  @override
+  String get profileAbout => 'के बारे में';
+
+  @override
+  String get profileVersion => 'संस्करण 1.0.0';
+
+  @override
+  String get profileLogout => 'लॉगआउट';
+
+  @override
+  String get profileLogoutConfirmation => 'क्या आप वाकई लॉगआउट करना चाहते हैं?';
+
+  @override
+  String get profileCancel => 'रद्द करें';
+
+  @override
+  String get profileUserNotFound => 'उपयोगकर्ता नहीं मिला';
+
+  @override
+  String get profileErrorLoading => 'प्रोफ़ाइल लोड करने में त्रुटि';
+
+  @override
+  String get profileSelectLanguage => 'भाषा चुनें';
+
+  @override
+  String get profileSelectTheme => 'थीम चुनें';
+
+  @override
+  String get profileFeatureComingSoon => 'यह सुविधा जल्द ही आ रही है।';
+
+  @override
+  String get profileLanguageEnglish => 'अंग्रेजी';
+
+  @override
+  String get profileLanguageHindi => 'हिंदी';
+
+  @override
+  String get profileLanguageSpanish => 'स्पेनिश';
+
+  @override
+  String get profileLanguageFrench => 'फ्रेंच';
+
+  @override
+  String get profileLanguageGerman => 'जर्मन';
 }
