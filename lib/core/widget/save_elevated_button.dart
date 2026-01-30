@@ -26,8 +26,8 @@ class SaveElevatedButton extends StatelessWidget {
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.zero,
-        backgroundColor: AppTheme.secondary,
-        foregroundColor: context.colorScheme.onPrimary,
+        backgroundColor: AppTheme.primaryLight,
+        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: Text(
@@ -35,7 +35,7 @@ class SaveElevatedButton extends StatelessWidget {
         style: context.textTheme.labelLarge?.copyWith(
           inherit: false,
           fontWeight: FontWeight.bold,
-          color: context.colorScheme.onPrimary,
+          color: Colors.white,
         ),
       ),
     ),

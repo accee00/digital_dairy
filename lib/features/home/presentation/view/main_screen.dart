@@ -1,7 +1,7 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/features/cattle/presentation/view/cattle_screen.dart';
 import 'package:digital_dairy/features/home/presentation/view/home_screen.dart';
-import 'package:digital_dairy/features/home/presentation/widget/bottom_nav_bar.dart';
+import 'package:digital_dairy/features/home/presentation/widgets/bottom_nav_bar.dart';
 import 'package:digital_dairy/features/milklog/presentation/view/milk_log_screen.dart';
 import 'package:digital_dairy/features/sales/presentation/milk_sales_screen.dart';
 import 'package:flutter/material.dart';
