@@ -1,53 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Clean, modern app theme with friendly aesthetics.
+///
 class AppTheme {
-  // Avoid instantiation
+  ///
   const AppTheme._();
 
-  /// Primary - Modern Indigo Blue
+  ///
   static const Color primary = Color(0xFF6366F1);
 
-  /// Primary Light - Softer variant
+  ///
   static const Color primaryLight = Color(0xFF818CF8);
 
-  /// Primary Dark - Deeper variant
+  ///
   static const Color primaryDark = Color(0xFF4F46E5);
 
-  /// Secondary - Warm Coral Pink
+  ///
   static const Color secondary = Color(0xFFF472B6);
 
-  /// Accent - Fresh Cyan
+  ///
   static const Color accent = Color(0xFF22D3EE);
 
-  /// Success - Soft Green
+  ///
   static const Color success = Color(0xFF10B981);
 
-  /// Warning - Warm Amber
+  ///
   static const Color warning = Color(0xFFFBBF24);
 
-  /// Error - Soft Red
+  ///
   static const Color error = Color(0xFFEF4444);
 
-  /// Info - Sky Blue
+  ///
   static const Color info = Color(0xFF3B82F6);
 
-  /// Primary gradient - Indigo to Purple
+  ///
   static const List<Color> primaryGradient = <Color>[
     Color(0xFF6366F1),
     Color(0xFF8B5CF6),
     Color(0xFFA855F7),
   ];
 
-  /// Warm gradient - Pink to Rose
+  ///
   static const List<Color> warmGradient = <Color>[
     Color(0xFFF472B6),
     Color(0xFFFB7185),
     Color(0xFFFDA4AF),
   ];
 
-  /// Cool gradient - Cyan to Blue
+  ///
   static const List<Color> coolGradient = <Color>[
     Color(0xFF22D3EE),
     Color(0xFF38BDF8),
@@ -73,10 +73,6 @@ class AppTheme {
   static const Color _darkTextPrimary = Color(0xFFFAFAFA);
   static const Color _darkTextSecondary = Color(0xFFA1A1AA);
   static const Color _darkTextTertiary = Color(0xFF71717A);
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // LIGHT THEME
-  // ═══════════════════════════════════════════════════════════════════════════
 
   /// Returns the Light Theme configuration.
   static ThemeData get lightTheme {

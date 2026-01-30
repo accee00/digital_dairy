@@ -66,15 +66,20 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _startAnimations() async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    unawaited(_scaleController.forward());
+    if (mounted) {
+      unawaited(_scaleController.forward());
+    }
 
     await Future<void>.delayed(const Duration(milliseconds: 500));
-    unawaited(_fadeController.forward());
+    if (mounted) {
+      unawaited(_fadeController.forward());
+    }
 
     await Future<void>.delayed(const Duration(milliseconds: 800));
-    unawaited(_slideController.forward());
+    if (mounted) {
+      unawaited(_slideController.forward());
+    }
 
-    // Check session after animations complete
     await Future<void>.delayed(const Duration(milliseconds: 1400));
     if (mounted) {
       unawaited(context.read<AuthCubit>().checkPersistedSession());
@@ -102,8 +107,8 @@ class _SplashScreenState extends State<SplashScreen>
   );
 
   Widget _buildAnimatedContent(BuildContext context) {
-    final ColorScheme colorScheme = context.colorScheme;
     final TextTheme textTheme = context.textTheme;
+    const Color contrastColor = Colors.white;
 
     return Container(
       width: double.infinity,
@@ -113,7 +118,6 @@ class _SplashScreenState extends State<SplashScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: AppTheme.primaryGradient,
-          stops: <double>[0, 0.3, 0.7, 1],
         ),
       ),
       child: SafeArea(
@@ -138,37 +142,25 @@ class _SplashScreenState extends State<SplashScreen>
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: <Color>[
-                                  colorScheme.onPrimary,
-                                  colorScheme.surface,
+                                  contrastColor,
+                                  contrastColor.withAlpha(240),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(35),
                               boxShadow: <BoxShadow>[
                                 BoxShadow(
-                                  color: Colors.black.withAlpha(15),
+                                  color: Colors.black.withAlpha(40),
                                   blurRadius: 25,
                                   spreadRadius: 2,
                                   offset: const Offset(0, 12),
                                 ),
-                                BoxShadow(
-                                  color: colorScheme.onPrimary.withAlpha(15),
-                                  blurRadius: 10,
-                                  spreadRadius: -5,
-                                  offset: const Offset(0, -5),
-                                ),
                               ],
                             ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(35),
-                                border: Border.all(
-                                  color: colorScheme.onPrimary.withAlpha(15),
-                                ),
-                              ),
+                            child: const Center(
                               child: Icon(
                                 Icons.menu_book_rounded,
                                 size: 70,
-                                color: colorScheme.primary,
+                                color: AppTheme.primary,
                               ),
                             ),
                           ),
@@ -181,20 +173,20 @@ class _SplashScreenState extends State<SplashScreen>
                       position: _slideAnimation,
                       child: Column(
                         children: <Widget>[
-                          ShaderMask(
-                            shaderCallback: (Rect bounds) => LinearGradient(
-                              colors: <Color>[
-                                colorScheme.onPrimary,
-                                colorScheme.surface,
+                          Text(
+                            context.strings.appName,
+                            style: textTheme.displayLarge?.copyWith(
+                              color: contrastColor,
+                              letterSpacing: 2,
+                              height: 1.2,
+                              fontWeight: FontWeight.bold,
+                              shadows: <Shadow>[
+                                Shadow(
+                                  color: Colors.black.withAlpha(50),
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 4,
+                                ),
                               ],
-                            ).createShader(bounds),
-                            child: Text(
-                              context.strings.appName,
-                              style: textTheme.displayLarge?.copyWith(
-                                color: colorScheme.onPrimary,
-                                letterSpacing: 2,
-                                height: 1.2,
-                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -204,25 +196,28 @@ class _SplashScreenState extends State<SplashScreen>
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: colorScheme.onPrimary.withAlpha(30),
+                              color: contrastColor.withAlpha(40),
                               borderRadius: BorderRadius.circular(25),
                               border: Border.all(
-                                color: colorScheme.onPrimary.withAlpha(15),
+                                color: contrastColor.withAlpha(30),
                               ),
                             ),
                             child: Text(
                               context.strings.splashTagline,
                               textAlign: TextAlign.center,
                               style: textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onPrimary,
+                                color: contrastColor,
                                 letterSpacing: 1.2,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Row(
-                            spacing: 15,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          const SizedBox(height: 30),
+
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 12,
+                            runSpacing: 12,
                             children: <Widget>[
                               ...context.strings.splashSubtitle
                                   .split('.')
@@ -231,8 +226,7 @@ class _SplashScreenState extends State<SplashScreen>
                                   .map(
                                     (String text) => _buildFeatureChip(
                                       text,
-                                      colorScheme.onPrimary,
-                                      colorScheme,
+                                      contrastColor,
                                       textTheme,
                                     ),
                                   ),
@@ -252,42 +246,31 @@ class _SplashScreenState extends State<SplashScreen>
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: Container(
-                      width: 50,
-                      height: 50,
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: colorScheme.onPrimary.withAlpha(100),
-                        borderRadius: BorderRadius.circular(25),
+                        shape: BoxShape.circle,
+                        color: contrastColor.withAlpha(30),
                       ),
-                      child: SizedBox(
-                        width: 30,
-                        height: 30,
+                      child: const SizedBox(
+                        width: 24,
+                        height: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.onPrimary,
+                            contrastColor,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   FadeTransition(
                     opacity: _fadeAnimation,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colorScheme.onPrimary.withAlpha(30),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        context.strings.loading,
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onPrimary,
-                          letterSpacing: 0.5,
-                        ),
+                    child: Text(
+                      context.strings.loading,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: contrastColor.withAlpha(200),
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
@@ -298,25 +281,11 @@ class _SplashScreenState extends State<SplashScreen>
               padding: const EdgeInsets.only(bottom: 30),
               child: FadeTransition(
                 opacity: _fadeAnimation,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colorScheme.onPrimary.withAlpha(30),
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                      color: colorScheme.onPrimary.withAlpha(30),
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Text(
-                    'v1.0.0 • Made with ❤️',
-                    style: textTheme.labelMedium?.copyWith(
-                      color: colorScheme.onPrimary,
-                      letterSpacing: 0.5,
-                    ),
+                child: Text(
+                  'v1.0.0 • Made with ❤️',
+                  style: textTheme.labelMedium?.copyWith(
+                    color: contrastColor.withAlpha(150),
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
@@ -327,28 +296,21 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Widget _buildFeatureChip(
-    String text,
-    Color textColor,
-    ColorScheme colorScheme,
-    TextTheme textTheme,
-  ) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    decoration: BoxDecoration(
-      color: colorScheme.onPrimary.withAlpha(26),
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(
-        color: colorScheme.onPrimary.withAlpha(51),
-        width: 0.5,
-      ),
-    ),
-    child: Text(
-      text,
-      style: textTheme.labelSmall?.copyWith(
-        color: textColor,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.3,
-      ),
-    ),
-  );
+  Widget _buildFeatureChip(String text, Color color, TextTheme textTheme) =>
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withAlpha(25),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withAlpha(50), width: 0.5),
+        ),
+        child: Text(
+          text,
+          style: textTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      );
 }

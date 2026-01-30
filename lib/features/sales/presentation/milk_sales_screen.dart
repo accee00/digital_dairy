@@ -392,7 +392,7 @@ class _BuyerCard extends StatelessWidget {
                   height: 40,
                   margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
-                    color: colorScheme.secondary,
+                    color: colorScheme.primary,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
@@ -516,7 +516,7 @@ class _BuyerCard extends StatelessWidget {
                   icon: const Icon(Icons.add_shopping_cart, size: 18),
                   label: Text(context.strings.buyerAddSaleButton),
                   style: FilledButton.styleFrom(
-                    backgroundColor: colorScheme.secondary,
+                    backgroundColor: colorScheme.primary,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,
