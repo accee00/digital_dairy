@@ -86,6 +86,7 @@ class CattleCubit extends Cubit<CattleState> {
     }
   }
 
+  /// Fetches cattle data, optionally refreshing the list.
   Future<void> getCattle({bool refresh = false}) async =>
       _load(refresh: refresh);
 

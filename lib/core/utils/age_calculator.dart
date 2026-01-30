@@ -1,3 +1,7 @@
+/// Calculates the age from a date of birth and returns a formatted string.
+///
+/// Returns 'Unknown' if [dob] is null. Otherwise returns a string like
+/// '2 y 3 mo' for years and months, or just years/months if one is zero.
 String calculateAge(DateTime? dob) {
   if (dob == null) {
     return 'Unknown';

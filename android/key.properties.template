@@ -1,0 +1,15 @@
+# Android Signing Configuration
+# =============================================
+# IMPORTANT: DO NOT COMMIT THIS FILE TO VERSION CONTROL!
+# This file should remain in .gitignore
+#
+# Steps to configure:
+# 1. Generate a keystore:
+#    keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+# 2. Fill in the values below:
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=/Users/YOUR_USERNAME/upload-keystore.jks

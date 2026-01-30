@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+/// A page that allows users to request a password reset email.
 class ForgotPasswordPage extends StatefulWidget {
+  /// Creates a [ForgotPasswordPage].
   const ForgotPasswordPage({super.key});
 
   @override

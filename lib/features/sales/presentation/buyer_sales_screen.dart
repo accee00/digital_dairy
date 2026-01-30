@@ -193,7 +193,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
     ),
     floatingActionButton: FloatingActionButton.extended(
       onPressed: () async {
-        final result = await context.push(
+        final Object? result = await context.push(
           AppRoutes.addSales,
           extra: <String, String?>{
             'id': widget.buyerId,

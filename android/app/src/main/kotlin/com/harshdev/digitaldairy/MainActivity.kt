@@ -1,4 +1,4 @@
-package com.example.digital_dairy
+package com.harshdev.digitaldairy
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -173,7 +173,7 @@ class CustomElevatedButton extends StatelessWidget {
                   offset: const Offset(0, 4),
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 2,
                   offset: const Offset(0, 1),
                 ),
@@ -203,10 +203,10 @@ class CustomElevatedButton extends StatelessWidget {
                 Set<WidgetState> states,
               ) {
                 if (states.contains(WidgetState.pressed)) {
-                  return Colors.white.withOpacity(0.1);
+                  return Colors.white.withValues(alpha: 0.1);
                 }
                 if (states.contains(WidgetState.hovered)) {
-                  return Colors.white.withOpacity(0.05);
+                  return Colors.white.withValues(alpha: 0.05);
                 }
                 return Colors.red;
               }),

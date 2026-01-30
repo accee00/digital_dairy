@@ -1,4 +1,5 @@
 import 'package:digital_dairy/core/exceptions/failure.dart';
+import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/auth/model/user.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:equatable/equatable.dart';
@@ -8,15 +9,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'auth_state.dart';
 
-///
+/// Cubit for managing authentication state.
 class AuthCubit extends Cubit<AuthState> {
-  ///
-  AuthCubit(this.authService) : super(AuthFailureState('An Unexpected error!'));
+  /// Creates an [AuthCubit] with the given [authService].
+  AuthCubit(this.authService)
+    : super(const AuthFailureState('An Unexpected error!'));
 
-  ///
+  /// The authentication service used for auth operations.
   final AuthService authService;
 
-  ///
+  /// Signs up a new user with the provided credentials.
   Future<void> signUpUser({
     required String name,
     required String email,
@@ -36,7 +38,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  ///
+  /// Signs in an existing user with the provided credentials.
   Future<void> signInUser({
     required String email,
     required String password,
@@ -53,7 +55,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  ///
+  /// Initiates password reset for the given email.
   Future<void> forgotPassword({required String email}) async {
     final Either<Failure, bool> response = await authService.forgotPassword(
       email: email,
@@ -64,19 +66,19 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  ///
+  /// Checks for a persisted session and emits the appropriate state.
   Future<void> checkPersistedSession() async {
     emit(AuthLoading());
     try {
       final Session? session = await authService.getInitialSession();
       if (session != null) {
-        print('[Session from Auth Cubit]=> $session');
+        logger.info('[Session from Auth Cubit]=> $session');
         emit(AuthSuccessState(session.user));
       } else {
         emit(SessionNotFoundState());
       }
     } catch (e) {
-      emit(AuthFailureState('Session check failed'));
+      emit(const AuthFailureState('Session check failed'));
     }
   }
 }

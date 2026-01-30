@@ -556,6 +556,9 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     );
 
     if (confirmed ?? false) {
+      if (!context.mounted) {
+        return;
+      }
       await context.read<CattleCubit>().deleteCattle(widget.cattle.id!);
     }
   }
