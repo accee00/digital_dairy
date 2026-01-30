@@ -6,15 +6,13 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
+import 'package:digital_dairy/core/widget/app_text_form_field.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
-import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
-import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/services/cattle_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:go_router/go_router.dart';
@@ -137,259 +135,342 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
       },
       child: Scaffold(
         extendBody: true,
+        backgroundColor: colorScheme.surface,
         body: CustomScaffoldContainer(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                systemOverlayStyle: const SystemUiOverlayStyle(),
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                centerTitle: true,
-                leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    size: 25,
-                    Icons.arrow_back_ios,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                title: Text(
-                  isEdit
-                      ? context.strings.cattleEntryEdit
-                      : context.strings.addCattleTitle,
-                  style: context.textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 10,
+          child: Form(
+            key: _formKey,
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  leading: IconButton(
+                    onPressed: () => context.pop(),
+                    icon: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.surface,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: context.colorScheme.onSurface,
+                        ),
+                      ),
                     ),
+                  ),
+                  title: Text(
+                    isEdit
+                        ? context.strings.cattleEntryEdit
+                        : context.strings.addCattleTitle,
+                    style: context.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverToBoxAdapter(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        _buildSectionHeader(
-                          context,
-                          context.strings.cattleBasicInfo,
-                          Icons.info,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildBasicInfoSection(context),
+                        // Basic Info Card
+                        _buildBasicInfoCard(context),
+                        const SizedBox(height: 20),
 
-                        const SizedBox(height: 10),
-                        _buildSectionHeader(
-                          context,
-                          context.strings.physicalDetails,
-                          Icons.pets,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildPhysicalDetailsSection(context),
+                        // Physical Details Card
+                        _buildPhysicalDetailsCard(context),
+                        const SizedBox(height: 20),
 
-                        const SizedBox(height: 10),
-                        _buildSectionHeader(
-                          context,
-                          context.strings.importantDates,
-                          Icons.calendar_today,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildDatesSection(context),
+                        // Dates Card
+                        _buildDatesCard(context),
+                        const SizedBox(height: 20),
 
-                        const SizedBox(height: 10),
-                        _buildSectionHeader(
-                          context,
-                          context.strings.additionalInfo,
-                          Icons.note,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildAdditionalInfoSection(context),
+                        // Notes Card
+                        _buildNotesCard(context),
+                        const SizedBox(height: 32),
 
-                        const SizedBox(height: 40),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 40),
+                        // Save Button
+                        SaveElevatedButton(
+                          key: UniqueKey(),
+                          label: context.strings.saveCattleButton,
+                          onTap: _saveCattle,
+                        ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(
-    BuildContext context,
-    String title,
-    IconData icon,
-  ) => Text(
-    title,
-    style: context.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-      color: context.colorScheme.onSurface,
-    ),
-  );
-
-  Widget _buildBasicInfoSection(BuildContext context) => CustomContainer(
-    child: Column(
-      children: <Widget>[
-        CustomTextField(
-          labelText: context.strings.cattleNameLabel,
-          controller: _nameController,
-          hintText: context.strings.cattleNameHint,
-          suffixIcon: const Icon(Icons.pets),
-          validator: (String? value) {
-            if (value == null || value.trim().isEmpty) {
-              return context.strings.cattleNameRequired;
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 16),
-        CustomTextField(
-          labelText: context.strings.tagIdLabel,
-          controller: _tagController,
-          hintText: context.strings.tagIdHint,
-          suffixIcon: const Icon(Icons.qr_code),
-          validator: (String? value) {
-            if (value == null || value.trim().isEmpty) {
-              return context.strings.tagIdRequired;
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 16),
-        _buildImagePickerSection(context),
-      ],
-    ),
-  );
-
-  Widget _buildPhysicalDetailsSection(BuildContext context) => CustomContainer(
-    child: Column(
-      children: <Widget>[
-        _buildDropdownField(
-          context,
-          context.strings.breedLabel,
-          _selectedBreed,
-          _breeds,
-          Icons.category,
-          (String? value) => setState(() => _selectedBreed = value!),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _buildDropdownField(
-                context,
-                context.strings.genderLabel,
-                _selectedGender,
-                _genders,
-                _selectedGender == 'Female' ? Icons.female : Icons.male,
-                (String? value) => setState(() => _selectedGender = value!),
+  Widget _buildBasicInfoCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.pets_rounded,
+                  color: context.colorScheme.primary,
+                  size: 24,
+                ),
               ),
+              const SizedBox(width: 12),
+              Text(
+                context.strings.cattleBasicInfo,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          AppTextFormField(
+            controller: _nameController,
+            labelText: context.strings.cattleNameLabel,
+            hintText: context.strings.cattleNameHint,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return context.strings.cattleNameRequired;
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          AppTextFormField(
+            controller: _tagController,
+            labelText: context.strings.tagIdLabel,
+            hintText: context.strings.tagIdHint,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return context.strings.tagIdRequired;
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildImagePickerSection(context),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildPhysicalDetailsCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.info_outline_rounded,
+                  color: context.colorScheme.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                context.strings.physicalDetails,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildModernDropdownField(
+            context,
+            context.strings.breedLabel,
+            _selectedBreed,
+            _breeds,
+            (String? value) => setState(() => _selectedBreed = value!),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: _buildModernDropdownField(
+                  context,
+                  context.strings.genderLabel,
+                  _selectedGender,
+                  _genders,
+                  (String? value) => setState(() => _selectedGender = value!),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildModernDropdownField(
+                  context,
+                  context.strings.statusLabel,
+                  _selectedStatus,
+                  _statuses,
+                  (String? value) => setState(() => _selectedStatus = value!),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildDatesCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.calendar_today_rounded,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.importantDates,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildModernDateField(
+            context,
+            context.strings.dobLabel,
+            _selectedDob,
+            (DateTime date) => setState(() => _selectedDob = date),
+            firstDate: DateTime(2000),
+            lastDate: DateTime.now(),
+          ),
+          if (_selectedGender == 'Female') ...<Widget>[
+            const SizedBox(height: 16),
+            _buildModernDateField(
+              context,
+              context.strings.calvingDateLabel,
+              _selectedCalvingDate,
+              (DateTime date) => setState(() => _selectedCalvingDate = date),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildDropdownField(
-                context,
-                context.strings.statusLabel,
-                _selectedStatus,
-                _statuses,
-                Icons.health_and_safety,
-                (String? value) => setState(() => _selectedStatus = value!),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.colorScheme.primaryContainer.withAlpha(50),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: context.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      context.strings.calvingDateHint,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
-        ),
-      ],
+        ],
+      ),
     ),
   );
 
-  Widget _buildDatesSection(BuildContext context) => CustomContainer(
-    child: Column(
-      children: <Widget>[
-        _buildDateField(
-          context,
-          context.strings.dobLabel,
-          _selectedDob,
-          Icons.cake,
-          (DateTime date) => setState(() => _selectedDob = date),
-          firstDate: DateTime(2000),
-          lastDate: DateTime.now(),
-        ),
-        const SizedBox(height: 16),
-        if (_selectedGender == 'Female') ...<Widget>[
-          _buildDateField(
-            context,
-            context.strings.calvingDateLabel,
-            _selectedCalvingDate,
-            Icons.baby_changing_station,
-            (DateTime date) => setState(() => _selectedCalvingDate = date),
-            firstDate: DateTime.now(),
-            lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+  Widget _buildNotesCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.note_alt_outlined,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.additionalInfo,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            context.strings.calvingDateHint,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.onSurface.withAlpha(150),
-            ),
+          const SizedBox(height: 12),
+          AppTextFormField(
+            controller: _notesController,
+            maxLines: 3,
+            textInputAction: TextInputAction.done,
+            hintText: context.strings.notesHint,
           ),
         ],
-      ],
+      ),
     ),
   );
 
-  Widget _buildAdditionalInfoSection(BuildContext context) => CustomContainer(
-    child: CustomTextField(
-      labelText: context.strings.notesLabel,
-      controller: _notesController,
-      hintText: context.strings.notesHint,
-      suffixIcon: const Icon(Icons.notes_rounded),
-      maxLines: 4,
-      textInputAction: TextInputAction.done,
-    ),
-  );
-
-  Widget _buildDropdownField(
+  Widget _buildModernDropdownField(
     BuildContext context,
     String label,
     String value,
     List<String> options,
-    IconData icon,
     void Function(String?) onChanged,
   ) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Text(
         label,
-        style: context.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: context.colorScheme.onSurface,
+        style: context.textTheme.labelMedium?.copyWith(
+          color: context.colorScheme.onSurfaceVariant,
         ),
       ),
       const SizedBox(height: 8),
       Container(
         decoration: BoxDecoration(
-          border: Border.all(color: context.colorScheme.outline.withAlpha(100)),
-          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: context.colorScheme.outline.withAlpha(80)),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: DropdownButtonFormField<String>(
-          padding: const EdgeInsets.only(left: 10, right: 4),
-          decoration: const InputDecoration(border: InputBorder.none),
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: context.colorScheme.primary.withAlpha(100),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(vertical: 16),
           ),
           initialValue: value,
-
           items: options
               .map(
                 (String option) => DropdownMenuItem<String>(
@@ -404,11 +485,10 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     ],
   );
 
-  Widget _buildDateField(
+  Widget _buildModernDateField(
     BuildContext context,
     String label,
     DateTime? selectedDate,
-    IconData icon,
     void Function(DateTime) onDateSelected, {
     required DateTime firstDate,
     required DateTime lastDate,
@@ -417,54 +497,49 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     children: <Widget>[
       Text(
         label,
-        style: context.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: context.colorScheme.onSurface,
+        style: context.textTheme.labelMedium?.copyWith(
+          color: context.colorScheme.onSurfaceVariant,
         ),
       ),
       const SizedBox(height: 8),
-      Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: context.colorScheme.outline.withAlpha(100)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: ListTile(
-          title: selectedDate != null
-              ? Text(
-                  _formatDate(selectedDate, context),
-                  style: context.textTheme.bodyMedium,
-                )
-              : Text(
-                  context.strings.selectDate,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.colorScheme.onSurface.withAlpha(100),
-                  ),
+      InkWell(
+        onTap: () async {
+          final DateTime? date = await showDatePicker(
+            context: context,
+            initialDate: selectedDate ?? DateTime.now(),
+            firstDate: firstDate,
+            lastDate: lastDate,
+          );
+          if (date != null) {
+            onDateSelected(date);
+          }
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: context.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: context.colorScheme.outline.withAlpha(80),
+            ),
+          ),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.event_rounded, color: context.colorScheme.primary),
+              const SizedBox(width: 12),
+              Text(
+                selectedDate != null
+                    ? _formatDate(selectedDate, context)
+                    : context.strings.selectDate,
+                style: context.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w500,
                 ),
-          trailing: const Icon(Icons.calendar_month),
-          onTap: () async {
-            final DateTime? date = await showDatePicker(
-              context: context,
-              initialDate: selectedDate,
-              firstDate: firstDate,
-              lastDate: lastDate,
-            );
-            if (date != null) {
-              onDateSelected(date);
-            }
-          },
+              ),
+            ],
+          ),
         ),
       ),
-    ],
-  );
-
-  Widget _buildActionButtons(BuildContext context) => Column(
-    children: <Widget>[
-      SaveElevatedButton(
-        key: UniqueKey(),
-        label: context.strings.saveCattleButton,
-        onTap: _saveCattle,
-      ),
-      const SizedBox(height: 12),
     ],
   );
 
@@ -566,30 +641,28 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
     children: <Widget>[
       Text(
         context.strings.cattlePhotoLabel,
-        style: context.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: context.colorScheme.onSurface,
+        style: context.textTheme.labelMedium?.copyWith(
+          color: context.colorScheme.onSurfaceVariant,
         ),
       ),
       const SizedBox(height: 8),
-
       GestureDetector(
         onTap: () => _pickImage(ImageSource.gallery),
         child: Container(
           width: double.infinity,
-          height: 200,
+          height: 180,
           decoration: BoxDecoration(
             border: Border.all(
-              color: context.colorScheme.outline.withAlpha(100),
+              color: context.colorScheme.outline.withAlpha(80),
               width: 2,
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: _selectedImage != null
               ? Stack(
                   children: <Widget>[
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(14),
                       child: Image.file(
                         _selectedImage!,
                         width: double.infinity,
@@ -623,7 +696,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                 )
               : isEdit && widget.cattle!.imageUrl != null
               ? ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(14),
                   child: Image.network(
                     widget.cattle!.imageUrl!,
                     width: double.infinity,
@@ -637,13 +710,13 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                     Icon(
                       Icons.add_a_photo,
                       size: 48,
-                      color: context.colorScheme.onSurface.withAlpha(120),
+                      color: context.colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 12),
                     Text(
                       context.strings.tapToAddPhoto,
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: context.colorScheme.onSurface.withAlpha(150),
+                        color: context.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

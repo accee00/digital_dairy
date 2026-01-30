@@ -3,9 +3,12 @@ import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:digital_dairy/features/home/model/analytics_model.dart';
 import 'package:flutter/material.dart';
 
+/// A card that displays a summary of today's milk production and income.
 class MilkSummaryCard extends StatelessWidget {
+  /// Creates a [MilkSummaryCard].
   const MilkSummaryCard({required this.analytics, super.key});
 
+  /// The analytics model containing data to display.
   final AnalyticsModel analytics;
 
   @override
@@ -113,46 +116,44 @@ class _SummaryItem extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withAlpha(15),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: color.withAlpha(30),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 18, color: color),
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: color.withAlpha(15),
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withAlpha(30),
+                borderRadius: BorderRadius.circular(10),
               ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: context.textTheme.labelMedium?.copyWith(
-                  color: context.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
+              child: Icon(icon, size: 18, color: color),
             ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: context.textTheme.labelMedium?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          value,
+          style: context.textTheme.titleLarge?.copyWith(
+            color: color,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }

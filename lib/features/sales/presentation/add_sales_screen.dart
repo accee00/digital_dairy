@@ -2,10 +2,9 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
+import 'package:digital_dairy/core/widget/app_text_form_field.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
-import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/save_elevated_button.dart';
-import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/features/sales/model/buyer_model.dart';
 import 'package:digital_dairy/features/sales/model/milk_sales_model.dart';
@@ -128,350 +127,464 @@ class _AddMilkSaleScreenState extends State<AddMilkSaleScreen> {
     },
     child: Scaffold(
       extendBody: true,
+      backgroundColor: context.colorScheme.surface,
       body: CustomScaffoldContainer(
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _appbar(context),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Form(
-                  key: _formKey,
+        child: Form(
+          key: _formKey,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                leading: IconButton(
+                  onPressed: () => context.pop(),
+                  icon: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.surface,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: context.colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  isEdit
+                      ? context.strings.milkSaleEditTitle
+                      : context.strings.milkSaleAddTitle,
+                  style: context.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(20),
+                sliver: SliverToBoxAdapter(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (widget.buyer != null)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            _buildSectionHeader(
-                              context,
-                              context.strings.milkSaleBuyerLabel,
-                            ),
-                            const SizedBox(height: 10),
-                            CustomContainer(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: context.colorScheme.primaryContainer
-                                      .withAlpha(76),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: context.colorScheme.primary
-                                        .withAlpha(51),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: context.colorScheme.primary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.person,
-                                        color: context.colorScheme.onPrimary,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        widget.buyer!['name'].toString(),
-                                        style: context.textTheme.titleMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color:
-                                                  context.colorScheme.onSurface,
-                                            ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: context.colorScheme.primary
-                                            .withAlpha(51),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        context.strings.milkSaleSelected,
-                                        style: context.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color:
-                                                  context.colorScheme.primary,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      else
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            _buildSectionHeader(
-                              context,
-                              context.strings.milkSaleBuyerLabel,
-                            ),
-                            const SizedBox(height: 10),
-                            _buildBuyerDropdown(),
-                          ],
-                        ),
+                      // Buyer Selection Card
+                      _buildBuyerCard(context),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(
-                        context,
-                        context.strings.milkSaleDateLabel,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildDatePicker(context),
+
+                      // Date Card
+                      _buildDateCard(context),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(
-                        context,
-                        context.strings.milkSaleQuantityLabel,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildInputFeild(
-                        controller: _quantityController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        labelText: context.strings.milkSaleQuantityInputLabel,
-                        hintText: context.strings.milkSaleQuantityHint,
-                        validator: (String? value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return context.strings.milkSaleQuantityRequired;
-                          }
-                          if (double.tryParse(value) == null) {
-                            return context.strings.milkSaleInvalidNumber;
-                          }
-                          if (double.parse(value) <= 0) {
-                            return context
-                                .strings
-                                .milkSaleQuantityGreaterThanZero;
-                          }
-                          return null;
-                        },
-                      ),
+
+                      // Quantity & Price Card
+                      _buildQuantityPriceCard(context),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(
-                        context,
-                        context.strings.milkSalePriceLabel,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildInputFeild(
-                        controller: _priceController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        labelText: context.strings.milkSalePriceInputLabel,
-                        hintText: context.strings.milkSalePriceHint,
-                        validator: (String? value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return context.strings.milkSalePriceRequired;
-                          }
-                          if (double.tryParse(value) == null) {
-                            return context.strings.milkSaleInvalidNumber;
-                          }
-                          if (double.parse(value) <= 0) {
-                            return context.strings.milkSalePriceGreaterThanZero;
-                          }
-                          return null;
-                        },
-                      ),
-                      if (_calculatedTotal != null) ...<Widget>[
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: context.colorScheme.primaryContainer
-                                .withAlpha(76),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: context.colorScheme.primary.withAlpha(76),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                context.strings.milkSaleTotalAmount,
-                                style: context.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: context.colorScheme.onSurface,
-                                ),
-                              ),
-                              Text(
-                                '₹${_calculatedTotal!.toStringAsFixed(2)}',
-                                style: context.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: context.colorScheme.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 20),
-                      _buildSectionHeader(
-                        context,
-                        context.strings.milkSaleNotesLabel,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildInputFeild(
-                        controller: _notesController,
-                        labelText: context.strings.milkSaleNotesInputLabel,
-                        hintText: context.strings.milkSaleNotesHint,
-                        maxLine: 3,
-                      ),
-                      const SizedBox(height: 60),
+
+                      // Notes Card
+                      _buildNotesCard(context),
+                      const SizedBox(height: 32),
+
+                      // Save Button
                       SaveElevatedButton(
                         label: context.strings.formSave,
                         onTap: _addMilkSale,
                         key: UniqueKey(),
                       ),
-                      const SizedBox(height: 100),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-
-  Widget _buildBuyerDropdown() => BlocBuilder<SalesCubit, SalesState>(
-    builder: (BuildContext context, SalesState state) => CustomContainer(
-      child: DropdownButtonFormField<String>(
-        initialValue: _selectedBuyerId,
-        hint: Text(
-          context.strings.milkSaleChooseBuyerHint,
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: context.colorScheme.onSurface.withAlpha(100),
+            ],
           ),
         ),
-        decoration: const InputDecoration(border: InputBorder.none),
-        items: state.buyers
-            .map(
-              (Buyer buyer) => DropdownMenuItem<String>(
-                value: buyer.id,
-                child: Text(buyer.name),
+      ),
+    ),
+  );
+
+  Widget _buildBuyerCard(BuildContext context) {
+    if (widget.buyer != null) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: context.colorScheme.primary,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    context.strings.milkSaleBuyerLabel,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            )
-            .toList(),
-        onChanged: (String? value) {
-          setState(() {
-            _selectedBuyerId = value;
-          });
-        },
-        validator: (String? value) {
-          if (value == null || value.isEmpty) {
-            return context.strings.milkSaleSelectBuyerError;
-          }
-          return null;
-        },
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primaryContainer.withAlpha(76),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: context.colorScheme.primary.withAlpha(51),
+                  ),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.person,
+                        color: context.colorScheme.onPrimary,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        widget.buyer!['name'].toString(),
+                        style: context.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        context.strings.milkSaleSelected,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: context.colorScheme.onSecondaryContainer,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return BlocBuilder<SalesCubit, SalesState>(
+      builder: (BuildContext context, SalesState state) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.person_rounded,
+                      color: context.colorScheme.primary,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    context.strings.milkSaleBuyerLabel,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: context.colorScheme.outline.withAlpha(80),
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: DropdownButtonFormField<String>(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  hint: Text(
+                    context.strings.milkSaleChooseBuyerHint,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  initialValue: _selectedBuyerId,
+                  items: state.buyers
+                      .map(
+                        (Buyer buyer) => DropdownMenuItem<String>(
+                          value: buyer.id,
+                          child: Text(buyer.name),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedBuyerId = value;
+                    });
+                  },
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return context.strings.milkSaleSelectBuyerError;
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.calendar_today_rounded,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkSaleDateLabel,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: () async {
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate,
+                firstDate: DateTime(2000),
+                lastDate: DateTime.now(),
+              );
+              if (picked != null && picked != _selectedDate) {
+                setState(() {
+                  _selectedDate = picked;
+                  _dateController.text = DateFormat(
+                    'dd/MM/yyyy',
+                  ).format(picked);
+                });
+              }
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: context.colorScheme.outline.withAlpha(80),
+                ),
+              ),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.event_rounded, color: context.colorScheme.primary),
+                  const SizedBox(width: 12),
+                  Text(
+                    _dateController.text.isNotEmpty
+                        ? _dateController.text
+                        : context.strings.milkSaleDateHint,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     ),
   );
 
-  Widget _buildDatePicker(BuildContext context) => CustomContainer(
-    child: CustomTextField(
-      controller: _dateController,
-      labelText: context.strings.milkSaleDateInputLabel,
-      hintText: context.strings.milkSaleDateHint,
-      readOnly: true,
-      onTap: () async {
-        final DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: _selectedDate,
-          firstDate: DateTime(2000),
-          lastDate: DateTime.now(),
-        );
-        if (picked != null && picked != _selectedDate) {
-          setState(() {
-            _selectedDate = picked;
-            _dateController.text = DateFormat('dd/MM/yyyy').format(picked);
-          });
-        }
-      },
-      suffixIcon: Icon(
-        Icons.calendar_today,
-        color: context.colorScheme.primary,
+  Widget _buildQuantityPriceCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.water_drop_rounded,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkSaleQuantityLabel,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          AppTextFormField(
+            controller: _quantityController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            labelText: context.strings.milkSaleQuantityInputLabel,
+            hintText: context.strings.milkSaleQuantityHint,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return context.strings.milkSaleQuantityRequired;
+              }
+              if (double.tryParse(value) == null) {
+                return context.strings.milkSaleInvalidNumber;
+              }
+              if (double.parse(value) <= 0) {
+                return context.strings.milkSaleQuantityGreaterThanZero;
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.currency_rupee_rounded,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkSalePriceLabel,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          AppTextFormField(
+            controller: _priceController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            labelText: context.strings.milkSalePriceInputLabel,
+            hintText: context.strings.milkSalePriceHint,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return context.strings.milkSalePriceRequired;
+              }
+              if (double.tryParse(value) == null) {
+                return context.strings.milkSaleInvalidNumber;
+              }
+              if (double.parse(value) <= 0) {
+                return context.strings.milkSalePriceGreaterThanZero;
+              }
+              return null;
+            },
+          ),
+          if (_calculatedTotal != null) ...<Widget>[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.colorScheme.primaryContainer.withAlpha(76),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: context.colorScheme.primary.withAlpha(76),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    context.strings.milkSaleTotalAmount,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '₹${_calculatedTotal!.toStringAsFixed(2)}',
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: context.colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
-      validator: (String? value) {
-        if (value == null || value.isEmpty) {
-          return context.strings.milkSaleDateRequired;
-        }
-        return null;
-      },
     ),
   );
 
-  CustomContainer _buildInputFeild({
-    required TextEditingController controller,
-    required String labelText,
-    required String hintText,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLine = 1,
-    bool readOnly = false,
-    VoidCallback? onTap,
-    Widget? suffixIcon,
-    String? Function(String?)? validator,
-  }) => CustomContainer(
-    child: CustomTextField(
-      controller: controller,
-      labelText: labelText,
-      hintText: hintText,
-      keyboardType: keyboardType,
-      maxLines: maxLine,
-      readOnly: readOnly,
-      onTap: onTap,
-      suffixIcon: suffixIcon,
-      validator: validator,
-    ),
-  );
-
-  SliverAppBar _appbar(BuildContext context) => SliverAppBar(
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    centerTitle: true,
-    leading: IconButton(
-      onPressed: () => Navigator.pop(context),
-      icon: Icon(
-        Icons.arrow_back_ios,
-        color: context.colorScheme.onSurface,
-        size: 25,
+  Widget _buildNotesCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.note_alt_outlined,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkSaleNotesLabel,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          AppTextFormField(
+            controller: _notesController,
+            maxLines: 3,
+            textInputAction: TextInputAction.done,
+            hintText: context.strings.milkSaleNotesHint,
+          ),
+        ],
       ),
-    ),
-    title: Text(
-      isEdit
-          ? context.strings.milkSaleEditTitle
-          : context.strings.milkSaleAddTitle,
-      style: context.textTheme.headlineLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-        color: context.colorScheme.onSurface,
-      ),
-    ),
-  );
-
-  Widget _buildSectionHeader(BuildContext context, String title) => Text(
-    title,
-    style: context.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-      color: context.colorScheme.onSurface,
     ),
   );
 }

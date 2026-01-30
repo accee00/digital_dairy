@@ -2,12 +2,11 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
+import 'package:digital_dairy/core/widget/app_text_form_field.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
-import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/save_elevated_button.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
 import 'package:digital_dairy/features/cattle/model/cattle_model.dart';
-import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
 import 'package:digital_dairy/features/milklog/model/milk_model.dart';
 import 'package:flutter/material.dart';
@@ -90,175 +89,184 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
       },
       child: Scaffold(
         extendBody: true,
+        backgroundColor: colorScheme.surface,
         body: CustomScaffoldContainer(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                systemOverlayStyle: const SystemUiOverlayStyle(),
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                centerTitle: true,
-                leading: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: colorScheme.onSurface,
-                    size: 25,
-                  ),
-                ),
-                title: Text(
-                  isEdit
-                      ? context.strings.milkEditEntry
-                      : context.strings.milkAddEntry,
-                  style: context.textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 10,
+          child: Form(
+            key: _formKey,
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  leading: IconButton(
+                    onPressed: () => context.pop(),
+                    icon: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.surface,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: context.colorScheme.onSurface,
+                        ),
+                      ),
                     ),
+                  ),
+                  title: Text(
+                    isEdit
+                        ? context.strings.milkEditEntry
+                        : context.strings.milkAddEntry,
+                    style: context.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverToBoxAdapter(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        _buildSectionHeader(
-                          context,
-                          context.strings.milkCattleSelection,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildCattleSelectionSection(context),
+                        // Cattle Selection Card
+                        _buildCattleSelectionCard(context),
+                        const SizedBox(height: 20),
 
-                        const SizedBox(height: 15),
-                        _buildSectionHeader(
-                          context,
-                          context.strings.milkMilkingDetails,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildMilkingDetailsSection(context),
+                        // Date & Shift Selection
+                        _buildDateShiftCard(context),
+                        const SizedBox(height: 20),
 
-                        const SizedBox(height: 15),
-                        _buildSectionHeader(
-                          context,
-                          context.strings.milkAdditionalInfo,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildAdditionalInfoSection(context),
+                        // Quantity Input
+                        _buildQuantityCard(context),
+                        const SizedBox(height: 20),
 
-                        const SizedBox(height: 40),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 40),
+                        // Notes Section
+                        _buildNotesCard(context),
+                        const SizedBox(height: 32),
+
+                        // Save Button
+                        SaveElevatedButton(
+                          key: UniqueKey(),
+                          label: isEdit
+                              ? context.strings.milkUpdateEntry
+                              : context.strings.milkSaveEntry,
+                          onTap: _saveMilkEntry,
+                        ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title) => Text(
-    title,
-    style: context.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-      color: context.colorScheme.onSurface,
-    ),
-  );
-
-  Widget _buildCattleSelectionSection(BuildContext context) =>
-      BlocBuilder<CattleCubit, CattleState>(
-        builder: (BuildContext context, CattleState state) {
-          String? selectedCattleDisplay;
-          if (_selectedCattleId != null) {
-            final Cattle cattle = state.cattle.firstWhere(
-              (Cattle c) => c.id == _selectedCattleId,
-              orElse: () => state.cattle.first,
-            );
-            selectedCattleDisplay = '${cattle.tagId} - ${cattle.name}';
-          }
-          return CustomContainer(
-            child: _buildDropdownField(
-              context,
-              context.strings.milkSelectCattle,
-              selectedCattleDisplay,
-              state.cattle
-                  .map(
-                    (Cattle e) => '${e.tagId} - ${e.name}',
-                  ) // show tag_id + name
-                  .toList(),
-              (String? value) {
-                final Cattle selectedCattle = state.cattle.firstWhere(
-                  (Cattle cattle) =>
-                      '${cattle.tagId} - ${cattle.name}' == value,
-                );
-                setState(() {
-                  _selectedCattleId = selectedCattle.id;
-                });
-              },
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return context.strings.milkSelectCattleError;
-                }
-                return null;
-              },
-            ),
-          );
-        },
-      );
-
-  Widget _buildMilkingDetailsSection(BuildContext context) => CustomContainer(
-    child: Column(
-      children: <Widget>[
-        _buildDateField(
-          context,
-          context.strings.milkMilkingDate,
-          _selectedDate,
-          (DateTime date) => setState(() => _selectedDate = date),
-          firstDate: DateTime.now().subtract(const Duration(days: 30)),
-          lastDate: DateTime.now(),
-        ),
-        const SizedBox(height: 16),
-        Row(
+  Widget _buildCattleSelectionCard(
+    BuildContext context,
+  ) => BlocBuilder<CattleCubit, CattleState>(
+    builder: (BuildContext context, CattleState state) => Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(
-              child: _buildDropdownField(
-                context,
-                context.strings.milkShift,
-                _selectedShift.value,
-                <String>[context.strings.morning, context.strings.evening],
-                (String? value) =>
-                    setState(() => _selectedShift = ShiftType.from(value!)),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                height: 52,
-                labelText: context.strings.milkQuantity,
-                controller: _quantityController,
-                hintText: context.strings.milkEnterQuantity,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+            Row(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.pets_rounded,
+                    color: context.colorScheme.primary,
+                    size: 24,
+                  ),
                 ),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                ],
+                const SizedBox(width: 12),
+                Text(
+                  context.strings.milkSelectCattle,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: context.colorScheme.outline.withAlpha(80),
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: DropdownButtonFormField<String>(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                hint: Text(
+                  context.strings.milkSelectCattle,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                initialValue:
+                    _selectedCattleId != null &&
+                        state.cattle.any(
+                          (Cattle c) => c.id == _selectedCattleId,
+                        )
+                    ? _selectedCattleId
+                    : null,
+                items: state.cattle
+                    .map(
+                      (Cattle cattle) => DropdownMenuItem<String>(
+                        value: cattle.id,
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.colorScheme.secondaryContainer,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                cattle.tagId,
+                                style: context.textTheme.labelSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      context.colorScheme.onSecondaryContainer,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              cattle.name,
+                              style: context.textTheme.bodyLarge,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedCattleId = value;
+                  });
+                },
                 validator: (String? value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return context.strings.milkQuantityRequired;
-                  }
-                  final double? quantity = double.tryParse(value);
-                  if (quantity == null || quantity <= 0) {
-                    return context.strings.milkEnterValidQuantity;
+                  if (value == null || value.isEmpty) {
+                    return context.strings.milkSelectCattleError;
                   }
                   return null;
                 },
@@ -266,235 +274,380 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        Row(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: context.colorScheme.primaryContainer.withAlpha(100),
-                borderRadius: BorderRadius.circular(4),
+      ),
+    ),
+  );
+
+  Widget _buildDateShiftCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.calendar_today_rounded,
+                color: context.colorScheme.primary,
+                size: 20,
               ),
-              child: Text(
-                context.strings.milkTip,
-                style: TextStyle(
-                  fontSize: 10,
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkMilkingDate,
+                style: context.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: context.colorScheme.primary,
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: () async {
+              final DateTime? date = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate ?? DateTime.now(),
+                firstDate: DateTime.now().subtract(const Duration(days: 30)),
+                lastDate: DateTime.now(),
+              );
+              if (date != null) {
+                setState(() => _selectedDate = date);
+              }
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: context.colorScheme.outline.withAlpha(80),
+                ),
+              ),
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.event_rounded, color: context.colorScheme.primary),
+                  const SizedBox(width: 12),
+                  Text(
+                    _selectedDate != null
+                        ? _formatDate(_selectedDate)
+                        : context.strings.milkSelectDate,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                context.strings.milkTipText,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colorScheme.onSurface.withAlpha(150),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.wb_twilight_rounded,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkShift,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: _buildShiftButton(
+                  context,
+                  context.strings.morning,
+                  Icons.wb_sunny_rounded,
+                  ShiftType.morning,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildShiftButton(
+                  context,
+                  context.strings.evening,
+                  Icons.nightlight_round,
+                  ShiftType.evening,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildShiftButton(
+    BuildContext context,
+    String label,
+    IconData icon,
+    ShiftType shift,
+  ) {
+    final bool isSelected = _selectedShift == shift;
+    return InkWell(
+      onTap: () => setState(() => _selectedShift = shift),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? context.colorScheme.primaryContainer
+              : context.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? context.colorScheme.primary
+                : context.colorScheme.outline.withAlpha(80),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              icon,
+              color: isSelected
+                  ? context.colorScheme.primary
+                  : context.colorScheme.onSurfaceVariant,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: context.textTheme.bodyLarge?.copyWith(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected
+                    ? context.colorScheme.primary
+                    : context.colorScheme.onSurfaceVariant,
               ),
             ),
           ],
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 
-  Widget _buildAdditionalInfoSection(BuildContext context) => CustomContainer(
-    child: Column(
-      children: <Widget>[
-        CustomTextField(
-          labelText: context.strings.milkNotes,
-          controller: _notesController,
-          hintText: context.strings.milkNotesHint,
-          maxLines: 3,
-          textInputAction: TextInputAction.done,
-        ),
-        const SizedBox(height: 12),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: context.colorScheme.surfaceContainerHighest.withAlpha(100),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: context.colorScheme.outline.withAlpha(100),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildQuantityCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
             children: <Widget>[
-              Text(
-                context.strings.milkCommonNotes,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+              Icon(
+                Icons.water_drop_rounded,
+                color: context.colorScheme.primary,
+                size: 20,
               ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: <Widget>[
-                  _buildQuickNoteChip(context, context.strings.milkGoodQuality),
-                  _buildQuickNoteChip(
-                    context,
-                    context.strings.milkSlightlyLowYield,
-                  ),
-                  _buildQuickNoteChip(
-                    context,
-                    context.strings.milkNormalProduction,
-                  ),
-                  _buildQuickNoteChip(
-                    context,
-                    context.strings.milkCattleSeemsHealthy,
-                  ),
-                ],
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkQuantity,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: 12),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: TextFormField(
+                  controller: _quantityController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*\.?\d{0,2}'),
+                    ),
+                  ],
+                  style: context.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '0.0',
+                    hintStyle: context.textTheme.headlineMedium?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant.withAlpha(
+                        100,
+                      ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.outline.withAlpha(80),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.outline.withAlpha(80),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: context.colorScheme.primary,
+                        width: 2,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.all(20),
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return context.strings.milkQuantityRequired;
+                    }
+                    final double? quantity = double.tryParse(value);
+                    if (quantity == null || quantity <= 0) {
+                      return context.strings.milkEnterValidQuantity;
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  'L',
+                  style: context.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: context.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: context.colorScheme.primaryContainer.withAlpha(50),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 16,
+                  color: context.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    context.strings.milkTipText,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 
-  Widget _buildQuickNoteChip(BuildContext context, String note) =>
-      GestureDetector(
-        onTap: () {
-          if (_notesController.text.isEmpty) {
-            _notesController.text = note;
-          } else {
-            _notesController.text = '${_notesController.text}, $note';
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: context.colorScheme.onError.withAlpha(100),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: context.colorScheme.primary.withAlpha(100),
-            ),
-          ),
-          child: Text(
-            note,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.primary,
-              fontSize: 14,
-            ),
-          ),
-        ),
-      );
-
-  Widget _buildDropdownField(
-    BuildContext context,
-    String label,
-    String? value,
-    List<String> options,
-    void Function(String?) onChanged, {
-    String? Function(String?)? validator,
-  }) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Text(
-        label,
-        style: context.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-      const SizedBox(height: 8),
-      Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: context.colorScheme.outline.withAlpha(100)),
-          borderRadius: BorderRadius.circular(13),
-        ),
-        child: DropdownButtonFormField<String>(
-          padding: const EdgeInsets.only(left: 10, right: 4),
-          decoration: const InputDecoration(border: InputBorder.none),
-          hint: Text(
-            label.replaceAll(' *', ''),
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: context.colorScheme.onSurface.withAlpha(100),
-            ),
-          ),
-          initialValue: value != null && options.contains(value) ? value : null,
-          validator: validator,
-          items: options
-              .map(
-                (String option) => DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option),
+  Widget _buildNotesCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.note_alt_outlined,
+                color: context.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.strings.milkNotes,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-              )
-              .toList(),
-          onChanged: onChanged,
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          AppTextFormField(
+            controller: _notesController,
+            maxLines: 3,
+            textInputAction: TextInputAction.done,
+            hintText: context.strings.milkNotesHint,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            context.strings.milkCommonNotes,
+            style: context.textTheme.labelMedium?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: <Widget>[
+              _buildQuickNoteChip(context, context.strings.milkGoodQuality),
+              _buildQuickNoteChip(
+                context,
+                context.strings.milkSlightlyLowYield,
+              ),
+              _buildQuickNoteChip(
+                context,
+                context.strings.milkNormalProduction,
+              ),
+              _buildQuickNoteChip(
+                context,
+                context.strings.milkCattleSeemsHealthy,
+              ),
+            ],
+          ),
+        ],
       ),
-    ],
+    ),
   );
 
-  Widget _buildDateField(
-    BuildContext context,
-    String label,
-    DateTime? selectedDate,
-    void Function(DateTime) onDateSelected, {
-    required DateTime firstDate,
-    required DateTime lastDate,
-  }) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Text(
-        label,
+  Widget _buildQuickNoteChip(BuildContext context, String note) => InkWell(
+    onTap: () {
+      if (_notesController.text.isEmpty) {
+        _notesController.text = note;
+      } else {
+        _notesController.text = '${_notesController.text}, $note';
+      }
+    },
+    borderRadius: BorderRadius.circular(20),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: context.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        note,
         style: context.textTheme.bodyMedium?.copyWith(
+          color: context.colorScheme.onSecondaryContainer,
           fontWeight: FontWeight.w500,
-          color: context.colorScheme.onSurface,
         ),
       ),
-      const SizedBox(height: 8),
-      Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: context.colorScheme.outline.withAlpha(100)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: ListTile(
-          title: selectedDate != null
-              ? Text(
-                  _formatDate(selectedDate),
-                  style: context.textTheme.bodyMedium,
-                )
-              : Text(
-                  context.strings.milkSelectDate,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.colorScheme.onSurface.withAlpha(100),
-                  ),
-                ),
-          trailing: const Icon(Icons.calendar_month),
-          onTap: () async {
-            final DateTime? date = await showDatePicker(
-              context: context,
-              initialDate: selectedDate ?? DateTime.now(),
-              firstDate: firstDate,
-              lastDate: lastDate,
-            );
-            if (date != null) {
-              onDateSelected(date);
-            }
-          },
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildActionButtons(BuildContext context) => Column(
-    children: <Widget>[
-      SaveElevatedButton(
-        key: UniqueKey(),
-        label: isEdit
-            ? context.strings.milkUpdateEntry
-            : context.strings.milkSaveEntry,
-        onTap: _saveMilkEntry,
-      ),
-      const SizedBox(height: 12),
-    ],
+    ),
   );
 
   String _formatDate(DateTime? date) {

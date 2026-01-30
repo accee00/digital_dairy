@@ -54,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: <Widget>[
                           MilkSummaryCard(analytics: state.analytics),
                           const SizedBox(height: 24),
+                          const QuickActionsCard(),
+                          const SizedBox(height: 24),
                           MonthlySummaryCard(analytics: state.analytics),
                         ],
                       );
@@ -61,9 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     return const EmptyCard();
                   },
                 ),
-                const SizedBox(height: 24),
-                const QuickActionsCard(),
-                const SizedBox(height: 24),
               ],
             ),
           ),

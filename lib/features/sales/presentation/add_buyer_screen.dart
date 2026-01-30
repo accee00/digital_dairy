@@ -2,10 +2,9 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/show_loading.dart';
+import 'package:digital_dairy/core/widget/app_text_form_field.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
-import 'package:digital_dairy/core/widget/custom_text_feild.dart';
 import 'package:digital_dairy/core/widget/save_elevated_button.dart';
-import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/features/sales/model/buyer_model.dart';
 import 'package:flutter/material.dart';
@@ -93,74 +92,59 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
     },
     child: Scaffold(
       extendBody: true,
+      backgroundColor: context.colorScheme.surface,
       body: CustomScaffoldContainer(
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _appbar(context),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Form(
-                  key: _formKey,
+        child: Form(
+          key: _formKey,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                leading: IconButton(
+                  onPressed: () => context.pop(),
+                  icon: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.surface,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: context.colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  isEdit
+                      ? context.strings.buyerEditTitle
+                      : context.strings.buyerAddTitle,
+                  style: context.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(20),
+                sliver: SliverToBoxAdapter(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      _buildSectionHeader(
-                        context,
-                        context.strings.buyerNameLabel,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildInputFeild(
-                        controller: _nameController,
-                        labelText: context.strings.buyerNameLabel,
-                        hintText: context.strings.buyerNameHint,
-                        validator: (String? value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return context.strings.buyerNameRequired;
-                          }
-                          return null;
-                        },
-                      ),
+                      // Basic Info Card
+                      _buildBasicInfoCard(context),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(
-                        context,
-                        context.strings.buyerContactLabel,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildInputFeild(
-                        controller: _contactController,
-                        keyboardType: TextInputType.phone,
-                        labelText: context.strings.buyerContactLabel,
-                        hintText: context.strings.buyerContactHint,
-                        validator: (String? value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return context.strings.buyerContactRequired;
-                          }
-                          if (value.length < 10) {
-                            return context.strings.buyerInvalidContact;
-                          }
-                          return null;
-                        },
-                      ),
+
+                      // Contact Card
+                      _buildContactCard(context),
                       const SizedBox(height: 20),
-                      _buildSectionHeader(
-                        context,
-                        context.strings.buyerAddressLabel,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildInputFeild(
-                        controller: _addressController,
-                        labelText: context.strings.buyerAddressLabel,
-                        hintText: context.strings.buyerAddressHint,
-                        maxLine: 3,
-                        validator: (String? value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return context.strings.buyerAddressRequired;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 60),
+
+                      // Address Card
+                      _buildAddressCard(context),
+                      const SizedBox(height: 32),
+
+                      // Save Button
                       SaveElevatedButton(
                         label: isEdit
                             ? context.strings.buyerUpdate
@@ -168,14 +152,156 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
                         onTap: isEdit ? _updateBuyer : _addBuyer,
                         key: UniqueKey(),
                       ),
-                      const SizedBox(height: 100),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    ),
+  );
+
+  Widget _buildBasicInfoCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.person_rounded,
+                  color: context.colorScheme.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                context.strings.buyerNameLabel,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          AppTextFormField(
+            controller: _nameController,
+            hintText: context.strings.buyerNameHint,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return context.strings.buyerNameRequired;
+              }
+              return null;
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildContactCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.phone_rounded,
+                  color: context.colorScheme.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                context.strings.buyerContactLabel,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          AppTextFormField(
+            controller: _contactController,
+            keyboardType: TextInputType.phone,
+            labelText: context.strings.buyerContactLabel,
+            hintText: context.strings.buyerContactHint,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return context.strings.buyerContactRequired;
+              }
+              if (value.length < 10) {
+                return context.strings.buyerInvalidContact;
+              }
+              return null;
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildAddressCard(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.location_on_rounded,
+                  color: context.colorScheme.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                context.strings.buyerAddressLabel,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          AppTextFormField(
+            controller: _addressController,
+            maxLines: 3,
+            labelText: context.strings.buyerAddressLabel,
+            hintText: context.strings.buyerAddressHint,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return context.strings.buyerAddressRequired;
+              }
+              return null;
+            },
+          ),
+        ],
       ),
     ),
   );
@@ -208,52 +334,4 @@ class _AddBuyerScreenState extends State<AddBuyerScreen> {
     logInfo('updated buyer model presentation $updatedBuyer');
     context.read<SalesCubit>().updateBuyer(updatedBuyer);
   }
-
-  CustomContainer _buildInputFeild({
-    required TextEditingController controller,
-    required String labelText,
-    required String hintText,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLine = 1,
-    String? Function(String?)? validator,
-  }) => CustomContainer(
-    child: CustomTextField(
-      controller: controller,
-      labelText: labelText,
-      hintText: hintText,
-      keyboardType: keyboardType,
-      maxLines: maxLine,
-      validator: validator,
-    ),
-  );
-
-  SliverAppBar _appbar(BuildContext context) => SliverAppBar(
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    centerTitle: true,
-    leading: IconButton(
-      onPressed: () => Navigator.pop(context),
-      icon: Icon(
-        Icons.arrow_back_ios,
-        color: context.colorScheme.onSurface,
-        size: 25,
-      ),
-    ),
-    title: Text(
-      isEdit ? context.strings.buyerEditTitle : context.strings.buyerAddTitle,
-      style: context.textTheme.headlineLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-        color: context.colorScheme.onSurface,
-      ),
-    ),
-  );
-
-  Widget _buildSectionHeader(BuildContext context, String title) => Text(
-    title,
-    style: context.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-      color: context.colorScheme.onSurface,
-    ),
-  );
 }

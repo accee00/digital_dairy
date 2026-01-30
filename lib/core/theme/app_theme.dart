@@ -3,9 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// Clean, modern app theme with friendly aesthetics.
 class AppTheme {
-  // ═══════════════════════════════════════════════════════════════════════════
-  // MODERN COLOR PALETTE
-  // ═══════════════════════════════════════════════════════════════════════════
+  // Avoid instantiation
+  const AppTheme._();
 
   /// Primary - Modern Indigo Blue
   static const Color primary = Color(0xFF6366F1);
@@ -34,9 +33,26 @@ class AppTheme {
   /// Info - Sky Blue
   static const Color info = Color(0xFF3B82F6);
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // LIGHT MODE SURFACES
-  // ═══════════════════════════════════════════════════════════════════════════
+  /// Primary gradient - Indigo to Purple
+  static const List<Color> primaryGradient = <Color>[
+    Color(0xFF6366F1),
+    Color(0xFF8B5CF6),
+    Color(0xFFA855F7),
+  ];
+
+  /// Warm gradient - Pink to Rose
+  static const List<Color> warmGradient = <Color>[
+    Color(0xFFF472B6),
+    Color(0xFFFB7185),
+    Color(0xFFFDA4AF),
+  ];
+
+  /// Cool gradient - Cyan to Blue
+  static const List<Color> coolGradient = <Color>[
+    Color(0xFF22D3EE),
+    Color(0xFF38BDF8),
+    Color(0xFF60A5FA),
+  ];
 
   static const Color _lightBg = Color(0xFFFAFAFC);
   static const Color _lightSurface = Color(0xFFFFFFFF);
@@ -44,17 +60,9 @@ class AppTheme {
   static const Color _lightBorder = Color(0xFFE5E5EA);
   static const Color _lightBorderSubtle = Color(0xFFF0F0F3);
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // LIGHT MODE TEXT
-  // ═══════════════════════════════════════════════════════════════════════════
-
   static const Color _lightTextPrimary = Color(0xFF18181B);
   static const Color _lightTextSecondary = Color(0xFF71717A);
   static const Color _lightTextTertiary = Color(0xFFA1A1AA);
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DARK MODE SURFACES
-  // ═══════════════════════════════════════════════════════════════════════════
 
   static const Color _darkBg = Color(0xFF09090B);
   static const Color _darkSurface = Color(0xFF18181B);
@@ -62,40 +70,15 @@ class AppTheme {
   static const Color _darkBorder = Color(0xFF3F3F46);
   static const Color _darkBorderSubtle = Color(0xFF27272A);
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DARK MODE TEXT
-  // ═══════════════════════════════════════════════════════════════════════════
-
   static const Color _darkTextPrimary = Color(0xFFFAFAFA);
   static const Color _darkTextSecondary = Color(0xFFA1A1AA);
   static const Color _darkTextTertiary = Color(0xFF71717A);
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // GRADIENTS
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  static const List<Color> primaryGradient = <Color>[
-    Color(0xFF6366F1),
-    Color(0xFF8B5CF6),
-    Color(0xFFA855F7),
-  ];
-
-  static const List<Color> warmGradient = <Color>[
-    Color(0xFFF472B6),
-    Color(0xFFFB7185),
-    Color(0xFFFDA4AF),
-  ];
-
-  static const List<Color> coolGradient = <Color>[
-    Color(0xFF22D3EE),
-    Color(0xFF38BDF8),
-    Color(0xFF60A5FA),
-  ];
-
-  // ═══════════════════════════════════════════════════════════════════════════
   // LIGHT THEME
   // ═══════════════════════════════════════════════════════════════════════════
 
+  /// Returns the Light Theme configuration.
   static ThemeData get lightTheme {
     final ColorScheme colorScheme = ColorScheme.light(
       primary: primary,
@@ -103,17 +86,15 @@ class AppTheme {
       onPrimaryContainer: primaryDark,
       secondary: secondary,
       secondaryContainer: secondary.withAlpha(25),
-      onSecondaryContainer: Color(0xFFBE185D),
+      onSecondaryContainer: const Color(0xFFBE185D),
       tertiary: accent,
       tertiaryContainer: accent.withAlpha(25),
-      surface: _lightSurface,
       surfaceContainerHighest: _lightSurfaceAlt,
       onSurface: _lightTextPrimary,
       onSurfaceVariant: _lightTextSecondary,
       outline: _lightBorder,
       outlineVariant: _lightBorderSubtle,
       error: error,
-      onPrimary: Colors.white,
       onSecondary: Colors.white,
     );
 
@@ -301,7 +282,9 @@ class AppTheme {
         indicatorColor: primary.withAlpha(25),
         elevation: 0,
         height: 65,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        labelTextStyle: WidgetStateProperty.resolveWith((
+          Set<WidgetState> states,
+        ) {
           if (states.contains(WidgetState.selected)) {
             return GoogleFonts.inter(
               fontSize: 12,
@@ -315,7 +298,7 @@ class AppTheme {
             color: _lightTextTertiary,
           );
         }),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
+        iconTheme: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
             return const IconThemeData(color: primary, size: 24);
           }
@@ -395,13 +378,13 @@ class AppTheme {
 
       // Switch
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
+        thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
             return Colors.white;
           }
           return _lightTextTertiary;
         }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
+        trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
             return primary;
           }
@@ -499,18 +482,15 @@ class AppTheme {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DARK THEME
-  // ═══════════════════════════════════════════════════════════════════════════
-
+  /// Returns the Dark Theme configuration.
   static ThemeData get darkTheme {
     final ColorScheme colorScheme = ColorScheme.dark(
       primary: primaryLight,
       primaryContainer: primary.withAlpha(40),
-      onPrimaryContainer: Color(0xFFE0E7FF),
+      onPrimaryContainer: const Color(0xFFE0E7FF),
       secondary: secondary,
       secondaryContainer: secondary.withAlpha(40),
-      onSecondaryContainer: Color(0xFFFCE7F3),
+      onSecondaryContainer: const Color(0xFFFCE7F3),
       tertiary: accent,
       tertiaryContainer: accent.withAlpha(40),
       surface: _darkSurface,
@@ -519,9 +499,9 @@ class AppTheme {
       onSurfaceVariant: _darkTextSecondary,
       outline: _darkBorder,
       outlineVariant: _darkBorderSubtle,
-      error: Color(0xFFFCA5A5),
-      onPrimary: Color(0xFF1E1B4B),
-      onSecondary: Color(0xFF831843),
+      error: const Color(0xFFFCA5A5),
+      onPrimary: const Color(0xFF1E1B4B),
+      onSecondary: const Color(0xFF831843),
     );
 
     return ThemeData(
@@ -551,7 +531,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryLight,
-          foregroundColor: Color(0xFF1E1B4B),
+          foregroundColor: const Color(0xFF1E1B4B),
           elevation: 0,
           shadowColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -568,7 +548,7 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: primaryLight,
-          foregroundColor: Color(0xFF1E1B4B),
+          foregroundColor: const Color(0xFF1E1B4B),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -612,7 +592,7 @@ class AppTheme {
       // FAB
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryLight,
-        foregroundColor: Color(0xFF1E1B4B),
+        foregroundColor: const Color(0xFF1E1B4B),
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         extendedPadding: const EdgeInsets.symmetric(
@@ -701,7 +681,9 @@ class AppTheme {
         indicatorColor: primaryLight.withAlpha(30),
         elevation: 0,
         height: 65,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        labelTextStyle: WidgetStateProperty.resolveWith((
+          Set<WidgetState> states,
+        ) {
           if (states.contains(WidgetState.selected)) {
             return GoogleFonts.inter(
               fontSize: 12,
@@ -715,7 +697,7 @@ class AppTheme {
             color: _darkTextTertiary,
           );
         }),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
+        iconTheme: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
             return const IconThemeData(color: primaryLight, size: 24);
           }
@@ -795,13 +777,13 @@ class AppTheme {
 
       // Switch
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
+        thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
-            return Color(0xFF1E1B4B);
+            return const Color(0xFF1E1B4B);
           }
           return _darkTextTertiary;
         }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
+        trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
             return primaryLight;
           }
@@ -877,7 +859,7 @@ class AppTheme {
             fontWeight: FontWeight.w400,
           ),
           labelLarge: GoogleFonts.inter(
-            color: Color(0xFF1E1B4B),
+            color: const Color(0xFF1E1B4B),
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
@@ -898,10 +880,6 @@ class AppTheme {
       primaryIconTheme: const IconThemeData(color: Color(0xFF1E1B4B), size: 24),
     );
   }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // UTILITY METHODS
-  // ═══════════════════════════════════════════════════════════════════════════
 
   /// Soft shadow for cards
   static List<BoxShadow> get softShadow => <BoxShadow>[

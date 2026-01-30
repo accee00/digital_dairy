@@ -3,9 +3,12 @@ import 'package:digital_dairy/core/theme/app_theme.dart';
 import 'package:digital_dairy/features/home/model/analytics_model.dart';
 import 'package:flutter/material.dart';
 
+/// A card that displays a summary of the current month's milk production and income.
 class MonthlySummaryCard extends StatelessWidget {
+  /// Creates a [MonthlySummaryCard].
   const MonthlySummaryCard({required this.analytics, super.key});
 
+  /// The analytics model containing data to display.
   final AnalyticsModel analytics;
 
   @override
@@ -166,43 +169,48 @@ class _MonthlyItem extends StatelessWidget {
     required this.color,
   });
 
+  /// The icon to display.
   final IconData icon;
+
+  /// The label text.
   final String label;
+
+  /// The value text.
   final String value;
+
+  /// The color to use for the icon and background.
   final Color color;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withAlpha(15),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: color.withAlpha(15),
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: context.textTheme.bodySmall?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: context.textTheme.titleLarge?.copyWith(
+            color: color,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }
 
 class _MonthStat extends StatelessWidget {
@@ -212,29 +220,32 @@ class _MonthStat extends StatelessWidget {
     required this.color,
   });
 
+  /// The label for this stat.
   final String label;
+
+  /// The value for this stat.
   final String value;
+
+  /// The color for this stat.
   final Color color;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text(
-          label,
-          style: context.textTheme.labelSmall?.copyWith(
-            color: context.colorScheme.onSurfaceVariant,
-          ),
+  Widget build(BuildContext context) => Column(
+    children: <Widget>[
+      Text(
+        label,
+        style: context.textTheme.labelSmall?.copyWith(
+          color: context.colorScheme.onSurfaceVariant,
         ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: context.textTheme.titleMedium?.copyWith(
-            color: color,
-            fontWeight: FontWeight.w800,
-          ),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        value,
+        style: context.textTheme.titleMedium?.copyWith(
+          color: color,
+          fontWeight: FontWeight.w800,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 }
