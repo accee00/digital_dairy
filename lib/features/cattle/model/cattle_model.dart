@@ -51,7 +51,7 @@ class Cattle extends Equatable {
     updatedAt: map['updated_at'] != null
         ? DateTime.parse(map['updated_at'] as String)
         : null,
-    thisMonthL: map['this_month_l']?.toString() ?? '00',
+    thisMonthL: map['this_month_l']?.toString() ?? '0',
   );
 
   /// The unique identifier for the cattle (optional).

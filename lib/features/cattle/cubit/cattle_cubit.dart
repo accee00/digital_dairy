@@ -127,7 +127,7 @@ class CattleCubit extends Cubit<CattleState> {
       ),
       (List<Cattle> list) => emit(
         CattleCreatedSuccess(
-          cattle: list,
+          cattle: <Cattle>[...list, ...state.cattle],
           hasMore: state.hasMore,
           newlyCreatedCattle: list.last,
           search: state.search,
