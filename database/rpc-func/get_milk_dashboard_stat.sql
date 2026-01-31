@@ -10,27 +10,51 @@ RETURNS TABLE (
 LANGUAGE sql
 AS $$
   SELECT
-    -- Today production
-    COALESCE(SUM(me.quantity_litres) FILTER (WHERE me.shift = 'Morning' AND me.date = CURRENT_DATE), 0),
-    COALESCE(SUM(me.quantity_litres) FILTER (WHERE me.shift = 'Evening' AND me.date = CURRENT_DATE), 0),
-    COALESCE(SUM(me.quantity_litres) FILTER (WHERE me.date = CURRENT_DATE), 0),
+    -- Milk stats (ONLY from milk_entries)
+    COALESCE((
+      SELECT SUM(quantity_litres)
+      FROM milk_entries
+      WHERE user_id = p_user_id
+        AND shift = 'Morning'
+        AND date = CURRENT_DATE
+    ), 0) AS today_morning_milk,
 
-    -- Month production
-    COALESCE(SUM(me.quantity_litres) FILTER (
-      WHERE me.date >= date_trunc('month', CURRENT_DATE)
-        AND me.date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
-    ), 0),
+    COALESCE((
+      SELECT SUM(quantity_litres)
+      FROM milk_entries
+      WHERE user_id = p_user_id
+        AND shift = 'Evening'
+        AND date = CURRENT_DATE
+    ), 0) AS today_evening_milk,
 
-    -- Today income
-    COALESCE(SUM(ms.total_amount) FILTER (WHERE ms.date = CURRENT_DATE), 0),
+    COALESCE((
+      SELECT SUM(quantity_litres)
+      FROM milk_entries
+      WHERE user_id = p_user_id
+        AND date = CURRENT_DATE
+    ), 0) AS today_total_milk,
 
-    -- Month income
-    COALESCE(SUM(ms.total_amount) FILTER (
-      WHERE ms.date >= date_trunc('month', CURRENT_DATE)
-        AND ms.date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
-    ), 0)
-  FROM user_profiles u
-  LEFT JOIN milk_entries me ON me.user_id = u.id
-  LEFT JOIN milk_sales ms ON ms.user_id = u.id
-  WHERE u.id = p_user_id;
+    COALESCE((
+      SELECT SUM(quantity_litres)
+      FROM milk_entries
+      WHERE user_id = p_user_id
+        AND date >= date_trunc('month', CURRENT_DATE)
+        AND date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
+    ), 0) AS month_total_milk,
+
+    -- Income stats (ONLY from milk_sales)
+    COALESCE((
+      SELECT SUM(total_amount)
+      FROM milk_sales
+      WHERE user_id = p_user_id
+        AND date = CURRENT_DATE
+    ), 0) AS today_income,
+
+    COALESCE((
+      SELECT SUM(total_amount)
+      FROM milk_sales
+      WHERE user_id = p_user_id
+        AND date >= date_trunc('month', CURRENT_DATE)
+        AND date < date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
+    ), 0) AS month_income;
 $$;

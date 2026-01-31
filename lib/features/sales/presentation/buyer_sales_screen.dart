@@ -51,7 +51,6 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
     final DateTime endDate = DateTime(
       _selectedMonth.year,
       _selectedMonth.month + 1,
-      0,
     );
 
     context.read<SalesCubit>().getSales(

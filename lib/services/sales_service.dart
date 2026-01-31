@@ -161,7 +161,7 @@ class SalesService {
             .select()
             .eq('buyer_id', buyerId)
             .gte('created_at', startDate.toIso8601String())
-            .lte('created_at', endDate.toIso8601String())
+            .lt('created_at', endDate.toIso8601String())
             .order('created_at', ascending: false);
 
         final List<MilkSale> sales = response.map(MilkSale.fromJson).toList();
