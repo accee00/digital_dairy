@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/exceptions/failure.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: implementation_imports
 import 'package:fpdart/src/either.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 ///
 class ProfileScreen extends StatefulWidget {
@@ -32,6 +35,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool emailNotifications = false;
   bool smsNotifications = false;
 
+  final ImagePicker _imagePicker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +47,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) =>
       BlocConsumer<ProfileCubit, ProfileState>(
-        listener: (BuildContext context, ProfileState state) {},
+        listener: (BuildContext context, ProfileState state) {
+          // Handle profile image update success
+          if (state is ProfileImageUpdateSuccess) {
+            showAppSnackbar(context, message: 'Add');
+          }
+
+          // Handle profile image update failure
+          if (state is ProfileImageUpdateFailure) {
+            showAppSnackbar(context, message: state.message);
+          }
+
+          // Handle profile image delete success
+          if (state is ProfileImageDeleteSuccess) {
+            showAppSnackbar(context, message: 'Delete');
+          }
+
+          // Handle profile image delete failure
+          if (state is ProfileImageDeleteFailure) {
+            showAppSnackbar(context, message: state.message);
+          }
+        },
         builder: (BuildContext context, ProfileState state) {
           final String userName = state is FetchProfileSuccess
               ? state.user.name
@@ -64,21 +89,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 slivers: <Widget>[
                   _appBar(context),
 
-                  if (state is ProfileInitial)
+                  if (state is ProfileInitial || state is ProfileLoading)
                     const SliverFillRemaining(
                       child: Center(child: CircularProgressIndicator()),
                     ),
 
                   if (state is FetchProfileFailure)
-                    SliverFillRemaining(child: _buildErrorState(state.msg)),
+                    SliverFillRemaining(child: _buildErrorState(state.message)),
 
-                  if (state is! ProfileInitial && state is! FetchProfileFailure)
+                  if (state is! ProfileInitial &&
+                      state is! FetchProfileFailure &&
+                      state is! ProfileLoading)
                     ..._buildContent(
                       context,
                       userName,
                       userEmail,
                       '+91 $userPhone',
                       memberSince,
+                      '',
                     ),
                 ],
               ),
@@ -93,24 +121,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String userEmail,
     String userPhone,
     DateTime memberSince,
+    String? profileImageUrl,
   ) => <Widget>[
     SliverToBoxAdapter(
       child: Column(
         children: <Widget>[
           const SizedBox(height: 20),
-          CircleAvatar(
-            radius: 60,
-            backgroundColor: context.colorScheme.primary.withAlpha(200),
-            child: CircleAvatar(
-              radius: 55,
-              backgroundColor: context.colorScheme.surfaceContainerHighest,
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: context.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
+          _buildProfileAvatar(profileImageUrl),
           const SizedBox(height: 15),
 
           Text(userName, style: context.textTheme.headlineLarge),
@@ -285,6 +302,138 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     const SliverToBoxAdapter(child: SizedBox(height: 30)),
   ];
+
+  Widget _buildProfileAvatar(String? profileImageUrl) {
+    return Stack(
+      children: <Widget>[
+        CircleAvatar(
+          radius: 60,
+          backgroundColor: context.colorScheme.primary.withAlpha(200),
+          child: CircleAvatar(
+            radius: 55,
+            backgroundColor: context.colorScheme.surfaceContainerHighest,
+            backgroundImage: profileImageUrl != null
+                ? NetworkImage(profileImageUrl)
+                : null,
+            child: profileImageUrl == null
+                ? Icon(
+                    Icons.person,
+                    size: 50,
+                    color: context.colorScheme.onSurfaceVariant,
+                  )
+                : null,
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: () => _showImageOptions(profileImageUrl),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: context.colorScheme.primary,
+              child: Icon(
+                profileImageUrl == null ? Icons.add_a_photo : Icons.edit,
+                size: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showImageOptions(String? currentImageUrl) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: Text('Take photo'),
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: Text('Choose from gallery'),
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              if (currentImageUrl != null)
+                ListTile(
+                  leading: Icon(Icons.delete, color: context.colorScheme.error),
+                  title: Text(
+                    'Delete profile photo',
+                    style: TextStyle(color: context.colorScheme.error),
+                  ),
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    _deleteProfileImage();
+                  },
+                ),
+              ListTile(
+                leading: const Icon(Icons.cancel),
+                title: Text(context.strings.profileCancel),
+                onTap: () => Navigator.pop(bottomSheetContext),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        context.read<ProfileCubit>().updateProfileImage(image: imageFile);
+      }
+    } catch (e) {
+      showAppSnackbar(context, message: 'Error');
+    }
+  }
+
+  void _deleteProfileImage() {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: Text('Delete'),
+        content: Text('permantent delete'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(context.strings.profileCancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<ProfileCubit>().deleteProfileImage();
+            },
+            child: Text(
+              'Delete',
+              style: TextStyle(color: context.colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildErrorState(String errorMessage) {
     final bool isUserNotFound =
