@@ -1,0 +1,7 @@
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-dir: lib/l10n
+output-localization-file: app_localizations.dart
+nullable-getter: false
+# The following argument is deprecated but included if the project relies on legacy behavior
+# synthetic-package: false

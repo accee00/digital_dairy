@@ -82,7 +82,7 @@ class MilkEntryCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                '${milkEntry.quantityInLiter.toStringAsFixed(1)}L',
+                '${milkEntry.quantityInLiter.toStringAsFixed(1)}${context.strings.unitLitres}',
                 style: context.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -158,7 +158,7 @@ class MilkEntryCard extends StatelessWidget {
             ),
             _buildDetailRow(
               '🥛 ${context.strings.milkScreenEntryQuantity}',
-              '${milkEntry.quantityInLiter.toStringAsFixed(2)} L',
+              '${milkEntry.quantityInLiter.toStringAsFixed(2)}${context.strings.unitLitres}',
               context,
             ),
             if (milkEntry.notes.isNotEmpty) ...<Widget>[

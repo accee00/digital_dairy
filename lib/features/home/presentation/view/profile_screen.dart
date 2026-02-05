@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (state is ProfileImageUpdateSuccess) {
         currentUser = state.user;
-        showAppSnackbar(context, message: 'Profile image updated successfully');
+        showAppSnackbar(context, message: context.strings.profileImageUpdated);
       }
 
       if (state is ProfileImageUpdateFailure) {
@@ -78,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (state is ProfileImageDeleteSuccess) {
         currentUser = state.user;
-        showAppSnackbar(context, message: 'Profile image deleted successfully');
+        showAppSnackbar(context, message: context.strings.profileImageDeleted);
       }
 
       if (state is ProfileImageDeleteFailure) {
@@ -283,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.logout),
             label: Text(context.strings.profileLogout),
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colorScheme.error,
+              backgroundColor: Colors.red,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 15),
               shape: RoundedRectangleBorder(
@@ -351,7 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.photo_camera),
-              title: const Text('Take photo'),
+              title: Text(context.strings.profileTakePhoto),
               onTap: () {
                 Navigator.pop(bottomSheetContext);
                 _pickImage(ImageSource.camera);
@@ -359,7 +359,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Choose from gallery'),
+              title: Text(context.strings.profileChooseGallery),
               onTap: () {
                 Navigator.pop(bottomSheetContext);
                 _pickImage(ImageSource.gallery);
@@ -369,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ListTile(
                 leading: Icon(Icons.delete, color: context.colorScheme.error),
                 title: Text(
-                  'Delete profile photo',
+                  context.strings.profileDeletePhoto,
                   style: TextStyle(color: context.colorScheme.error),
                 ),
                 onTap: () {
@@ -408,7 +408,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) {
         return;
       }
-      showAppSnackbar(context, message: 'Error picking image: ${e.toString()}');
+      showAppSnackbar(
+        context,
+        message: '${context.strings.errorPickingImage} ${e.toString()}',
+      );
     }
   }
 
@@ -416,10 +419,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text('Delete Profile Photo'),
-        content: const Text(
-          'Are you sure you want to permanently delete your profile photo?',
-        ),
+        title: Text(context.strings.profileDeletePhotoTitle),
+        content: Text(context.strings.profileDeletePhotoConfirmation),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
@@ -431,7 +432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context.read<ProfileCubit>().deleteProfileImage();
             },
             child: Text(
-              'Delete',
+              context.strings.delete,
               style: TextStyle(color: context.colorScheme.error),
             ),
           ),

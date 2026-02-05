@@ -346,5 +346,38 @@
     "totalRevenue": "कुल राजस्व",
     "salesTotalQuantity": "कुल मात्रा",
     "transactions": "लेनदेन",
-    "avgPricePerLitre": "प्रति लीटर औसत मूल्य"
+    "avgPricePerLitre": "प्रति लीटर औसत मूल्य",
+    "goodMorning": "शुभ प्रभात",
+    "goodAfternoon": "नमस्कार",
+    "goodEvening": "शुभ संध्या",
+    "guest": "अतिथि",
+    "profileImageUpdated": "प्रोफ़ाइल फोटो सफलतापूर्वक अपडेट की गई",
+    "profileImageDeleted": "प्रोफ़ाइल फोटो सफलतापूर्वक हटा दी गई",
+    "errorUserNotFound": "उपयोगकर्ता नहीं मिला",
+    "errorUserNotSignedIn": "उपयोगकर्ता साइन इन नहीं है",
+    "errorUnexpected": "एक अप्रत्याशित त्रुटि हुई।",
+    "profileTakePhoto": "फोटो लें",
+    "profileChooseGallery": "गैलरी से चुनें",
+    "profileDeletePhoto": "प्रोफ़ाइल फोटो हटाएं",
+    "profileDeletePhotoTitle": "प्रोफ़ाइल फोटो हटाएं",
+    "profileDeletePhotoConfirmation": "क्या आप वाकई अपनी प्रोफ़ाइल फोटो स्थायी रूप से हटाना चाहते हैं?",
+    "notificationScreenTitle": "सूचनाएं",
+    "unitLitres": "ली",
+    "sortDate": "तारीख",
+    "sortQuantity": "मात्रा",
+    "sortMorningShift": "सुबह की शिफ्ट",
+    "sortEveningShift": "शाम की शिफ्ट",
+    "sortAllShifts": "सभी शिफ्ट",
+    "cattleCount": "{count, plural, =1{1 पशु} other{{count} पशु}}",
+    "@cattleCount": {
+        "placeholders": {
+            "count": {}
+        }
+    },
+    "searchResultsCount": "{count, plural, =1{1 परिणाम मिला} other{{count} परिणाम मिले}}",
+    "@searchResultsCount": {
+        "placeholders": {
+            "count": {}
+        }
+    }
 }

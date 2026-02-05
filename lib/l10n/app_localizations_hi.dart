@@ -141,7 +141,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get success => 'सफलता!';
 
   @override
-  String get welcome => 'डिजिटल डेयरी में आपका स्वागत है! आइए आपकी खेती को स्मार्ट और अधिक कुशल बनाते हैं।';
+  String get welcome =>
+      'डिजिटल डेयरी में आपका स्वागत है! आइए आपकी खेती को स्मार्ट और अधिक कुशल बनाते हैं।';
 
   @override
   String get authAgreeTerms => 'मैं सहमत हूँ ';
@@ -168,7 +169,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get authDontHaveAccount => 'क्या आपके पास खाता नहीं है?';
 
   @override
-  String get authForgotPasswordDescription => 'चिंता न करें! अपना ईमेल पता दर्ज करें और हम आपको पासवर्ड रीसेट करने के लिए एक लिंक भेजेंगे।';
+  String get authForgotPasswordDescription =>
+      'चिंता न करें! अपना ईमेल पता दर्ज करें और हम आपको पासवर्ड रीसेट करने के लिए एक लिंक भेजेंगे।';
 
   @override
   String get authSendResetLink => 'रीसेट लिंक भेजें';
@@ -180,10 +182,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get authBackToSignIn => 'साइन इन पर वापस जाएं';
 
   @override
-  String get authResetLinkSent => 'आपके ईमेल पर रीसेट लिंक सफलतापूर्वक भेजा गया!';
+  String get authResetLinkSent =>
+      'आपके ईमेल पर रीसेट लिंक सफलतापूर्वक भेजा गया!';
 
   @override
-  String get authResetPasswordHelp => 'यदि आपको कुछ मिनटों के भीतर ईमेल नहीं मिलता है, तो कृपया अपना स्पैम फ़ोल्डर जांचें या सहायता से संपर्क करें।';
+  String get authResetPasswordHelp =>
+      'यदि आपको कुछ मिनटों के भीतर ईमेल नहीं मिलता है, तो कृपया अपना स्पैम फ़ोल्डर जांचें या सहायता से संपर्क करें।';
 
   @override
   String get navbarHome => 'होम';
@@ -243,7 +247,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get milkTip => 'सुझाव';
 
   @override
-  String get milkTipText => 'सटीकता के लिए दुहने के तुरंत बाद दूध उत्पादन रिकॉर्ड करें';
+  String get milkTipText =>
+      'सटीकता के लिए दुहने के तुरंत बाद दूध उत्पादन रिकॉर्ड करें';
 
   @override
   String get milkAdditionalInfo => 'अतिरिक्त जानकारी';
@@ -252,7 +257,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get milkNotes => 'नोट्स (वैकल्पिक)';
 
   @override
-  String get milkNotesHint => 'दूध की गुणवत्ता, पशु स्वास्थ्य या किसी समस्या के बारे में नोट्स जोड़ें...';
+  String get milkNotesHint =>
+      'दूध की गुणवत्ता, पशु स्वास्थ्य या किसी समस्या के बारे में नोट्स जोड़ें...';
 
   @override
   String get milkCommonNotes => 'सामान्य नोट्स:';
@@ -336,7 +342,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get milkScreenNoEntriesFound => 'कोई दूध प्रविष्टि नहीं मिली';
 
   @override
-  String get milkScreenAdjustFilters => 'अपने फ़िल्टर समायोजित करने का प्रयास करें';
+  String get milkScreenAdjustFilters =>
+      'अपने फ़िल्टर समायोजित करने का प्रयास करें';
 
   @override
   String get milkScreenSummaryTotal => 'कुल';
@@ -474,7 +481,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get deleteCattle => 'पशु हटाएं';
 
   @override
-  String get deleteConfirmation => 'क्या आप वाकई इस पशु को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।';
+  String get deleteConfirmation =>
+      'क्या आप वाकई इस पशु को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।';
 
   @override
   String get cancel => 'रद्द करें';
@@ -879,7 +887,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get buyerAddressLabel => 'पता';
 
   @override
-  String get buyerAddressHint => 'अक्षय नगर पहला ब्लॉक पहला क्रॉस, राममूर्ति नगर, बैंगलोर-560016';
+  String get buyerAddressHint =>
+      'अक्षय नगर पहला ब्लॉक पहला क्रॉस, राममूर्ति नगर, बैंगलोर-560016';
 
   @override
   String get buyerAddressRequired => 'कृपया पता दर्ज करें';
@@ -996,7 +1005,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get buyerEmptyStateTitle => 'अभी तक कोई खरीदार नहीं';
 
   @override
-  String get buyerEmptyStateSubtitle => 'अपना पहला खरीदार जोड़कर\nअपने ग्राहक आधार का निर्माण शुरू करें';
+  String get buyerEmptyStateSubtitle =>
+      'अपना पहला खरीदार जोड़कर\nअपने ग्राहक आधार का निर्माण शुरू करें';
 
   @override
   String get buyerAddFirstButton => 'अपना पहला खरीदार जोड़ें';
@@ -1005,7 +1015,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get buyerNoResultsTitle => 'कोई परिणाम नहीं मिला';
 
   @override
-  String get buyerNoResultsSubtitle => 'अपनी खोज शर्तों को समायोजित करने का प्रयास करें';
+  String get buyerNoResultsSubtitle =>
+      'अपनी खोज शर्तों को समायोजित करने का प्रयास करें';
 
   @override
   String get buyerMenuAddBuyer => 'खरीदार जोड़ें';
@@ -1048,4 +1059,90 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get avgPricePerLitre => 'प्रति लीटर औसत मूल्य';
+
+  @override
+  String get goodMorning => 'शुभ प्रभात';
+
+  @override
+  String get goodAfternoon => 'नमस्कार';
+
+  @override
+  String get goodEvening => 'शुभ संध्या';
+
+  @override
+  String get guest => 'अतिथि';
+
+  @override
+  String get profileImageUpdated => 'प्रोफ़ाइल फोटो सफलतापूर्वक अपडेट की गई';
+
+  @override
+  String get profileImageDeleted => 'प्रोफ़ाइल फोटो सफलतापूर्वक हटा दी गई';
+
+  @override
+  String get errorUserNotFound => 'उपयोगकर्ता नहीं मिला';
+
+  @override
+  String get errorUserNotSignedIn => 'उपयोगकर्ता साइन इन नहीं है';
+
+  @override
+  String get errorUnexpected => 'एक अप्रत्याशित त्रुटि हुई।';
+
+  @override
+  String get profileTakePhoto => 'फोटो लें';
+
+  @override
+  String get profileChooseGallery => 'गैलरी से चुनें';
+
+  @override
+  String get profileDeletePhoto => 'प्रोफ़ाइल फोटो हटाएं';
+
+  @override
+  String get profileDeletePhotoTitle => 'प्रोफ़ाइल फोटो हटाएं';
+
+  @override
+  String get profileDeletePhotoConfirmation =>
+      'क्या आप वाकई अपनी प्रोफ़ाइल फोटो स्थायी रूप से हटाना चाहते हैं?';
+
+  @override
+  String get notificationScreenTitle => 'सूचनाएं';
+
+  @override
+  String get unitLitres => 'ली';
+
+  @override
+  String get sortDate => 'तारीख';
+
+  @override
+  String get sortQuantity => 'मात्रा';
+
+  @override
+  String get sortMorningShift => 'सुबह की शिफ्ट';
+
+  @override
+  String get sortEveningShift => 'शाम की शिफ्ट';
+
+  @override
+  String get sortAllShifts => 'सभी शिफ्ट';
+
+  @override
+  String cattleCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count पशु',
+      one: '1 पशु',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchResultsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count परिणाम मिले',
+      one: '1 परिणाम मिला',
+    );
+    return '$_temp0';
+  }
 }

@@ -524,7 +524,7 @@ class _AddMilkScreenState extends State<AddMilkScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  'L',
+                  context.strings.unitLitres,
                   style: context.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.colorScheme.primary,

@@ -1,6 +1,7 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/debouncer.dart';
+import 'package:digital_dairy/core/widget/app_empty_state.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
@@ -79,8 +80,8 @@ class _CattleScreenState extends State<CattleScreen> {
                         ? context.strings.searchResults
                         : context.strings.myCattles,
                     subTitle: isSearching
-                        ? '$cattleCount ${context.strings.found}'
-                        : '$cattleCount ${cattleCount != 1 ? context.strings.cattlePlural : context.strings.cattleSingular}',
+                        ? context.strings.searchResultsCount(cattleCount)
+                        : context.strings.cattleCount(cattleCount),
                     onTap: () => context.push(AppRoutes.addCattle),
                   );
                 },
@@ -181,44 +182,17 @@ class _CattleScreenState extends State<CattleScreen> {
 
                 // Show empty state
                 if (cattleList.isEmpty) {
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.pets_outlined,
-                            size: 64,
-                            color: context.colorScheme.onSurface.withAlpha(100),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            (state.search?.isNotEmpty ?? false)
-                                ? '${context.strings.noCattleFound} "${state.search}"'
-                                : context.strings.noCattleFound,
-                            style: context.textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            (state.search?.isNotEmpty ?? false)
-                                ? context.strings.tryDifferentSearch
-                                : context.strings.addFirstCattle,
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              color: context.colorScheme.onSurface.withAlpha(
-                                150,
-                              ),
-                            ),
-                          ),
-                          if (state.search?.isNotEmpty ?? false) ...<Widget>[
-                            const SizedBox(height: 16),
-                            OutlinedButton(
-                              onPressed: _clearSearch,
-                              child: Text(context.strings.clearSearch),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
+                  final bool isSearchActive = state.search?.isNotEmpty ?? false;
+                  return AppEmptyState.sliver(
+                    title: isSearchActive
+                        ? '${context.strings.noCattleFound} "${state.search}"'
+                        : context.strings.noCattleFound,
+                    message: isSearchActive
+                        ? context.strings.tryDifferentSearch
+                        : context.strings.addFirstCattle,
+                    icon: Icons.pets_outlined,
+                    onRetry: isSearchActive ? _clearSearch : null,
+                    retryText: context.strings.clearSearch,
                   );
                 }
 

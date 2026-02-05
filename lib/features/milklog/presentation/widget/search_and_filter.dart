@@ -36,12 +36,16 @@ class SearchAndFilters extends StatelessWidget {
 
   String _getSortDisplayText(BuildContext context) {
     switch (sortBy) {
+      case 'Date':
+        return context.strings.sortDate;
+      case 'Quantity':
+        return context.strings.sortQuantity;
       case 'Morning Shift':
-        return '${context.strings.morning} Only';
+        return context.strings.sortMorningShift;
       case 'Evening Shift':
-        return '${context.strings.evening} Only';
+        return context.strings.sortEveningShift;
       case 'All Shifts':
-        return 'All Entries';
+        return context.strings.sortAllShifts;
       default:
         return sortBy;
     }

@@ -5,6 +5,7 @@ import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/utils/debouncer.dart';
 import 'package:digital_dairy/core/utils/enums.dart';
+import 'package:digital_dairy/core/widget/app_empty_state.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
@@ -143,35 +144,10 @@ class _MilkScreenState extends State<MilkScreen> {
                   final List<MilkModel> sortedEntries = state.milkLogList;
 
                   if (sortedEntries.isEmpty) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.water_drop_outlined,
-                              size: 64,
-                              color: context.colorScheme.onSurface.withAlpha(
-                                100,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              context.strings.milkScreenNoEntriesFound,
-                              style: context.textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              context.strings.milkScreenAdjustFilters,
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                color: context.colorScheme.onSurface.withAlpha(
-                                  150,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    return AppEmptyState.sliver(
+                      title: context.strings.milkScreenNoEntriesFound,
+                      message: context.strings.milkScreenAdjustFilters,
+                      icon: Icons.water_drop_outlined,
                     );
                   }
 
@@ -249,21 +225,21 @@ class _MilkScreenState extends State<MilkScreen> {
           _buildSummaryItem(
             context,
             context.strings.milkScreenSummaryTotal,
-            '${totalMilk.toStringAsFixed(1)}L',
+            '${totalMilk.toStringAsFixed(1)}${context.strings.unitLitres}',
             Icons.water_drop,
             context.colorScheme.primary,
           ),
           _buildSummaryItem(
             context,
             context.strings.milkScreenSummaryMorning,
-            '${morningMilk.toStringAsFixed(1)}L',
+            '${morningMilk.toStringAsFixed(1)}${context.strings.unitLitres}',
             Icons.wb_sunny,
             Colors.orange,
           ),
           _buildSummaryItem(
             context,
             context.strings.milkScreenSummaryEvening,
-            '${eveningMilk.toStringAsFixed(1)}L',
+            '${eveningMilk.toStringAsFixed(1)}${context.strings.unitLitres}',
             Icons.nights_stay,
             Colors.indigo,
           ),
@@ -299,6 +275,23 @@ class _MilkScreenState extends State<MilkScreen> {
     ],
   );
 
+  String _getSortDisplayOption(String option) {
+    switch (option) {
+      case 'Date':
+        return context.strings.sortDate;
+      case 'Quantity':
+        return context.strings.sortQuantity;
+      case 'Morning Shift':
+        return context.strings.sortMorningShift;
+      case 'Evening Shift':
+        return context.strings.sortEveningShift;
+      case 'All Shifts':
+        return context.strings.sortAllShifts;
+      default:
+        return option;
+    }
+  }
+
   void _showSortOptions(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
@@ -327,7 +320,7 @@ class _MilkScreenState extends State<MilkScreen> {
                       ? context.colorScheme.primary
                       : context.colorScheme.onSurface.withAlpha(150),
                 ),
-                title: Text(option),
+                title: Text(_getSortDisplayOption(option)),
                 trailing: _sortBy == option
                     ? Icon(Icons.check, color: context.colorScheme.primary)
                     : null,

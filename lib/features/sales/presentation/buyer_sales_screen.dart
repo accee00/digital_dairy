@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
+import 'package:digital_dairy/core/widget/app_empty_state.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
 import 'package:digital_dairy/features/cattle/presentation/widget/custom_container.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
@@ -167,7 +168,17 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
                   ),
                 )
               else if (_displayedSales.isEmpty)
-                SliverToBoxAdapter(child: _buildEmpty())
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: AppEmptyState(
+                    title: context.strings.noMilkRecordsFound,
+                    message: context.strings.recordsWillAppear.replaceAll(
+                      'monthYear',
+                      '${_getLocalizedMonthName(_selectedMonth, context)} ${_selectedMonth.year}',
+                    ),
+                    icon: Icons.receipt_long_outlined,
+                  ),
+                )
               else ...<Widget>[
                 SliverToBoxAdapter(child: _buildSummaryCards(_displayedSales)),
                 SliverToBoxAdapter(
@@ -191,6 +202,7 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
       ),
     ),
     floatingActionButton: FloatingActionButton.extended(
+      foregroundColor: Colors.white,
       onPressed: () async {
         final Object? result = await context.push(
           AppRoutes.addSales,
@@ -516,45 +528,6 @@ class _BuyerSalesScreenState extends State<BuyerSalesScreen> {
     delegate: SliverChildBuilderDelegate(
       (BuildContext context, int index) => SaleCard(sale: sales[index]),
       childCount: sales.length,
-    ),
-  );
-
-  Widget _buildEmpty() => Padding(
-    padding: const EdgeInsets.all(40),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: context.colorScheme.surfaceContainerHighest,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.receipt_long_outlined,
-            size: 64,
-            color: context.colorScheme.outline,
-          ),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          context.strings.noMilkRecordsFound,
-          style: context.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          context.strings.recordsWillAppear.replaceAll(
-            'monthYear',
-            '${_getLocalizedMonthName(_selectedMonth, context)} ${_selectedMonth.year}',
-          ),
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: context.colorScheme.onSurfaceVariant,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
     ),
   );
 

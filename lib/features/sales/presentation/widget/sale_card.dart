@@ -26,7 +26,7 @@ class SaleCard extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: context.colorScheme.secondary.withAlpha(100),
+                  color: context.colorScheme.primary.withAlpha(200),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -36,13 +36,13 @@ class SaleCard extends StatelessWidget {
                       DateFormat('dd').format(sale.date),
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: context.colorScheme.primary,
+                        color: Colors.white,
                       ),
                     ),
                     Text(
                       _getLocalizedShortMonth(sale.date, context),
                       style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.primary,
+                        color: Colors.white,
                       ),
                     ),
                   ],

@@ -62,15 +62,17 @@ import 'app_localizations_hi.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,17 +84,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('hi')
+    Locale('hi'),
   ];
 
   /// No description provided for @appName.
@@ -2176,9 +2179,148 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Average Price per Litre'**
   String get avgPricePerLitre;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get goodEvening;
+
+  /// No description provided for @guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// No description provided for @profileImageUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile image updated successfully'**
+  String get profileImageUpdated;
+
+  /// No description provided for @profileImageDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile image deleted successfully'**
+  String get profileImageDeleted;
+
+  /// No description provided for @errorUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User Not Found'**
+  String get errorUserNotFound;
+
+  /// No description provided for @errorUserNotSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'User Not Signed In'**
+  String get errorUserNotSignedIn;
+
+  /// No description provided for @errorUnexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected error occurred.'**
+  String get errorUnexpected;
+
+  /// No description provided for @profileTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get profileTakePhoto;
+
+  /// No description provided for @profileChooseGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get profileChooseGallery;
+
+  /// No description provided for @profileDeletePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete profile photo'**
+  String get profileDeletePhoto;
+
+  /// No description provided for @profileDeletePhotoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Profile Photo'**
+  String get profileDeletePhotoTitle;
+
+  /// No description provided for @profileDeletePhotoConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently delete your profile photo?'**
+  String get profileDeletePhotoConfirmation;
+
+  /// No description provided for @notificationScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationScreenTitle;
+
+  /// No description provided for @unitLitres.
+  ///
+  /// In en, this message translates to:
+  /// **'L'**
+  String get unitLitres;
+
+  /// No description provided for @sortDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get sortDate;
+
+  /// No description provided for @sortQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get sortQuantity;
+
+  /// No description provided for @sortMorningShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Shift'**
+  String get sortMorningShift;
+
+  /// No description provided for @sortEveningShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Shift'**
+  String get sortEveningShift;
+
+  /// No description provided for @sortAllShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'All Shifts'**
+  String get sortAllShifts;
+
+  /// No description provided for @cattleCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Cattle} other{{count} Cattles}}'**
+  String cattleCount(num count);
+
+  /// No description provided for @searchResultsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 result found} other{{count} results found}}'**
+  String searchResultsCount(num count);
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -2187,25 +2329,26 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'hi'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'hi'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'hi': return AppLocalizationsHi();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'hi':
+      return AppLocalizationsHi();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

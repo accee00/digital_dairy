@@ -116,7 +116,7 @@ class CattleCard extends StatelessWidget {
                   child: _buildInfoItem(
                     context,
                     context.strings.thisMonth,
-                    '${cattle.thisMonthL}L',
+                    '${cattle.thisMonthL}${context.strings.unitLitres}',
                     Icons.water_drop,
                   ),
                 ),

@@ -1,6 +1,7 @@
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
+import 'package:digital_dairy/core/widget/app_empty_state.dart';
 import 'package:digital_dairy/core/widget/header_for_add.dart';
 import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:digital_dairy/features/sales/model/buyer_model.dart';
@@ -154,11 +155,21 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
             final List<Buyer> filteredBuyers = _filterBuyers(buyerData);
 
             if (buyerData.isEmpty) {
-              return SliverFillRemaining(child: _buildEmptyState(context));
+              return AppEmptyState.sliver(
+                title: context.strings.buyerEmptyStateTitle,
+                message: context.strings.buyerEmptyStateSubtitle,
+                icon: Icons.people_outline_rounded,
+                onRetry: () => context.pushNamed(AppRoutes.addBuyer),
+                retryText: context.strings.buyerAddFirstButton,
+              );
             }
 
             if (filteredBuyers.isEmpty) {
-              return SliverFillRemaining(child: _buildNoSearchResults(context));
+              return AppEmptyState.sliver(
+                title: context.strings.buyerNoResultsTitle,
+                message: context.strings.buyerNoResultsSubtitle,
+                icon: Icons.search_off_rounded,
+              );
             }
 
             return SliverPadding(
@@ -190,98 +201,6 @@ class _MilkSalesScreenState extends State<MilkSalesScreen> {
       ],
     ),
   );
-
-  Widget _buildEmptyState(BuildContext context) {
-    final TextTheme textTheme = context.textTheme;
-    final ColorScheme colorScheme = context.colorScheme;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withAlpha(102),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.people_outline_rounded,
-                size: 80,
-                color: colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 32),
-            Text(
-              context.strings.buyerEmptyStateTitle,
-              style: textTheme.headlineSmall?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              context.strings.buyerEmptyStateSubtitle,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 40),
-            FilledButton.icon(
-              onPressed: () => context.pushNamed(AppRoutes.addBuyer),
-              icon: const Icon(Icons.person_add_alt_1_outlined),
-              label: Text(context.strings.buyerAddFirstButton),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNoSearchResults(BuildContext context) {
-    final TextTheme textTheme = context.textTheme;
-    final ColorScheme colorScheme = context.colorScheme;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.search_off_rounded,
-              size: 80,
-              color: colorScheme.outline.withAlpha(128),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              context.strings.buyerNoResultsTitle,
-              style: textTheme.titleLarge?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              context.strings.buyerNoResultsSubtitle,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   SliverAppBar _appbar(BuildContext context) => SliverAppBar(
     backgroundColor: Colors.transparent,
@@ -399,7 +318,7 @@ class _BuyerCard extends StatelessWidget {
                     child: Text(
                       buyer.name.isNotEmpty ? buyer.name[0].toUpperCase() : '?',
                       style: textTheme.titleLarge?.copyWith(
-                        color: colorScheme.onPrimaryContainer,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -517,6 +436,7 @@ class _BuyerCard extends StatelessWidget {
                   label: Text(context.strings.buyerAddSaleButton),
                   style: FilledButton.styleFrom(
                     backgroundColor: colorScheme.primary,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,

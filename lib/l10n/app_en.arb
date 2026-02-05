@@ -348,5 +348,38 @@
     "totalRevenue": "Total Revenue",
     "salesTotalQuantity": "Total Quantity",
     "transactions": "Transactions",
-    "avgPricePerLitre": "Average Price per Litre"
+    "avgPricePerLitre": "Average Price per Litre",
+    "goodMorning": "Good Morning",
+    "goodAfternoon": "Good Afternoon",
+    "goodEvening": "Good Evening",
+    "guest": "Guest",
+    "profileImageUpdated": "Profile image updated successfully",
+    "profileImageDeleted": "Profile image deleted successfully",
+    "errorUserNotFound": "User Not Found",
+    "errorUserNotSignedIn": "User Not Signed In",
+    "errorUnexpected": "Unexpected error occurred.",
+    "profileTakePhoto": "Take photo",
+    "profileChooseGallery": "Choose from gallery",
+    "profileDeletePhoto": "Delete profile photo",
+    "profileDeletePhotoTitle": "Delete Profile Photo",
+    "profileDeletePhotoConfirmation": "Are you sure you want to permanently delete your profile photo?",
+    "notificationScreenTitle": "Notifications",
+    "unitLitres": "L",
+    "sortDate": "Date",
+    "sortQuantity": "Quantity",
+    "sortMorningShift": "Morning Shift",
+    "sortEveningShift": "Evening Shift",
+    "sortAllShifts": "All Shifts",
+    "cattleCount": "{count, plural, =1{1 Cattle} other{{count} Cattles}}",
+    "@cattleCount": {
+        "placeholders": {
+            "count": {}
+        }
+    },
+    "searchResultsCount": "{count, plural, =1{1 result found} other{{count} results found}}",
+    "@searchResultsCount": {
+        "placeholders": {
+            "count": {}
+        }
+    }
 }

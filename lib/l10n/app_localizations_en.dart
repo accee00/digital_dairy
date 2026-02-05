@@ -141,7 +141,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get success => 'Success!';
 
   @override
-  String get welcome => 'Welcome to Digital Dairy! Let\'s make your farming smarter and more efficient.';
+  String get welcome =>
+      'Welcome to Digital Dairy! Let\'s make your farming smarter and more efficient.';
 
   @override
   String get authAgreeTerms => 'I agree to the ';
@@ -168,7 +169,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authDontHaveAccount => 'Don\'t have an account?';
 
   @override
-  String get authForgotPasswordDescription => 'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.';
+  String get authForgotPasswordDescription =>
+      'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.';
 
   @override
   String get authSendResetLink => 'Send Reset Link';
@@ -183,7 +185,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authResetLinkSent => 'Reset link sent to your email successfully!';
 
   @override
-  String get authResetPasswordHelp => 'If you don\'t receive the email within a few minutes, please check your spam folder or contact support.';
+  String get authResetPasswordHelp =>
+      'If you don\'t receive the email within a few minutes, please check your spam folder or contact support.';
 
   @override
   String get navbarHome => 'Home';
@@ -243,7 +246,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get milkTip => 'Tip';
 
   @override
-  String get milkTipText => 'Record milk production immediately after milking for accuracy';
+  String get milkTipText =>
+      'Record milk production immediately after milking for accuracy';
 
   @override
   String get milkAdditionalInfo => 'Additional Information';
@@ -252,7 +256,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get milkNotes => 'Notes (Optional)';
 
   @override
-  String get milkNotesHint => 'Add notes about milk quality, cattle health, or any issues...';
+  String get milkNotesHint =>
+      'Add notes about milk quality, cattle health, or any issues...';
 
   @override
   String get milkCommonNotes => 'Common Notes:';
@@ -474,7 +479,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteCattle => 'Delete Cattle';
 
   @override
-  String get deleteConfirmation => 'Are you sure you want to delete this cattle? This action cannot be undone.';
+  String get deleteConfirmation =>
+      'Are you sure you want to delete this cattle? This action cannot be undone.';
 
   @override
   String get cancel => 'Cancel';
@@ -879,7 +885,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyerAddressLabel => 'Address';
 
   @override
-  String get buyerAddressHint => 'Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016';
+  String get buyerAddressHint =>
+      'Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016';
 
   @override
   String get buyerAddressRequired => 'Please enter address';
@@ -939,7 +946,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get milkSaleQuantityRequired => 'Please enter quantity';
 
   @override
-  String get milkSaleQuantityGreaterThanZero => 'Quantity must be greater than 0';
+  String get milkSaleQuantityGreaterThanZero =>
+      'Quantity must be greater than 0';
 
   @override
   String get milkSalePriceLabel => 'Price';
@@ -996,7 +1004,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyerEmptyStateTitle => 'No Buyers Yet';
 
   @override
-  String get buyerEmptyStateSubtitle => 'Start building your customer base by\nadding your first buyer';
+  String get buyerEmptyStateSubtitle =>
+      'Start building your customer base by\nadding your first buyer';
 
   @override
   String get buyerAddFirstButton => 'Add Your First Buyer';
@@ -1048,4 +1057,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get avgPricePerLitre => 'Average Price per Litre';
+
+  @override
+  String get goodMorning => 'Good Morning';
+
+  @override
+  String get goodAfternoon => 'Good Afternoon';
+
+  @override
+  String get goodEvening => 'Good Evening';
+
+  @override
+  String get guest => 'Guest';
+
+  @override
+  String get profileImageUpdated => 'Profile image updated successfully';
+
+  @override
+  String get profileImageDeleted => 'Profile image deleted successfully';
+
+  @override
+  String get errorUserNotFound => 'User Not Found';
+
+  @override
+  String get errorUserNotSignedIn => 'User Not Signed In';
+
+  @override
+  String get errorUnexpected => 'Unexpected error occurred.';
+
+  @override
+  String get profileTakePhoto => 'Take photo';
+
+  @override
+  String get profileChooseGallery => 'Choose from gallery';
+
+  @override
+  String get profileDeletePhoto => 'Delete profile photo';
+
+  @override
+  String get profileDeletePhotoTitle => 'Delete Profile Photo';
+
+  @override
+  String get profileDeletePhotoConfirmation =>
+      'Are you sure you want to permanently delete your profile photo?';
+
+  @override
+  String get notificationScreenTitle => 'Notifications';
+
+  @override
+  String get unitLitres => 'L';
+
+  @override
+  String get sortDate => 'Date';
+
+  @override
+  String get sortQuantity => 'Quantity';
+
+  @override
+  String get sortMorningShift => 'Morning Shift';
+
+  @override
+  String get sortEveningShift => 'Evening Shift';
+
+  @override
+  String get sortAllShifts => 'All Shifts';
+
+  @override
+  String cattleCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Cattles',
+      one: '1 Cattle',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchResultsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results found',
+      one: '1 result found',
+    );
+    return '$_temp0';
+  }
 }
