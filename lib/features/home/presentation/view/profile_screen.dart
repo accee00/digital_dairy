@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/exceptions/failure.dart';
@@ -7,12 +8,12 @@ import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
+import 'package:digital_dairy/features/auth/model/user.dart';
 import 'package:digital_dairy/features/home/cubit/profile_cubit.dart';
 import 'package:digital_dairy/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// ignore: implementation_imports
-import 'package:fpdart/src/either.dart';
+import 'package:fpdart/fpdart.dart' show Either;
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,9 +27,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final String defaultUserName = '';
-  final String defaultUserEmail = '';
-  final String defaultUserPhone = '';
   final DateTime defaultMemberSince = DateTime(2023, 1, 15);
 
   bool pushNotifications = false;
@@ -37,83 +35,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final ImagePicker _imagePicker = ImagePicker();
 
+  late UserModel? currentUser;
+  bool isImageLoading = false;
+
   @override
   void initState() {
     super.initState();
-
+    currentUser = null;
     context.read<ProfileCubit>().fetchProfile();
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocConsumer<ProfileCubit, ProfileState>(
-        listener: (BuildContext context, ProfileState state) {
-          // Handle profile image update success
-          if (state is ProfileImageUpdateSuccess) {
-            showAppSnackbar(context, message: 'Add');
-          }
+  Widget build(
+    BuildContext context,
+  ) => BlocConsumer<ProfileCubit, ProfileState>(
+    listener: (BuildContext context, ProfileState state) {
+      if (state is FetchProfileSuccess) {
+        currentUser = state.user;
+        isImageLoading = false;
+      }
 
-          // Handle profile image update failure
-          if (state is ProfileImageUpdateFailure) {
-            showAppSnackbar(context, message: state.message);
-          }
+      if (state is ProfileImageUploading) {
+        currentUser = state.user;
+        isImageLoading = true;
+      }
 
-          // Handle profile image delete success
-          if (state is ProfileImageDeleteSuccess) {
-            showAppSnackbar(context, message: 'Delete');
-          }
+      if (state is ProfileImageDeleting) {
+        currentUser = state.user;
+        isImageLoading = true;
+      }
 
-          // Handle profile image delete failure
-          if (state is ProfileImageDeleteFailure) {
-            showAppSnackbar(context, message: state.message);
-          }
-        },
-        builder: (BuildContext context, ProfileState state) {
-          final String userName = state is FetchProfileSuccess
-              ? state.user.name
-              : defaultUserName;
-          final String userEmail = state is FetchProfileSuccess
-              ? state.user.email
-              : defaultUserEmail;
-          final String userPhone = state is FetchProfileSuccess
-              ? state.user.phoneNumber
-              : defaultUserPhone;
-          final DateTime memberSince =
-              state is FetchProfileSuccess && state.user.createdAt != null
-              ? state.user.createdAt!
-              : defaultMemberSince;
+      if (state is ProfileImageUpdateSuccess) {
+        currentUser = state.user;
+        showAppSnackbar(context, message: 'Profile image updated successfully');
+      }
 
-          return Scaffold(
-            body: CustomScaffoldContainer(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  _appBar(context),
+      if (state is ProfileImageUpdateFailure) {
+        currentUser = state.user;
+        isImageLoading = false;
+        showAppSnackbar(context, message: state.message);
+      }
 
-                  if (state is ProfileInitial || state is ProfileLoading)
-                    const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
+      if (state is ProfileImageDeleteSuccess) {
+        currentUser = state.user;
+        showAppSnackbar(context, message: 'Profile image deleted successfully');
+      }
 
-                  if (state is FetchProfileFailure)
-                    SliverFillRemaining(child: _buildErrorState(state.message)),
+      if (state is ProfileImageDeleteFailure) {
+        currentUser = state.user;
+        isImageLoading = false;
+        showAppSnackbar(context, message: state.message);
+      }
+    },
+    builder: (BuildContext context, ProfileState state) => Scaffold(
+      body: CustomScaffoldContainer(
+        child: CustomScrollView(
+          slivers: <Widget>[
+            _appBar(context),
 
-                  if (state is! ProfileInitial &&
-                      state is! FetchProfileFailure &&
-                      state is! ProfileLoading)
-                    ..._buildContent(
-                      context,
-                      userName,
-                      userEmail,
-                      '+91 $userPhone',
-                      memberSince,
-                      '',
-                    ),
-                ],
+            if (state is ProfileInitial ||
+                (state is ProfileLoading && currentUser == null))
+              const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (state is FetchProfileFailure && currentUser == null)
+              SliverFillRemaining(child: _buildErrorState(state.message))
+            else if (currentUser != null)
+              ..._buildContent(
+                context,
+                currentUser!.name,
+                currentUser!.email,
+                '+91 ${currentUser!.phoneNumber}',
+                currentUser!.createdAt ?? defaultMemberSince,
+                currentUser!.imageUrl,
               ),
-            ),
-          );
-        },
-      );
+          ],
+        ),
+      ),
+    ),
+  );
 
   List<Widget> _buildContent(
     BuildContext context,
@@ -129,10 +129,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 20),
           _buildProfileAvatar(profileImageUrl),
           const SizedBox(height: 15),
-
           Text(userName, style: context.textTheme.headlineLarge),
           const SizedBox(height: 5),
-
           Text(
             '${context.strings.profileMemberSince} ${_formatDate(memberSince)}',
             style: context.textTheme.bodyLarge,
@@ -206,7 +204,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 message: context.strings.profileFeatureComingSoon,
               );
               return;
-              // setState(() => pushNotifications = value);
             },
           ),
           _buildSwitchTile(
@@ -220,7 +217,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 message: context.strings.profileFeatureComingSoon,
               );
               return;
-              // setState(() => emailNotifications = value);
             },
           ),
           _buildSwitchTile(
@@ -234,7 +230,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 message: context.strings.profileFeatureComingSoon,
               );
               return;
-              // setState(() => smsNotifications = value);
             },
           ),
         ],
@@ -303,91 +298,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
     const SliverToBoxAdapter(child: SizedBox(height: 30)),
   ];
 
-  Widget _buildProfileAvatar(String? profileImageUrl) {
-    return Stack(
-      children: <Widget>[
-        CircleAvatar(
-          radius: 60,
-          backgroundColor: context.colorScheme.primary.withAlpha(200),
-          child: CircleAvatar(
-            radius: 55,
-            backgroundColor: context.colorScheme.surfaceContainerHighest,
-            backgroundImage: profileImageUrl != null
-                ? NetworkImage(profileImageUrl)
-                : null,
-            child: profileImageUrl == null
-                ? Icon(
-                    Icons.person,
-                    size: 50,
-                    color: context.colorScheme.onSurfaceVariant,
-                  )
-                : null,
-          ),
+  Widget _buildProfileAvatar(String? profileImageUrl) => Stack(
+    children: <Widget>[
+      CircleAvatar(
+        radius: 55,
+        backgroundColor: context.colorScheme.surfaceContainerHighest,
+        backgroundImage: profileImageUrl != null && profileImageUrl.isNotEmpty
+            ? CachedNetworkImageProvider(profileImageUrl)
+            : null,
+        child: profileImageUrl == null || profileImageUrl.isEmpty
+            ? Icon(
+                Icons.person,
+                size: 50,
+                color: context.colorScheme.onSurfaceVariant,
+              )
+            : null,
+      ),
+
+      if (isImageLoading)
+        const Positioned.fill(
+          child: CircleAvatar(radius: 55, child: CircularProgressIndicator()),
         ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: GestureDetector(
-            onTap: () => _showImageOptions(profileImageUrl),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundColor: context.colorScheme.primary,
-              child: Icon(
-                profileImageUrl == null ? Icons.add_a_photo : Icons.edit,
-                size: 18,
-                color: Colors.white,
-              ),
+
+      Positioned(
+        bottom: 0,
+        right: 0,
+        child: GestureDetector(
+          onTap: isImageLoading
+              ? null
+              : () => _showImageOptions(profileImageUrl),
+          child: CircleAvatar(
+            radius: 18,
+            backgroundColor: context.colorScheme.primary,
+            child: Icon(
+              profileImageUrl == null || profileImageUrl.isEmpty
+                  ? Icons.add_a_photo
+                  : Icons.edit,
+              size: 18,
+              color: Colors.white,
             ),
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
   void _showImageOptions(String? currentImageUrl) {
     showModalBottomSheet<void>(
       context: context,
-      builder: (BuildContext bottomSheetContext) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
+      builder: (BuildContext bottomSheetContext) => SafeArea(
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.photo_camera),
+              title: const Text('Take photo'),
+              onTap: () {
+                Navigator.pop(bottomSheetContext);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from gallery'),
+              onTap: () {
+                Navigator.pop(bottomSheetContext);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            if (currentImageUrl != null && currentImageUrl.isNotEmpty)
               ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: Text('Take photo'),
-                onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: Text('Choose from gallery'),
-                onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-              if (currentImageUrl != null)
-                ListTile(
-                  leading: Icon(Icons.delete, color: context.colorScheme.error),
-                  title: Text(
-                    'Delete profile photo',
-                    style: TextStyle(color: context.colorScheme.error),
-                  ),
-                  onTap: () {
-                    Navigator.pop(bottomSheetContext);
-                    _deleteProfileImage();
-                  },
+                leading: Icon(Icons.delete, color: context.colorScheme.error),
+                title: Text(
+                  'Delete profile photo',
+                  style: TextStyle(color: context.colorScheme.error),
                 ),
-              ListTile(
-                leading: const Icon(Icons.cancel),
-                title: Text(context.strings.profileCancel),
-                onTap: () => Navigator.pop(bottomSheetContext),
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  _deleteProfileImage();
+                },
               ),
-            ],
-          ),
-        );
-      },
+            ListTile(
+              leading: const Icon(Icons.cancel),
+              title: Text(context.strings.profileCancel),
+              onTap: () => Navigator.pop(bottomSheetContext),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -402,10 +399,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (pickedFile != null) {
         final File imageFile = File(pickedFile.path);
-        context.read<ProfileCubit>().updateProfileImage(image: imageFile);
+        if (!mounted) {
+          return;
+        }
+        await context.read<ProfileCubit>().updateProfileImage(image: imageFile);
       }
     } catch (e) {
-      showAppSnackbar(context, message: 'Error');
+      if (!mounted) {
+        return;
+      }
+      showAppSnackbar(context, message: 'Error picking image: ${e.toString()}');
     }
   }
 
@@ -413,8 +416,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
-        title: Text('Delete'),
-        content: Text('permantent delete'),
+        title: const Text('Delete Profile Photo'),
+        content: const Text(
+          'Are you sure you want to permanently delete your profile photo?',
+        ),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),

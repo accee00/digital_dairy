@@ -36,17 +36,22 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   /// Uploads and updates the user's profile image.
   Future<void> updateProfileImage({required File image}) async {
-    emit(ProfileLoading());
+    final ProfileState currentState = state;
+    if (currentState is! FetchProfileSuccess) {
+      return;
+    }
+
+    emit(ProfileImageUploading(currentState.user));
 
     final Either<Failure, String> response = await _authService
         .updateProfileImage(image);
 
     response.fold(
       (Failure failure) {
-        emit(ProfileImageUpdateFailure(failure.message));
+        emit(ProfileImageUpdateFailure(failure.message, currentState.user));
       },
       (String path) {
-        emit(ProfileImageUpdateSuccess(path));
+        emit(ProfileImageUpdateSuccess(path, currentState.user));
 
         fetchProfile();
       },
@@ -55,18 +60,22 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   /// Deletes the user's profile image.
   Future<void> deleteProfileImage() async {
-    emit(ProfileLoading());
+    final ProfileState currentState = state;
+    if (currentState is! FetchProfileSuccess) {
+      return;
+    }
+
+    emit(ProfileImageDeleting(currentState.user));
 
     final Either<Failure, Unit> response = await _authService
         .deleteUserProfileImage();
 
     response.fold(
       (Failure failure) {
-        emit(ProfileImageDeleteFailure(failure.message));
+        emit(ProfileImageDeleteFailure(failure.message, currentState.user));
       },
       (_) {
-        emit(ProfileImageDeleteSuccess());
-
+        emit(ProfileImageDeleteSuccess(currentState.user));
         fetchProfile();
       },
     );

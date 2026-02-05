@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:digital_dairy/core/exceptions/failure.dart';
+import 'package:digital_dairy/core/logger/logger.dart';
 import 'package:digital_dairy/features/auth/model/user.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -217,7 +218,7 @@ class AuthService {
     final String publicUrl = _client.storage
         .from('userImage')
         .getPublicUrl(path);
-
+    logInfo('Public image url $publicUrl');
     return user.copyWith(imageUrl: publicUrl);
   }
 
