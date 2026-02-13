@@ -81,4 +81,14 @@ class AuthCubit extends Cubit<AuthState> {
       emit(const AuthFailureState('Session check failed'));
     }
   }
+
+  ///
+  Future<void> logOutUser() async {
+    emit(AuthLoading());
+    final Either<Failure, bool> response = await authService.logOutUser();
+    response.fold(
+      (Failure failure) => emit(AuthFailureState(failure.message)),
+      (bool success) => emit(AuthLoggedOut()),
+    );
+  }
 }

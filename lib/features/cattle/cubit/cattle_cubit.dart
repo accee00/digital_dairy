@@ -268,4 +268,9 @@ class CattleCubit extends Cubit<CattleState> {
       ),
     );
   }
+
+  ///
+  void clear() {
+    emit(const CattleInitial());
+  }
 }

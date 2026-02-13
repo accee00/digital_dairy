@@ -32,4 +32,9 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
   Future<void> refreshAnalytics() async {
     await fetchAnalytics();
   }
+
+  ///
+  void clear() {
+    emit(AnalyticsInitial());
+  }
 }

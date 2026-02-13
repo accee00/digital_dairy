@@ -182,4 +182,9 @@ class SalesCubit extends Cubit<SalesState> {
           emit(GetSalesSuccessState(sales, buyers: state.buyers)),
     );
   }
+
+  ///
+  void clear() {
+    emit(const SalesInitial());
+  }
 }

@@ -63,7 +63,7 @@ class UserModel extends Equatable {
     'image_url': imageUrl,
     'created_at': createdAt?.toIso8601String(),
     'updated_at': updatedAt?.toIso8601String(),
-  }..removeWhere((key, value) => value == null);
+  }..removeWhere((String key, dynamic value) => value == null);
 
   @override
   String toString() =>

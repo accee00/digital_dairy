@@ -162,4 +162,9 @@ class MilkCubit extends Cubit<MilkState> {
       (bool success) => success ? refreshMilkLog() : null,
     );
   }
+
+  ///
+  void clear() {
+    emit(const MilkInitial());
+  }
 }

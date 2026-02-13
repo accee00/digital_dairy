@@ -1,5 +1,4 @@
 import 'package:digital_dairy/features/home/cubit/analytics_cubit.dart';
-
 import 'package:digital_dairy/features/home/presentation/widgets/home_header.dart';
 import 'package:digital_dairy/features/home/presentation/widgets/milk_summary_card.dart';
 import 'package:digital_dairy/features/home/presentation/widgets/monthly_summary_card.dart';
@@ -21,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch analytics when screen loads
     context.read<AnalyticsCubit>().fetchAnalytics();
   }
 

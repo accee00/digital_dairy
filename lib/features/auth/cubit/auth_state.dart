@@ -77,3 +77,6 @@ class AuthForgotPassFailure extends AuthState {
   @override
   List<Object?> get props => <Object?>[msg];
 }
+
+///
+class AuthLoggedOut extends AuthState {}

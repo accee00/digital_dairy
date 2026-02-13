@@ -2,18 +2,19 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/bloc/app_config_bloc.dart';
-import 'package:digital_dairy/core/di/init_di.dart';
-import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
 import 'package:digital_dairy/core/routes/app_routes.dart';
 import 'package:digital_dairy/core/utils/custom_snackbar.dart';
 import 'package:digital_dairy/core/widget/custom_scaffold_container.dart';
+import 'package:digital_dairy/features/auth/cubit/auth_cubit.dart';
 import 'package:digital_dairy/features/auth/model/user.dart';
+import 'package:digital_dairy/features/cattle/cubit/cattle_cubit.dart';
+import 'package:digital_dairy/features/home/cubit/analytics_cubit.dart';
 import 'package:digital_dairy/features/home/cubit/profile_cubit.dart';
-import 'package:digital_dairy/services/auth_service.dart';
+import 'package:digital_dairy/features/milklog/cubit/milk_cubit.dart';
+import 'package:digital_dairy/features/sales/cubit/sales_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart' show Either;
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -46,70 +47,89 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) => BlocConsumer<ProfileCubit, ProfileState>(
-    listener: (BuildContext context, ProfileState state) {
-      if (state is FetchProfileSuccess) {
-        currentUser = state.user;
-        isImageLoading = false;
+  Widget build(BuildContext context) => BlocListener<AuthCubit, AuthState>(
+    listener: (BuildContext context, AuthState state) {
+      if (state is AuthLoggedOut) {
+        context.read<ProfileCubit>().clear();
+        context.read<CattleCubit>().clear();
+        context.read<AnalyticsCubit>().clear();
+        context.read<MilkCubit>().clear();
+        context.read<SalesCubit>().clear();
+        context.pushReplacementNamed(AppRoutes.signUp);
       }
-
-      if (state is ProfileImageUploading) {
-        currentUser = state.user;
-        isImageLoading = true;
-      }
-
-      if (state is ProfileImageDeleting) {
-        currentUser = state.user;
-        isImageLoading = true;
-      }
-
-      if (state is ProfileImageUpdateSuccess) {
-        currentUser = state.user;
-        showAppSnackbar(context, message: context.strings.profileImageUpdated);
-      }
-
-      if (state is ProfileImageUpdateFailure) {
-        currentUser = state.user;
-        isImageLoading = false;
-        showAppSnackbar(context, message: state.message);
-      }
-
-      if (state is ProfileImageDeleteSuccess) {
-        currentUser = state.user;
-        showAppSnackbar(context, message: context.strings.profileImageDeleted);
-      }
-
-      if (state is ProfileImageDeleteFailure) {
-        currentUser = state.user;
-        isImageLoading = false;
-        showAppSnackbar(context, message: state.message);
+      if (state is AuthFailureState) {
+        showAppSnackbar(context, message: state.msg);
       }
     },
-    builder: (BuildContext context, ProfileState state) => Scaffold(
-      body: CustomScaffoldContainer(
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _appBar(context),
+    child: BlocConsumer<ProfileCubit, ProfileState>(
+      listener: (BuildContext context, ProfileState state) {
+        if (state is FetchProfileSuccess) {
+          currentUser = state.user;
+          isImageLoading = false;
+        }
 
-            if (state is ProfileInitial ||
-                (state is ProfileLoading && currentUser == null))
-              const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else if (state is FetchProfileFailure && currentUser == null)
-              SliverFillRemaining(child: _buildErrorState(state.message))
-            else if (currentUser != null)
-              ..._buildContent(
-                context,
-                currentUser!.name,
-                currentUser!.email,
-                '+91 ${currentUser!.phoneNumber}',
-                currentUser!.createdAt ?? defaultMemberSince,
-                currentUser!.imageUrl,
-              ),
-          ],
+        if (state is ProfileImageUploading) {
+          currentUser = state.user;
+          isImageLoading = true;
+        }
+
+        if (state is ProfileImageDeleting) {
+          currentUser = state.user;
+          isImageLoading = true;
+        }
+
+        if (state is ProfileImageUpdateSuccess) {
+          currentUser = state.user;
+          showAppSnackbar(
+            context,
+            message: context.strings.profileImageUpdated,
+          );
+        }
+
+        if (state is ProfileImageUpdateFailure) {
+          currentUser = state.user;
+          isImageLoading = false;
+          showAppSnackbar(context, message: state.message);
+        }
+
+        if (state is ProfileImageDeleteSuccess) {
+          currentUser = state.user;
+          showAppSnackbar(
+            context,
+            message: context.strings.profileImageDeleted,
+          );
+        }
+
+        if (state is ProfileImageDeleteFailure) {
+          currentUser = state.user;
+          isImageLoading = false;
+          showAppSnackbar(context, message: state.message);
+        }
+      },
+      builder: (BuildContext context, ProfileState state) => Scaffold(
+        body: CustomScaffoldContainer(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _appBar(context),
+
+              if (state is ProfileInitial ||
+                  (state is ProfileLoading && currentUser == null))
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (state is FetchProfileFailure && currentUser == null)
+                SliverFillRemaining(child: _buildErrorState(state.message))
+              else if (currentUser != null)
+                ..._buildContent(
+                  context,
+                  currentUser!.name,
+                  currentUser!.email,
+                  '+91 ${currentUser!.phoneNumber}',
+                  currentUser!.createdAt ?? defaultMemberSince,
+                  currentUser!.imageUrl,
+                ),
+            ],
+          ),
         ),
       ),
     ),
@@ -410,7 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
       showAppSnackbar(
         context,
-        message: '${context.strings.errorPickingImage} ${e.toString()}',
+        message: '${context.strings.errorPickingImage} $e',
       );
     }
   }
@@ -770,18 +790,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text(context.strings.profileCancel),
           ),
           TextButton(
-            onPressed: () async {
-              final Either<Failure, bool> response =
-                  await serviceLocator<AuthService>().logOutUser();
-              response.fold(
-                (Failure failure) {
-                  showAppSnackbar(context, message: failure.message);
-                  Navigator.pop(context);
-                },
-                (bool value) {
-                  context.pushReplacementNamed(AppRoutes.signUp);
-                },
-              );
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<AuthCubit>().logOutUser();
             },
             child: Text(
               context.strings.profileLogout,

@@ -80,4 +80,9 @@ class ProfileCubit extends Cubit<ProfileState> {
       },
     );
   }
+
+  ///
+  void clear() {
+    emit(ProfileInitial());
+  }
 }

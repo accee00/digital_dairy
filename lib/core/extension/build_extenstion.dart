@@ -14,7 +14,7 @@ extension BuildContextExtension on BuildContext {
 
   /// Returns the localized [AppLocalizations] instance for the current context.
   /// Throws an exception if no [AppLocalizations] is found.
-  AppLocalizations get strings => AppLocalizations.of(this)!;
+  AppLocalizations get strings => AppLocalizations.of(this);
 
   /// Retrieves the current [ColorScheme] from the closest [Theme] widget that encloses the given context.
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
