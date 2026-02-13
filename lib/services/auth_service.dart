@@ -34,7 +34,7 @@ class AuthService {
       final AuthResponse response = await _client.auth.signUp(
         email: email,
         password: password,
-        data: <String, dynamic>{'name': name, 'phone_number': phoneNumber},
+        data: <String, dynamic>{'full_name': name, 'phone_number': phoneNumber},
       );
 
       final User? user = response.user;
@@ -116,7 +116,7 @@ class AuthService {
           .single();
 
       final UserModel user = UserModel.fromMap(response);
-
+      logInfo(user);
       return right(_attachPublicUrl(user));
     } on PostgrestException catch (e) {
       return left(Failure(e.message));
