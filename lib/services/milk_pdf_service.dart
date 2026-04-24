@@ -460,22 +460,37 @@ class MilkPdfService {
     String cattleName,
     DateTime month,
   ) async {
-    Directory? directory;
+    Directory? baseDir;
+
     if (Platform.isAndroid) {
-      directory = Directory('/storage/emulated/0/Download');
-      if (!directory.existsSync()) {
-        directory = await getExternalStorageDirectory();
+      final Directory publicDownload = Directory(
+        '/storage/emulated/0/Download',
+      );
+      if (publicDownload.existsSync()) {
+        baseDir = publicDownload;
+      } else {
+        final List<Directory>? dirs = await getExternalStorageDirectories();
+        if (dirs != null && dirs.isNotEmpty) {
+          baseDir = dirs.first;
+        }
       }
     } else if (Platform.isIOS) {
-      directory = await getApplicationDocumentsDirectory();
-    } else {
-      directory = await getApplicationDocumentsDirectory();
+      baseDir = await getApplicationDocumentsDirectory();
+    }
+
+    baseDir ??= await getApplicationDocumentsDirectory();
+
+    final String downloadDirStr = '${baseDir.path}/Digital Dairy';
+    final Directory directory = Directory(downloadDirStr);
+
+    if (!directory.existsSync()) {
+      await directory.create(recursive: true);
     }
 
     final String fileName =
         'Milk_${cattleName.replaceAll(' ', '_')}_${DateFormat('MMM_yyyy').format(month)}.pdf';
-    final String filePath = '${directory!.path}/$fileName';
-
+    final String filePath = '${directory.path}/$fileName';
+    logInfo('Saved PDF to: $filePath');
     final File file = File(filePath);
     await file.writeAsBytes(await pdf.save());
 
@@ -488,11 +503,22 @@ class MilkPdfService {
           await DeviceInfoPlugin().androidInfo;
       if (androidInfo.version.sdkInt >= 33) {
         return true;
-      } else {
-        final PermissionStatus status = await Permission.storage.request();
-        return status.isGranted;
       }
+
+      PermissionStatus status = await Permission.storage.status;
+
+      if (status.isDenied) {
+        status = await Permission.storage.request();
+      }
+
+      if (status.isPermanentlyDenied) {
+        await openAppSettings();
+        return false;
+      }
+
+      return status.isGranted;
     }
+
     return true;
   }
 

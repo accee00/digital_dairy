@@ -27,6 +27,9 @@ class MilkLogService {
       return right(false);
     } on PostgrestException catch (e) {
       logInfo(e.toString());
+      if (e.message.contains('milk_entries_user_id_cattle_id_date_shift_key')) {
+        return left(Failure('You have already entered milk for this cattle.'));
+      }
       return left(Failure(e.message));
     }
   }

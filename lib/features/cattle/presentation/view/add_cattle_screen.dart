@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digital_dairy/core/di/init_di.dart';
 import 'package:digital_dairy/core/exceptions/failure.dart';
 import 'package:digital_dairy/core/extension/build_extenstion.dart';
@@ -694,11 +695,13 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                     ),
                   ],
                 )
-              : isEdit && widget.cattle!.imageUrl != null
+              : isEdit &&
+                    widget.cattle!.imageUrl != null &&
+                    widget.cattle!.imageUrl!.isNotEmpty
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  child: Image.network(
-                    widget.cattle!.imageUrl!,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.cattle!.imageUrl!,
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
